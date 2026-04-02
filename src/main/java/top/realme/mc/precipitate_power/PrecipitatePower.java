@@ -36,7 +36,7 @@ public class PrecipitatePower {
                     .icon(() -> ModItems.WHITE_SOCK.get().getDefaultInstance())
                     .displayItems((parameters, output) -> {
                         output.accept(ModItems.WHITE_SOCK.get());
-                        output.accept(ModItems.RAINBOW_WHITE_SOCK.get());
+                        output.accept(ModItems.RAINBOW_WHITE_SOCK.get().getDefaultInstance());
                         output.accept(ModItems.DIRTY_WHITE_SOCK.get());
                         output.accept(ModBlocks.PRECIPITATE_GENERATOR_ITEM.get());
                     })

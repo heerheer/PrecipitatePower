@@ -264,7 +264,7 @@ public class PrecipitateGeneratorBlockEntity extends BaseContainerBlockEntity im
 
     private final class GeneratorEnergyStorage extends EnergyStorage {
         private GeneratorEnergyStorage() {
-            super(Config.GENERATOR_CAPACITY.get(), 0, Config.GENERATOR_MAX_EXTRACT.get());
+            super(Config.GENERATOR_CAPACITY.get(), 0, Integer.MAX_VALUE);
         }
 
         private void setEnergy(int energy) {

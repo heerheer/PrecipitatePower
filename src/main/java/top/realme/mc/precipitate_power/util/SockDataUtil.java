@@ -122,7 +122,10 @@ public final class SockDataUtil {
      */
     public static void appendTooltip(ItemStack stack, List<Component> tooltip) {
         tooltip.add(Component.translatable("tooltip.precipitate_power.sock.precipitation", getPrecipitationLevel(stack)).withStyle(ChatFormatting.AQUA));
-        tooltip.add(Component.translatable("tooltip.precipitate_power.sock.dirty_count", getDirtyCount(stack), Config.SOCK_STAIN_LIMIT.get()).withStyle(ChatFormatting.GRAY));
+
+        if(!stack.has(DataComponents.UNBREAKABLE))
+            tooltip.add(Component.translatable("tooltip.precipitate_power.sock.dirty_count", getDirtyCount(stack), Config.SOCK_STAIN_LIMIT.get()).withStyle(ChatFormatting.GRAY));
+
         tooltip.add(Component.translatable("tooltip.precipitate_power.sock.power_coefficient", String.format("%.2f", getPowerCoefficient(stack))).withStyle(ChatFormatting.GOLD));
         if (isUnbreakable(stack)) {
             tooltip.add(Component.translatable("tooltip.precipitate_power.sock.unbreakable").withStyle(ChatFormatting.LIGHT_PURPLE));
