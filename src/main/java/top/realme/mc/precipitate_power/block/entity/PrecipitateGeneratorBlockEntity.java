@@ -1,6 +1,5 @@
 package top.realme.mc.precipitate_power.block.entity;
 
-import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -15,7 +14,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
@@ -29,7 +27,6 @@ import top.realme.mc.precipitate_power.Config;
 import top.realme.mc.precipitate_power.menu.PrecipitateGeneratorMenu;
 import top.realme.mc.precipitate_power.registry.ModBlockEntities;
 import top.realme.mc.precipitate_power.registry.ModItems;
-import top.realme.mc.precipitate_power.registry.ModMenus;
 import top.realme.mc.precipitate_power.util.FormulaParser;
 import top.realme.mc.precipitate_power.util.SockDataUtil;
 
@@ -109,7 +106,7 @@ public class PrecipitateGeneratorBlockEntity extends BaseContainerBlockEntity im
 
         if (!SockDataUtil.isUnbreakable(stack)) {
             double dirtyChance = Config.DIRTY_BASE_CHANCE.get() + SockDataUtil.getPrecipitationLevel(stack) * Config.DIRTY_CHANCE_PER_PRECIPITATION.get();
-            int unbreaking = EnchantmentHelper.getItemEnchantmentLevel(level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.UNBREAKING), stack);
+            int unbreaking = stack.getEnchantmentLevel(level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.UNBREAKING));
             dirtyChance /= (1.0D + unbreaking);
             if (level.random.nextDouble() < dirtyChance) {
                 SockDataUtil.addDirtyCount(stack, 1);

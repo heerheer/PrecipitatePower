@@ -10,7 +10,6 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import top.realme.mc.precipitate_power.block.entity.PrecipitateGeneratorBlockEntity;
 import top.realme.mc.precipitate_power.registry.ModMenus;
 import top.realme.mc.precipitate_power.util.SockDataUtil;
 
