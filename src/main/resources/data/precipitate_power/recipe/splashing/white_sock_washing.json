@@ -1,0 +1,34 @@
+{
+  "type": "create:splashing",
+  "ingredients": [
+    {
+      "item": "precipitate_power:dirty_white_sock"
+    }
+  ],
+  "results": [
+    {
+      "id": "precipitate_power:white_sock",
+      "count": 1
+    },
+    {
+      "id": "create:experience_nugget",
+      "count": 16,
+      "chance": 0.8
+    },
+    {
+      "id": "create:experience_nugget",
+      "count": 64
+    },
+    {
+      "id": "create:experience_nugget",
+      "count": 46,
+      "chance": 0.4
+    },
+    {
+      "id": "create:experience_nugget",
+      "count": 5,
+      "chance": 0.9
+    }
+  ],
+  "processingTime": 200
+}

@@ -1,0 +1,10 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"parent": "item/generated",
+	"textures": {
+		"layer0": "precipitate_power:item/white_sock",
+		"particle": "precipitate_power:item/white_sock"
+	},
+	"display": {}
+}

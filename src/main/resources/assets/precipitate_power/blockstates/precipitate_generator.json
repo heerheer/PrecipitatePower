@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "precipitate_power:block/precipitate_generator" },
+    "facing=south": { "model": "precipitate_power:block/precipitate_generator", "y": 180 },
+    "facing=west": { "model": "precipitate_power:block/precipitate_generator", "y": 270 },
+    "facing=east": { "model": "precipitate_power:block/precipitate_generator", "y": 90 }
+  }
+}

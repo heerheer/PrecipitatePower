@@ -1,0 +1,38 @@
+{
+  "itemGroup.precipitate_power.main": "沉淀电力",
+  "block.precipitate_power.precipitate_generator": "沉淀发电机",
+  "item.precipitate_power.white_sock": "白袜",
+  "item.precipitate_power.rainbow_white_sock": "彩虹白袜",
+  "item.precipitate_power.dirty_white_sock": "有污渍的白袜",
+
+  "gui.precipitate_power.energy": "能量：%s / %s FE",
+  "gui.precipitate_power.precipitation": "沉淀等级：%s",
+  "gui.precipitate_power.dirty_count": "污渍次数：%s",
+
+  "tooltip.precipitate_power.sock.precipitation": "沉淀等级：%s",
+  "tooltip.precipitate_power.sock.dirty_count": "污渍次数：%s / %s",
+  "tooltip.precipitate_power.sock.power_coefficient": "发电系数：x%s",
+  "tooltip.precipitate_power.sock.unbreakable": "小赫给予了这个袜子永恒的光辉",
+  "tooltip.precipitate_power.sock.tag": "标签：%s",
+
+  "precipitate_power.ponder.shared.precipitate_generator.place": "放置一个沉淀发电机",
+  "precipitate_power.ponder.shared.precipitate_generator.insert_sock": "放入任意没有变脏的白袜即可开始产电",
+  "precipitate_power.ponder.shared.dirty_white_sock.wash": "使用批量洗涤可以快速将污渍白袜转变为干净的白袜与大量经验颗粒，不过无论怎么洗都无法保留原先的属性。",
+  "precipitate_power.ponder.dirty_white_sock_washing.header": "洗涤污渍白袜",
+  "precipitate_power.ponder.precipitate_generator_basic.header": "白袜发电",
+
+  "precipitate_power.configuration.title": "沉淀发电配置",
+  "precipitate_power.configuration.section.precipitate_power.common.toml": "通用",
+  "precipitate_power.configuration.section.precipitate_power.common.toml.title": "沉淀发电通用配置",
+  "precipitate_power.configuration.generatorCapacity": "发电机容量",
+  "precipitate_power.configuration.generatorMaxExtract": "发电机最大输出",
+  "precipitate_power.configuration.precipitateChance": "沉淀概率",
+  "precipitate_power.configuration.dirtyBaseChance": "基础变脏概率",
+  "precipitate_power.configuration.dirtyChancePerPrecipitation": "每级沉淀增加的变脏概率",
+  "precipitate_power.configuration.sockStainLimit": "袜子污渍上限",
+  "precipitate_power.configuration.lootSockChance": "箱子开出白袜概率",
+  "precipitate_power.configuration.lootBonusChance": "白袜获得系数增幅概率",
+  "precipitate_power.configuration.lootMinCoefficient": "最小发电系数",
+  "precipitate_power.configuration.lootMaxCoefficient": "最大发电系数",
+  "precipitate_power.configuration.generationFormula": "发电公式"
+}

@@ -1,0 +1,38 @@
+{
+  "itemGroup.precipitate_power.main": "Precipitate Power",
+  "block.precipitate_power.precipitate_generator": "Precipitation Generator",
+  "item.precipitate_power.white_sock": "White Sock",
+  "item.precipitate_power.rainbow_white_sock": "Rainbow White Sock",
+  "item.precipitate_power.dirty_white_sock": "Dirty White Sock",
+
+  "gui.precipitate_power.energy": "Energy: %s / %s FE",
+  "gui.precipitate_power.precipitation": "Precipitation: %s",
+  "gui.precipitate_power.dirty_count": "Stains: %s",
+
+  "tooltip.precipitate_power.sock.precipitation": "Precipitation Level: %s",
+  "tooltip.precipitate_power.sock.dirty_count": "Stains: %s / %s",
+  "tooltip.precipitate_power.sock.power_coefficient": "Power Coefficient: x%s",
+  "tooltip.precipitate_power.sock.unbreakable": "Harmog gave this sock eternal brilliance",
+  "tooltip.precipitate_power.sock.tag": "Tag: %s",
+
+  "precipitate_power.ponder.shared.precipitate_generator.place": "Place a precipitation generator",
+  "precipitate_power.ponder.shared.precipitate_generator.insert_sock": "Insert a white sock to start generating power",
+  "precipitate_power.ponder.shared.dirty_white_sock.wash": "Using batch washing can quickly turn stained white socks into clean white socks and a large amount of experience particles, but no matter how they are washed, the original attributes cannot be retained.",
+  "precipitate_power.ponder.dirty_white_sock_washing.header": "Wash dirty white socks",
+  "precipitate_power.ponder.precipitate_generator_basic.header": "Use sock to generate energy",
+
+  "precipitate_power.configuration.title": "Precipitate Power Config",
+  "precipitate_power.configuration.section.precipitate_power.common.toml": "Common",
+  "precipitate_power.configuration.section.precipitate_power.common.toml.title": "Precipitate Power Common",
+  "precipitate_power.configuration.generatorCapacity": "Generator Capacity",
+  "precipitate_power.configuration.generatorMaxExtract": "Generator Max Extract",
+  "precipitate_power.configuration.precipitateChance": "Precipitation Chance",
+  "precipitate_power.configuration.dirtyBaseChance": "Base Dirty Chance",
+  "precipitate_power.configuration.dirtyChancePerPrecipitation": "Dirty Chance Per Precipitation",
+  "precipitate_power.configuration.sockStainLimit": "Sock Stain Limit",
+  "precipitate_power.configuration.lootSockChance": "Loot Sock Chance",
+  "precipitate_power.configuration.lootBonusChance": "Loot Bonus Chance",
+  "precipitate_power.configuration.lootMinCoefficient": "Loot Min Coefficient",
+  "precipitate_power.configuration.lootMaxCoefficient": "Loot Max Coefficient",
+  "precipitate_power.configuration.generationFormula": "Generation Formula"
+}
