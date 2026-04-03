@@ -20,7 +20,13 @@ public final class PrecipitateGeneratorPonderScenes {
 
     public static void register(PonderSceneRegistrationHelper<ResourceLocation> helper) {
         helper.addStoryBoard(
-                ResourceLocation.fromNamespaceAndPath(PrecipitatePower.MODID, "precipitate_generator"),
+                ModBlocks.PRECIPITATE_GENERATOR_ITEM.getId(),
+                helper.asLocation("precipitate_generator"),
+                PrecipitateGeneratorPonderScenes::basicUsage
+        );
+
+                helper.addStoryBoard(
+                ModItems.WHITE_SOCK.getId(),
                 helper.asLocation("precipitate_generator"),
                 PrecipitateGeneratorPonderScenes::basicUsage
         );

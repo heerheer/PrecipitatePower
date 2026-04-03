@@ -5,7 +5,7 @@
   "item.precipitate_power.rainbow_white_sock": "彩虹白袜",
   "item.precipitate_power.dirty_white_sock": "有污渍的白袜",
   "curios.identifier.sock": "袜子",
-  "curios.modifier.sock": "装备在袜子栏位时",
+  "curios.modifiers.sock": "装备在袜子栏位时",
 
   "gui.precipitate_power.energy": "能量：%s / %s FE",
   "gui.precipitate_power.precipitation": "沉淀等级：%s",
