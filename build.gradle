@@ -143,7 +143,7 @@ dependencies {
     implementation "net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}"
 
     // ===== Curios =====
-    implementation "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
+    compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
     localRuntime "curse.maven:curios-309927:6528893"
 
     // ===== JEI Runtime =====

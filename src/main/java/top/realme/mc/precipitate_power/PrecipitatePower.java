@@ -7,6 +7,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -14,6 +15,7 @@ import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.slf4j.Logger;
+import top.realme.mc.precipitate_power.compat.curios.CuriosCompat;
 import top.realme.mc.precipitate_power.registry.ModBlockEntities;
 import top.realme.mc.precipitate_power.registry.ModBlocks;
 import top.realme.mc.precipitate_power.registry.ModItems;
@@ -55,12 +57,19 @@ public class PrecipitatePower {
         modEventBus.addListener(this::addCreative);
         modEventBus.addListener(ModBlocks::registerCapabilities); // 只能在这边注册cap
 
+        if (ModList.get().isLoaded("curios")) {
+            modEventBus.addListener(CuriosCompat::onCommonSetup);
+        }
+
         //NeoForge.EVENT_BUS.register(this);
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
         LOGGER.info("Precipitate Power common setup complete");
+        if (!ModList.get().isLoaded("curios")) {
+            LOGGER.info("Curios not found, skipping sock curio compat");
+        }
     }
 
     private void addCreative(BuildCreativeModeTabContentsEvent event) {

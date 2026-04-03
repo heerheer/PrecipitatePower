@@ -97,7 +97,7 @@ A simple power generation module that provides a precipitation that can be found
 
 [[dependencies.${mod_id}]]
     modId="curios"
-    type="required"
+    type="optional"
     versionRange="[9.5.0,10.0.0)"
     ordering="NONE"
     side="BOTH"
