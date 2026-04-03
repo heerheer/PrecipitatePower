@@ -58,6 +58,11 @@ public class AddSockLootModifier extends LootModifier {
             SockDataUtil.setPowerCoefficient(stack, coefficient);
         }
 
+        if (stack.is(ModItems.WHITE_SOCK.get())) {
+            double athleticCognition = Math.pow(context.getRandom().nextDouble(), 2.0D);
+            SockDataUtil.setAthleticCognition(stack, athleticCognition);
+        }
+
         // 增加随机耐久附魔等级 1/2/3
         double unbreakingChance = context.getRandom().nextDouble();
 

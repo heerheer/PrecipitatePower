@@ -5,6 +5,7 @@
   "item.precipitate_power.rainbow_white_sock": "彩虹白袜",
   "item.precipitate_power.dirty_white_sock": "有污渍的白袜",
   "curios.identifier.sock": "袜子",
+  "curios.modifier.sock": "装备在袜子栏位时",
 
   "gui.precipitate_power.energy": "能量：%s / %s FE",
   "gui.precipitate_power.precipitation": "沉淀等级：%s",
@@ -13,6 +14,7 @@
   "tooltip.precipitate_power.sock.precipitation": "沉淀等级：%s",
   "tooltip.precipitate_power.sock.dirty_count": "污渍次数：%s / %s",
   "tooltip.precipitate_power.sock.power_coefficient": "发电系数：x%s",
+  "tooltip.precipitate_power.sock.athletic_cognition": "体育生认知：%s",
   "tooltip.precipitate_power.sock.unbreakable": "小赫给予了这个袜子永恒的光辉",
   "tooltip.precipitate_power.sock.tag": "标签：%s",
 

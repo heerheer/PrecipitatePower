@@ -5,6 +5,7 @@
   "item.precipitate_power.rainbow_white_sock": "Rainbow White Sock",
   "item.precipitate_power.dirty_white_sock": "Dirty White Sock",
   "curios.identifier.sock": "Sock",
+  "curios.modifier.sock": "When in Sock Slot",
 
   "gui.precipitate_power.energy": "Energy: %s / %s FE",
   "gui.precipitate_power.precipitation": "Precipitation: %s",
@@ -13,6 +14,7 @@
   "tooltip.precipitate_power.sock.precipitation": "Precipitation Level: %s",
   "tooltip.precipitate_power.sock.dirty_count": "Stains: %s / %s",
   "tooltip.precipitate_power.sock.power_coefficient": "Power Coefficient: x%s",
+  "tooltip.precipitate_power.sock.athletic_cognition": "Athletic Cognition: %s",
   "tooltip.precipitate_power.sock.unbreakable": "Harmog gave this sock eternal brilliance",
   "tooltip.precipitate_power.sock.tag": "Tag: %s",
 
