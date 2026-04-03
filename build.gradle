@@ -32,6 +32,7 @@ repositories {
     maven { url = "https://maven.blamejared.com/" } // JEI
     maven { url = "https://modmaven.dev/" }         // Mekanism
     maven { url = "https://cursemaven.com" }        // Jade runtime
+    maven { url = "https://maven.theillusivec4.top/" } // Curios API
     //maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
     maven { url = "https://maven.createmod.net" }
     maven {url = "https://maven.tterrag.com"}
@@ -140,6 +141,10 @@ dependencies {
 
     // ===== Ponder =====
     implementation "net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}"
+
+    // ===== Curios =====
+    implementation "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
+    localRuntime "curse.maven:curios-309927:6528893"
 
     // ===== JEI Runtime =====
     localRuntime "mezz.jei:jei-${minecraft_version}-common:${jei_version}"

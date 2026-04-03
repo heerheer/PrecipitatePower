@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import top.realme.mc.precipitate_power.util.SockDataUtil;
 
-public class WhiteSockItem extends Item {
+public class WhiteSockItem extends CurioSockItem {
     public WhiteSockItem(Properties properties) {
         super(properties);
     }

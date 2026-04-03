@@ -4,6 +4,7 @@
   "item.precipitate_power.white_sock": "White Sock",
   "item.precipitate_power.rainbow_white_sock": "Rainbow White Sock",
   "item.precipitate_power.dirty_white_sock": "Dirty White Sock",
+  "curios.identifier.sock": "Sock",
 
   "gui.precipitate_power.energy": "Energy: %s / %s FE",
   "gui.precipitate_power.precipitation": "Precipitation: %s",
