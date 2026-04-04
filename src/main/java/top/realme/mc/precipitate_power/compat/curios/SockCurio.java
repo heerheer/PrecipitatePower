@@ -9,6 +9,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import top.realme.mc.precipitate_power.PrecipitatePower;
+import net.neoforged.fml.ModList;
+import top.realme.mc.precipitate_power.compat.ironsspellbooks.IronsSpellbooksCompat;
 import top.realme.mc.precipitate_power.registry.ModItems;
 import top.realme.mc.precipitate_power.util.SockDataUtil;
 import top.theillusivec4.curios.api.SlotContext;
@@ -26,6 +28,8 @@ public final class SockCurio implements ICurioItem {
             ResourceLocation.fromNamespaceAndPath(PrecipitatePower.MODID, "rainbow_sock_armor");
     private static final ResourceLocation RAINBOW_HEALTH_MODIFIER_ID =
             ResourceLocation.fromNamespaceAndPath(PrecipitatePower.MODID, "rainbow_sock_max_health");
+    private static final ResourceLocation RAINBOW_ATTACK_SPEED_MODIFIER_ID =
+            ResourceLocation.fromNamespaceAndPath(PrecipitatePower.MODID, "rainbow_sock_attack_speed");
 
     private SockCurio() {
     }
@@ -52,6 +56,11 @@ public final class SockCurio implements ICurioItem {
             addValueModifier(modifiers, Attributes.ATTACK_DAMAGE, RAINBOW_DAMAGE_MODIFIER_ID, 2.0D);
             addValueModifier(modifiers, Attributes.ARMOR, RAINBOW_ARMOR_MODIFIER_ID, 7.0D);
             addValueModifier(modifiers, Attributes.MAX_HEALTH, RAINBOW_HEALTH_MODIFIER_ID, 7.0D);
+            if (ModList.get().isLoaded("irons_spellbooks")) {
+                IronsSpellbooksCompat.addRainbowSockModifiers(modifiers);
+            } else {
+                addMultiplierModifier(modifiers, Attributes.ATTACK_SPEED, RAINBOW_ATTACK_SPEED_MODIFIER_ID, 0.08D);
+            }
         }
         return modifiers;
     }

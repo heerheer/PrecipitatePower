@@ -33,6 +33,7 @@ repositories {
     maven { url = "https://modmaven.dev/" }         // Mekanism
     maven { url = "https://cursemaven.com" }        // Jade runtime
     maven { url = "https://maven.theillusivec4.top/" } // Curios API
+    maven { url = "https://code.redspace.io/releases" } // Iron's Spells API
     //maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
     maven { url = "https://maven.createmod.net" }
     maven {url = "https://maven.tterrag.com"}
@@ -146,6 +147,16 @@ dependencies {
     compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
     localRuntime "curse.maven:curios-309927:6528893"
 
+    // ===== Iron's Spells 'n Spellbooks =====
+    compileOnly "io.redspace:irons_spellbooks:${irons_spellbooks_version}:api"
+    
+
+    // ===== Iron's runtime dependencies =====
+    localRuntime "maven.modrinth:geckolib:gFmrC8Ru"
+    localRuntime "maven.modrinth:irons-patreon-lib:1.21.1-1.0.1"
+    localRuntime "maven.modrinth:playeranimator:2.0.4+1.21.1-forge"
+    localRuntime "io.redspace:irons_spellbooks:${irons_spellbooks_version}"
+
     // ===== JEI Runtime =====
     localRuntime "mezz.jei:jei-${minecraft_version}-common:${jei_version}"
     localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
@@ -154,7 +165,7 @@ dependencies {
     localRuntime "curse.maven:jade-324717:6291517"
 
     // ===== Mekanism =====
-    localRuntime "mekanism:Mekanism:1.21.1-10.7.1.56"
+    localRuntime "mekanism:Mekanism:1.21.1-10.7.18.84"
 
     // ===== 引入Ponderer,仅作为运行时 =====
     localRuntime files("libs/ponderer-1.21.1-neoforge-1.7.1.5.jar")
