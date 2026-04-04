@@ -36,6 +36,10 @@ public class AddSockLootModifier extends LootModifier {
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
         String path = context.getQueriedLootTableId().getPath();
 
+        if(!isChest(path)) {
+            return generatedLoot;
+        }
+
         // 后续附魔获取用
         RegistryAccess registries = context.getLevel().registryAccess();
 
@@ -85,6 +89,10 @@ public class AddSockLootModifier extends LootModifier {
         return path.equals("chests/end_city_treasure")
                 || path.equals("chests/nether_bridge")
                 || path.startsWith("chests/bastion_");
+    }
+
+    private static boolean isChest(String path) {
+        return path.startsWith("chests/");
     }
 
     @Override
