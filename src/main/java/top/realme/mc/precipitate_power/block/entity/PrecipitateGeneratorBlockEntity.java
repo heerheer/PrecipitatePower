@@ -18,7 +18,9 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.EnergyStorage;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
@@ -101,6 +103,8 @@ public class PrecipitateGeneratorBlockEntity extends BaseContainerBlockEntity im
             //level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         }
 
+        pushEnergyToNeighbors();
+
         if (level.getGameTime() % 20L == 0L && level.random.nextDouble() < Config.PRECIPITATE_CHANCE.get()) {
             SockDataUtil.addPrecipitation(stack, 1);
             setChanged();
@@ -158,6 +162,35 @@ public class PrecipitateGeneratorBlockEntity extends BaseContainerBlockEntity im
 
     public ContainerData getData() {
         return data;
+    }
+
+    private void pushEnergyToNeighbors() {
+        if (level == null || level.isClientSide || energyStorage.getEnergyStored() <= 0) {
+            return;
+        }
+
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            if (energyStorage.getEnergyStored() <= 0) {
+                break;
+            }
+
+            BlockPos targetPos = worldPosition.relative(direction);
+            IEnergyStorage targetStorage = level.getCapability(Capabilities.EnergyStorage.BLOCK, targetPos, direction.getOpposite());
+            if (targetStorage == null || !targetStorage.canReceive()) {
+                continue;
+            }
+
+            int maxExtract = energyStorage.extractEnergy(Integer.MAX_VALUE, true);
+            if (maxExtract <= 0) {
+                break;
+            }
+
+            int accepted = targetStorage.receiveEnergy(maxExtract, false);
+            if (accepted > 0) {
+                energyStorage.extractEnergy(accepted, false);
+                setChanged();
+            }
+        }
     }
 
     @Override
