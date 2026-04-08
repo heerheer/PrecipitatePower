@@ -49,7 +49,7 @@ public final class SockCurio implements ICurioItem {
 
         double athleticCognition = SockDataUtil.getAthleticCognition(stack);
         if (athleticCognition > 0.0D) {
-            addMultiplierModifier(modifiers, Attributes.MOVEMENT_SPEED, SPEED_MODIFIER_ID, athleticCognition);
+            addMultiplierModifier(modifiers, Attributes.MOVEMENT_SPEED, SPEED_MODIFIER_ID, athleticCognition * 0.45D);
         }
 
         if (stack.is(ModItems.RAINBOW_WHITE_SOCK.get())) {

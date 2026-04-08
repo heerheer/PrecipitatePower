@@ -33,6 +33,8 @@ import top.realme.mc.precipitate_power.util.SockDataUtil;
 public class PrecipitateGeneratorBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer {
     private static final int INPUT_SLOT = 0;
     private static final int OUTPUT_SLOT = 1;
+    private static final double ATHLETIC_COGNITION_LOSS_CHANCE = 0.5D;
+    private static final double ATHLETIC_COGNITION_LOSS_AMOUNT = 0.01D;
 
     private static final int[] TOP_SLOTS = new int[]{INPUT_SLOT};
     private static final int[] BOTTOM_SLOTS = new int[]{OUTPUT_SLOT};
@@ -109,6 +111,12 @@ public class PrecipitateGeneratorBlockEntity extends BaseContainerBlockEntity im
             int unbreaking = stack.getEnchantmentLevel(level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.UNBREAKING));
             dirtyChance /= (1.0D + unbreaking);
             if (level.random.nextDouble() < dirtyChance) {
+                // 概率通过损失体育生认知来降低损坏概率
+                if (SockDataUtil.getAthleticCognition(stack) > 0.0D && level.random.nextDouble() < ATHLETIC_COGNITION_LOSS_CHANCE) {
+                    SockDataUtil.setAthleticCognition(stack, SockDataUtil.getAthleticCognition(stack) - ATHLETIC_COGNITION_LOSS_AMOUNT);
+                    setChanged();
+                    return;
+                }
                 SockDataUtil.addDirtyCount(stack, 1);
                 if (SockDataUtil.shouldBecomeDirty(stack)) {
                     transformSockToDirty(stack);

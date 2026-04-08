@@ -143,11 +143,13 @@ public final class SockDataUtil {
     public static void appendTooltip(ItemStack stack, List<Component> tooltip) {
         tooltip.add(Component.translatable("tooltip.precipitate_power.sock.precipitation", getPrecipitationLevel(stack)).withStyle(ChatFormatting.AQUA));
 
-        if(!stack.has(DataComponents.UNBREAKABLE))
+        if (!stack.has(DataComponents.UNBREAKABLE) && getDirtyCount(stack) > 0) // 污渍等级的显示优化
             tooltip.add(Component.translatable("tooltip.precipitate_power.sock.dirty_count", getDirtyCount(stack), Config.SOCK_STAIN_LIMIT.get()).withStyle(ChatFormatting.GRAY));
 
         tooltip.add(Component.translatable("tooltip.precipitate_power.sock.power_coefficient", formatDecimal(getPowerCoefficient(stack))).withStyle(ChatFormatting.GOLD));
+        
         tooltip.add(Component.translatable("tooltip.precipitate_power.sock.athletic_cognition", formatPercent(getAthleticCognition(stack))).withStyle(ChatFormatting.GOLD));
+        
         if (isUnbreakable(stack)) {
             tooltip.add(Component.translatable("tooltip.precipitate_power.sock.unbreakable").withStyle(ChatFormatting.LIGHT_PURPLE));
         }
