@@ -1,6 +1,7 @@
 {
   "itemGroup.precipitate_power.main": "Precipitate Power",
   "block.precipitate_power.precipitate_generator": "Precipitation Generator",
+  "block.precipitate_power.advanced_precipitate_generator": "Advanced Precipitation Generator",
   "item.precipitate_power.white_sock": "White Sock",
   "item.precipitate_power.rainbow_white_sock": "Rainbow White Sock",
   "item.precipitate_power.dirty_white_sock": "Dirty White Sock",
@@ -8,6 +9,7 @@
   "curios.modifiers.sock": "When in Sock Slot",
 
   "gui.precipitate_power.energy": "Energy: %s / %s FE",
+  "gui.precipitate_power.water": "Water: %s / %s mB",
   "gui.precipitate_power.precipitation": "Precipitation: %s",
   "gui.precipitate_power.dirty_count": "Stains: %s",
 
@@ -29,6 +31,9 @@
   "precipitate_power.configuration.section.precipitate_power.common.toml.title": "Precipitate Power Common",
   "precipitate_power.configuration.generatorCapacity": "Generator Capacity",
   "precipitate_power.configuration.generatorMaxExtract": "Generator Max Extract",
+  "precipitate_power.configuration.advancedGeneratorWaterCapacity": "Advanced Generator Water Capacity",
+  "precipitate_power.configuration.advancedGeneratorBaseWaterUse": "Advanced Generator Base Water Use",
+  "precipitate_power.configuration.advancedGeneratorWaterUsePerPrecipitation": "Advanced Generator Water Use Per Precipitation",
   "precipitate_power.configuration.precipitateChance": "Precipitation Chance",
   "precipitate_power.configuration.dirtyBaseChance": "Base Dirty Chance",
   "precipitate_power.configuration.dirtyChancePerPrecipitation": "Dirty Chance Per Precipitation",

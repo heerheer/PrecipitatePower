@@ -41,6 +41,7 @@ public class PrecipitatePower {
                         output.accept(ModItems.RAINBOW_WHITE_SOCK.get().getDefaultInstance());
                         output.accept(ModItems.DIRTY_WHITE_SOCK.get());
                         output.accept(ModBlocks.PRECIPITATE_GENERATOR_ITEM.get());
+                        output.accept(ModBlocks.ADVANCED_PRECIPITATE_GENERATOR_ITEM.get());
                     })
                     .build()
     );
@@ -75,6 +76,7 @@ public class PrecipitatePower {
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
             event.accept(ModBlocks.PRECIPITATE_GENERATOR_ITEM.get());
+            event.accept(ModBlocks.ADVANCED_PRECIPITATE_GENERATOR_ITEM.get());
         }
         if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
             event.accept(ModItems.WHITE_SOCK.get());

@@ -18,7 +18,7 @@ public class PrecipitateGeneratorMenu extends AbstractContainerMenu {
     private final ContainerData data;
 
     public PrecipitateGeneratorMenu(int containerId, Inventory inventory, FriendlyByteBuf buffer) {
-        this(containerId, inventory, new SimpleContainer(2), new SimpleContainerData(4));
+        this(containerId, inventory, new SimpleContainer(2), new SimpleContainerData(6));
     }
 
     public PrecipitateGeneratorMenu(int containerId, Inventory inventory, Container container, ContainerData data) {
@@ -58,6 +58,14 @@ public class PrecipitateGeneratorMenu extends AbstractContainerMenu {
 
     public int getDirtyCount() {
         return data.get(3);
+    }
+
+    public int getWaterStored() {
+        return data.get(4);
+    }
+
+    public int getMaxWaterStored() {
+        return data.get(5);
     }
 
     @Override

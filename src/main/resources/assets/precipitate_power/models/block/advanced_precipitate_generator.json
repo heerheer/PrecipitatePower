@@ -1,0 +1,24 @@
+{
+	"format_version": "1.21.11",
+	"credit": "Custom pixel-art UV atlas for advanced precipitate generator",
+	"parent": "block/block",
+	"texture_size": [48, 16],
+	"textures": {
+		"atlas": "precipitate_power:block/advanced_sedimentation_generator"
+	},
+	"elements": [
+		{
+			"name": "body",
+			"from": [0, 0, 0],
+			"to": [16, 16, 16],
+			"faces": {
+				"north": {"uv": [5.33333, 0, 10.66667, 16], "texture": "#atlas"},
+				"east": {"uv": [5.33333, 0, 10.66667, 16], "texture": "#atlas"},
+				"south": {"uv": [5.33333, 0, 10.66667, 16], "texture": "#atlas"},
+				"west": {"uv": [5.33333, 0, 10.66667, 16], "texture": "#atlas"},
+				"up": {"uv": [5.33333, 16, 0, 0], "texture": "#atlas"},
+				"down": {"uv": [16, 0, 10.66667, 16], "texture": "#atlas"}
+			}
+		}
+	]
+}

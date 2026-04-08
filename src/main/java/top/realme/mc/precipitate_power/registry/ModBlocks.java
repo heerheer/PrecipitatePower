@@ -11,6 +11,7 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import top.realme.mc.precipitate_power.block.AdvancedPrecipitateGeneratorBlock;
 import top.realme.mc.precipitate_power.PrecipitatePower;
 import top.realme.mc.precipitate_power.block.PrecipitateGeneratorBlock;
 
@@ -29,13 +30,31 @@ public final class ModBlocks {
     public static final DeferredItem<BlockItem> PRECIPITATE_GENERATOR_ITEM =
             ModItems.REGISTER.registerSimpleBlockItem("precipitate_generator", PRECIPITATE_GENERATOR);
 
+    public static final DeferredBlock<Block> ADVANCED_PRECIPITATE_GENERATOR = REGISTER.register(
+            "advanced_precipitate_generator",
+            () -> new AdvancedPrecipitateGeneratorBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(4.5F)
+                    .sound(SoundType.METAL)
+                    .requiresCorrectToolForDrops())
+    );
+
+    public static final DeferredItem<BlockItem> ADVANCED_PRECIPITATE_GENERATOR_ITEM =
+            ModItems.REGISTER.registerSimpleBlockItem("advanced_precipitate_generator", ADVANCED_PRECIPITATE_GENERATOR);
+
     private ModBlocks() {
     }
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, ModBlockEntities.PRECIPITATE_GENERATOR.get(),
                 (blockEntity, context) -> context == Direction.UP || context == Direction.DOWN ? null : blockEntity.getEnergyStorage());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, ModBlockEntities.ADVANCED_PRECIPITATE_GENERATOR.get(),
+                (blockEntity, context) -> context == Direction.UP || context == Direction.DOWN ? null : blockEntity.getEnergyStorage());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntities.PRECIPITATE_GENERATOR.get(),
                 (blockEntity, context) -> context == null ? blockEntity.getInternalItemHandler() : blockEntity.getSidedItemHandler(context));
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntities.ADVANCED_PRECIPITATE_GENERATOR.get(),
+                (blockEntity, context) -> context == null ? blockEntity.getInternalItemHandler() : blockEntity.getSidedItemHandler(context));
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlockEntities.ADVANCED_PRECIPITATE_GENERATOR.get(),
+                (blockEntity, context) -> blockEntity.getFluidHandler(context));
     }
 }

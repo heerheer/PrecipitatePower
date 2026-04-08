@@ -13,6 +13,18 @@ public final class Config {
             .comment("Maximum FE extracted per tick from each horizontal side.")
             .defineInRange("generatorMaxExtract", 2000, 1, Integer.MAX_VALUE);
 
+    public static final ModConfigSpec.IntValue ADVANCED_GENERATOR_WATER_CAPACITY = BUILDER
+            .comment("Internal water tank capacity of the advanced precipitate generator in mB.")
+            .defineInRange("advancedGeneratorWaterCapacity", 8000, 100, Integer.MAX_VALUE);
+
+    public static final ModConfigSpec.IntValue ADVANCED_GENERATOR_BASE_WATER_USE = BUILDER
+            .comment("Base water consumption per generation tick for the advanced precipitate generator in mB.")
+            .defineInRange("advancedGeneratorBaseWaterUse", 10, 0, Integer.MAX_VALUE);
+
+    public static final ModConfigSpec.IntValue ADVANCED_GENERATOR_WATER_USE_PER_PRECIPITATION = BUILDER
+            .comment("Additional water consumed per precipitation level for the advanced precipitate generator in mB.")
+            .defineInRange("advancedGeneratorWaterUsePerPrecipitation", 5, 0, Integer.MAX_VALUE);
+
     public static final ModConfigSpec.DoubleValue PRECIPITATE_CHANCE = BUILDER
             .comment("Chance checked every 20 ticks for a white sock to precipitate.")
             .defineInRange("precipitateChance", 0.015D, 0.0D, 1.0D);
