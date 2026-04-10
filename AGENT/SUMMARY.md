@@ -2,18 +2,19 @@
 
 ## 中文概括
 
-`Precipitate Power` 当前已经从 NeoForge 模板工程演进为一个可运行的玩法模组，核心围绕“白袜发电”展开：玩家可获得不同类型的袜子，将其投入沉淀发电机持续产能，袜子会在运行过程中积累沉淀值、获得发电系数、逐步变脏，并最终进入“污渍白袜 -> 清洗恢复”的循环。除基础物品与方块外，项目已经补齐 GUI、方块实体逻辑、配置系统、战利品注入、Curios 槽位兼容、Iron's Spellbooks 可选兼容、Ponder 教学场景、中英文本地化与所需资源文件。
+`Precipitate Power` 当前已经从 NeoForge 模板工程演进为一个可运行的玩法模组，核心围绕“白袜发电”展开：玩家可获得不同类型的袜子，将其投入不同等级的沉淀发电机持续产能，袜子会在运行过程中积累沉淀值、获得发电系数、逐步变脏，并最终进入“污渍白袜 -> 清洗恢复”的循环。除基础物品与方块外，项目已经补齐 GUI、方块实体逻辑、配置系统、战利品注入、Curios 槽位兼容、Iron's Spellbooks 可选兼容、Ponder 教学场景、中英文本地化与所需资源文件。
 
 目前玩法链路已经基本闭环：
 
 - 白袜、彩虹白袜、有污渍的白袜三类物品已实现。
-- 沉淀发电机支持白袜输入、服务端发电、容器交互和前端界面显示。
+- 沉淀发电机与高级沉淀发电机均已实现，支持白袜输入、服务端发电、容器交互和前端界面显示。
 - 袜子具有沉淀值、污渍次数、发电倍率、体育生认知等自定义数据。
+- 高级沉淀发电机已加入储水系统，且耗水会随沉淀等级提升而增加。
 - 战利品系统可以向箱子 loot 中注入袜子，并按维度/战利品表决定彩虹白袜的稀有来源。
 - Curios 安装时会启用 `sock` 栏位与装备属性；未安装时模组保持可加载。
 - Iron's Spellbooks 安装时，彩虹白袜会切换为法术相关加成；否则回退为普通战斗属性。
 
-最近一次明确修复是战利品约束问题：原来的全局战利品修改器会对所有 loot context 生效，导致非箱子掉落也有机会产出白袜；现在已经在 `AddSockLootModifier` 中加了 `chests/` 前缀判断，只允许箱子战利品表触发袜子注入。
+最近一轮功能更新集中在发电机体系：普通沉淀发电机现在会主动向四个水平相邻方块自动输出 FE，不再依赖外部设备主动抽取；同时新增了需要水输入的高级沉淀发电机，并将普通/高级机型的发电、沉淀和污渍逻辑抽到了共用基类中。
 
 ## Current Project State
 
@@ -53,18 +54,37 @@
   - 交互打开菜单
   - 正确连接方块实体 tick
 
-- `PrecipitateGeneratorBlockEntity` 已实现：
-  - 单输入槽逻辑
+- 当前机器实现已扩展为两级结构：
+  - `AbstractPrecipitateGeneratorBlockEntity`
+  - `PrecipitateGeneratorBlockEntity`
+  - `AdvancedPrecipitateGeneratorBlockEntity`
+
+- 共用基类目前统一承担：
+  - 单输入槽与输出槽逻辑
   - FE 存储与产能计算
-  - 服务端 tick
-  - 侧面能力暴露
+  - 服务端 tick 主循环
+  - 四个水平面的自动出能
   - 袜子沉淀与变脏逻辑
   - 变为污渍白袜后的物品替换
+  - GUI 数据同步
+
+- 普通沉淀发电机当前特性：
+  - 保持原有白袜发电玩法
+  - 不需要流体输入
+  - 支持自动向四周水平输出 FE
+
+- 高级沉淀发电机当前特性：
+  - 需要水作为额外输入资源
+  - 发电量为 `base * 发电系数 * 2`
+  - 袜子污渍概率降为普通机的一半
+  - 耗水量随沉淀等级提升而增加
+  - 暴露标准 `FluidHandler` 能力，可接管道/流体网络
 
 - `PrecipitateGeneratorMenu` 与 `PrecipitateGeneratorScreen` 已提供：
   - 服务端容器同步
   - 客户端 GUI 渲染
   - 与机器数据联动的基础展示
+  - 对高级机型额外显示储水量与水量条
 
 - 发电强度由表达式解析器驱动，配置中的公式使用 `x` 作为沉淀等级输入。
 
@@ -160,6 +180,11 @@
   - 清洗与机器配方
   - Ponder 结构 NBT
 
+- 本轮新增资源包括：
+  - `advanced_precipitate_generator` 的方块状态、模型、物品模型、掉落表与合成配方
+  - 高级沉淀发电机中英文语言键
+  - 高级沉淀发电机独立像素贴图 atlas
+
 - 资源完整性相对较高，已经不再是“只有代码没有内容”的阶段。
 
 ## Key Files By Responsibility
@@ -180,14 +205,23 @@
 - `src/main/java/top/realme/mc/precipitate_power/block/PrecipitateGeneratorBlock.java`
   - 方块状态与交互。
 
+- `src/main/java/top/realme/mc/precipitate_power/block/AdvancedPrecipitateGeneratorBlock.java`
+  - 高级发电机方块状态与交互。
+
+- `src/main/java/top/realme/mc/precipitate_power/block/entity/AbstractPrecipitateGeneratorBlockEntity.java`
+  - 普通/高级发电机的共用核心逻辑。
+
 - `src/main/java/top/realme/mc/precipitate_power/block/entity/PrecipitateGeneratorBlockEntity.java`
-  - 发电机核心逻辑。
+  - 普通沉淀发电机实现。
+
+- `src/main/java/top/realme/mc/precipitate_power/block/entity/AdvancedPrecipitateGeneratorBlockEntity.java`
+  - 高级沉淀发电机实现，包含储水与耗水逻辑。
 
 - `src/main/java/top/realme/mc/precipitate_power/menu/PrecipitateGeneratorMenu.java`
-  - 容器逻辑。
+  - 通用容器逻辑，含能量/沉淀/污渍/储水同步。
 
 - `src/main/java/top/realme/mc/precipitate_power/client/PrecipitateGeneratorScreen.java`
-  - 客户端界面。
+  - 通用客户端界面，含高级机型储水显示。
 
 - `src/main/java/top/realme/mc/precipitate_power/util/FormulaParser.java`
   - 发电公式解析。
@@ -225,13 +259,19 @@
 ### Data And Assets
 
 - `src/main/resources/data/precipitate_power/loot_table/blocks/precipitate_generator.json`
+- `src/main/resources/data/precipitate_power/loot_table/blocks/advanced_precipitate_generator.json`
 - `src/main/resources/data/precipitate_power/recipe/precipitate_generator.json`
+- `src/main/resources/data/precipitate_power/recipe/advanced_precipitate_generator.json`
 - `src/main/resources/data/precipitate_power/recipe/splashing/white_sock_washing.json`
 - `src/main/resources/data/precipitate_power/curios/slots/sock.json`
 - `src/main/resources/data/precipitate_power/curios/entities/player.json`
 - `src/main/resources/data/curios/tags/item/sock.json`
 - `src/main/resources/assets/precipitate_power/lang/en_us.json`
 - `src/main/resources/assets/precipitate_power/lang/zh_cn.json`
+- `src/main/resources/assets/precipitate_power/blockstates/advanced_precipitate_generator.json`
+- `src/main/resources/assets/precipitate_power/models/block/advanced_precipitate_generator.json`
+- `src/main/resources/assets/precipitate_power/models/item/advanced_precipitate_generator.json`
+- `src/main/resources/assets/precipitate_power/textures/block/advanced_sedimentation_generator.png`
 
 ## Recent Important Changes
 
@@ -240,6 +280,10 @@
 - 引入 Iron's Spellbooks 可选兼容，为彩虹白袜提供模组感知型加成。
 - 将教学内容迁移为 Java Ponder 场景。
 - 修复全局战利品修改器作用域过宽的问题，现仅对箱子 loot 生效。
+- 为普通沉淀发电机加入了四周水平自动出能逻辑。
+- 新增高级沉淀发电机，并引入水输入、耗水发电与分级机器设计。
+- 将机器逻辑重构为共用基类，减少普通/高级机之间的重复实现。
+- 为高级沉淀发电机补充独立方块资源，并将其模型改为 `48x16` 的 `front|side|top` 像素 atlas 贴图。
 
 ## Verification Status
 
@@ -257,4 +301,6 @@
 - 目前箱子战利品约束已经在 Java 代码层修复，但 JSON 条件层仍为空；如果后续希望进一步降低误配风险，可以在数据层再加一次限制，形成双保险。
 - `AddSockLootModifier` 中仍保留了一些未使用导入与中间变量，后续可以顺手清理，减少误导。
 - 彩虹白袜、体育生认知、发电倍率与 Curios 属性之间的数值平衡仍然偏设计问题，后续最好进入一轮游戏内调参。
+- 高级沉淀发电机目前只支持通过流体能力输入水，不支持玩家直接用水桶右键灌入。
+- 机器动画贴图方案已经讨论过，但目前尚未落地；如果后续要做“仅运作时播放”的动画，还需要补充 blockstate/模型切换或更细的渲染控制。
 - 目前总结基于代码结构和已落地资源，不代表所有功能都已经完成正式联机或长期存档验证。

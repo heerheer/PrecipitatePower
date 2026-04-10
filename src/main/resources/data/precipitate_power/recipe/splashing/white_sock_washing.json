@@ -12,23 +12,23 @@
     },
     {
       "id": "create:experience_nugget",
-      "count": 16,
+      "count": 8,
       "chance": 0.8
     },
     {
       "id": "create:experience_nugget",
-      "count": 64
+      "count": 12
     },
     {
       "id": "create:experience_nugget",
-      "count": 46,
+      "count": 4,
       "chance": 0.4
     },
     {
       "id": "create:experience_nugget",
-      "count": 5,
+      "count": 2,
       "chance": 0.9
     }
   ],
-  "processingTime": 200
+  "processingTime": 1000
 }
