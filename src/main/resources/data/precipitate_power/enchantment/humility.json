@@ -1,0 +1,20 @@
+{
+  "description": {
+    "translate": "enchantment.precipitate_power.humility"
+  },
+  "supported_items": "#precipitate_power:sock_enchantable",
+  "weight": 2,
+  "max_level": 3,
+  "min_cost": {
+    "base": 8,
+    "per_level_above_first": 9
+  },
+  "max_cost": {
+    "base": 32,
+    "per_level_above_first": 9
+  },
+  "anvil_cost": 4,
+  "slots": [
+    "any"
+  ]
+}
