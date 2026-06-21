@@ -11,7 +11,15 @@ public final class Config {
 
     public static final ModConfigSpec.IntValue GENERATOR_MAX_EXTRACT = BUILDER
             .comment("Maximum FE extracted per tick from each horizontal side.")
-            .defineInRange("generatorMaxExtract", 2000, 1, Integer.MAX_VALUE);
+            .defineInRange("generatorMaxExtract", 20000, 1, Integer.MAX_VALUE);
+
+    public static final ModConfigSpec.IntValue TRAVEL_SOCK_MAX_EXTRACT_BOOST = BUILDER
+            .comment("Permanent FE/t max output boost added to a generator when a travel disposable sock breaks inside it.")
+            .defineInRange("travelSockMaxExtractBoost", 100, 0, Integer.MAX_VALUE);
+
+    public static final ModConfigSpec.DoubleValue TRAVEL_SOCK_GENERATION_MULTIPLIER = BUILDER
+            .comment("Generation multiplier used while a travel disposable sock is generating.")
+            .defineInRange("travelSockGenerationMultiplier", 2.0D, 0.0D, 1000.0D);
 
     public static final ModConfigSpec.IntValue ADVANCED_GENERATOR_WATER_CAPACITY = BUILDER
             .comment("Internal water tank capacity of the advanced precipitate generator in mB.")

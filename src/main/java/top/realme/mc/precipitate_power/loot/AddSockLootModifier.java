@@ -4,12 +4,10 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -17,6 +15,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
 import top.realme.mc.precipitate_power.Config;
+import top.realme.mc.precipitate_power.registry.ModEnchantments;
 import top.realme.mc.precipitate_power.registry.ModItems;
 import top.realme.mc.precipitate_power.registry.ModLootModifiers;
 import top.realme.mc.precipitate_power.util.SockDataUtil;
@@ -24,6 +23,9 @@ import top.realme.mc.precipitate_power.util.SockDataUtil;
 import java.util.Map;
 
 public class AddSockLootModifier extends LootModifier {
+    private static final double BOAT_SOCK_DUNGEON_CHANCE = 0.025D;
+    private static final double TRAVEL_SOCK_CHEST_CHANCE = 0.018D;
+
     public static final MapCodec<AddSockLootModifier> CODEC = RecordCodecBuilder.mapCodec(
             inst -> codecStart(inst).apply(inst, AddSockLootModifier::new)
     );
@@ -40,11 +42,21 @@ public class AddSockLootModifier extends LootModifier {
             return generatedLoot;
         }
 
-        // 后续附魔获取用
-        RegistryAccess registries = context.getLevel().registryAccess();
+        if (isDungeonChest(path) && context.getRandom().nextDouble() < BOAT_SOCK_DUNGEON_CHANCE) {
+            ItemStack boatSock = new ItemStack(ModItems.BOAT_SOCK.get());
+            SockDataUtil.initializeBoatSock(boatSock, rollBoatSockCapacityBoost(context));
+            enchantWithRandomPrideOrHumility(boatSock, context);
+            generatedLoot.add(boatSock);
+        }
 
-        var random = context.getRandom().nextDouble();
-        if ( random>= Config.LOOT_SOCK_CHANCE.get()) {
+        if (context.getRandom().nextDouble() < TRAVEL_SOCK_CHEST_CHANCE) {
+            ItemStack travelSock = new ItemStack(ModItems.TRAVEL_DISPOSABLE_SOCK.get());
+            enchantWithRandomPrideOrHumility(travelSock, context);
+            generatedLoot.add(travelSock);
+        }
+
+        double random = context.getRandom().nextDouble();
+        if (random >= Config.LOOT_SOCK_CHANCE.get()) {
             return generatedLoot;
         }
 
@@ -85,10 +97,28 @@ public class AddSockLootModifier extends LootModifier {
         return generatedLoot;
     }
 
+    private static void enchantWithRandomPrideOrHumility(ItemStack stack, LootContext context) {
+        HolderLookup.Provider lookupProvider = context.getLevel().registryAccess();
+        var enchantmentLookup = lookupProvider.lookupOrThrow(Registries.ENCHANTMENT);
+        var enchantment = context.getRandom().nextBoolean()
+                ? enchantmentLookup.get(ModEnchantments.PRIDE)
+                : enchantmentLookup.get(ModEnchantments.HUMILITY);
+        int level = 1 + context.getRandom().nextInt(3);
+        enchantment.ifPresent(holder -> stack.enchant(holder, level));
+    }
+
     private static boolean isNetherOrEndChest(String path) {
         return path.equals("chests/end_city_treasure")
                 || path.equals("chests/nether_bridge")
                 || path.startsWith("chests/bastion_");
+    }
+
+    private static boolean isDungeonChest(String path) {
+        return path.equals("chests/simple_dungeon");
+    }
+
+    private static int rollBoatSockCapacityBoost(LootContext context) {
+        return 1 + (int) Math.floor(Math.pow(context.getRandom().nextDouble(), 2.0D) * 100.0D);
     }
 
     private static boolean isChest(String path) {

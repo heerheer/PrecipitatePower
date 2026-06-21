@@ -1,11 +1,14 @@
 package top.realme.mc.precipitate_power.block;
 
 import com.mojang.serialization.MapCodec;
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -19,7 +22,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
+import top.realme.mc.precipitate_power.block.entity.AbstractPrecipitateGeneratorBlockEntity;
 import top.realme.mc.precipitate_power.block.entity.AdvancedPrecipitateGeneratorBlockEntity;
 import top.realme.mc.precipitate_power.registry.ModBlockEntities;
 
@@ -60,6 +66,20 @@ public class AdvancedPrecipitateGeneratorBlock extends BaseEntityBlock {
     @Override
     public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
+    }
+
+    @Override
+    protected List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
+        List<ItemStack> drops = new ArrayList<>(super.getDrops(state, params));
+        BlockEntity blockEntity = params.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
+        if (blockEntity instanceof AbstractPrecipitateGeneratorBlockEntity generator) {
+            for (ItemStack drop : drops) {
+                if (drop.is(asItem())) {
+                    generator.saveToItem(drop, params.getLevel().registryAccess());
+                }
+            }
+        }
+        return drops;
     }
 
     @Override

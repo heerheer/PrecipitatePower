@@ -13,6 +13,7 @@ import net.neoforged.fml.ModList;
 import top.realme.mc.precipitate_power.compat.ironsspellbooks.IronsSpellbooksCompat;
 import top.realme.mc.precipitate_power.registry.ModItems;
 import top.realme.mc.precipitate_power.util.SockDataUtil;
+import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
@@ -22,6 +23,8 @@ public final class SockCurio implements ICurioItem {
             ResourceLocation.fromNamespaceAndPath(PrecipitatePower.MODID, "sock_speed");
     private static final ResourceLocation DIRTY_SPEED_MODIFIER_ID =
             ResourceLocation.fromNamespaceAndPath(PrecipitatePower.MODID, "dirty_sock_speed");
+    private static final ResourceLocation BOAT_PAIR_SPEED_MODIFIER_ID =
+            ResourceLocation.fromNamespaceAndPath(PrecipitatePower.MODID, "boat_sock_pair_speed");
     private static final ResourceLocation RAINBOW_DAMAGE_MODIFIER_ID =
             ResourceLocation.fromNamespaceAndPath(PrecipitatePower.MODID, "rainbow_sock_attack_damage");
     private static final ResourceLocation RAINBOW_ARMOR_MODIFIER_ID =
@@ -47,6 +50,14 @@ public final class SockCurio implements ICurioItem {
             return modifiers;
         }
 
+        if (stack.is(ModItems.BOAT_SOCK.get())) {
+            addMultiplierModifier(modifiers, Attributes.MOVEMENT_SPEED, id.withSuffix("_boat_speed"), SockDataUtil.BOAT_SOCK_SPEED_PENALTY);
+            if (isFirstBoatSock(slotContext) && countEquippedBoatSocks(slotContext) >= 2) {
+                addMultiplierModifier(modifiers, Attributes.MOVEMENT_SPEED, BOAT_PAIR_SPEED_MODIFIER_ID, SockDataUtil.BOAT_SOCK_PAIR_SPEED_PENALTY);
+            }
+            return modifiers;
+        }
+
         double athleticCognition = SockDataUtil.getAthleticCognition(stack);
         if (athleticCognition > 0.0D) {
             addMultiplierModifier(modifiers, Attributes.MOVEMENT_SPEED, SPEED_MODIFIER_ID, athleticCognition * 0.45D);
@@ -63,6 +74,26 @@ public final class SockCurio implements ICurioItem {
             }
         }
         return modifiers;
+    }
+
+    private static int countEquippedBoatSocks(SlotContext slotContext) {
+        if (slotContext.entity() == null) {
+            return 0;
+        }
+        return CuriosApi.getCuriosInventory(slotContext.entity())
+                .map(handler -> handler.findCurios(result -> result.is(ModItems.BOAT_SOCK.get())).size())
+                .orElse(0);
+    }
+
+    private static boolean isFirstBoatSock(SlotContext slotContext) {
+        if (slotContext.entity() == null) {
+            return false;
+        }
+        return CuriosApi.getCuriosInventory(slotContext.entity())
+                .flatMap(handler -> handler.findFirstCurio(stack -> stack.is(ModItems.BOAT_SOCK.get())))
+                .map(result -> result.slotContext().identifier().equals(slotContext.identifier())
+                        && result.slotContext().index() == slotContext.index())
+                .orElse(false);
     }
 
     private static void addMultiplierModifier(

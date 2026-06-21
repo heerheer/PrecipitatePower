@@ -7,6 +7,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -14,7 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -28,6 +28,7 @@ import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 import org.joml.Math;
 import top.realme.mc.precipitate_power.Config;
 import top.realme.mc.precipitate_power.menu.PrecipitateGeneratorMenu;
+import top.realme.mc.precipitate_power.registry.ModEnchantments;
 import top.realme.mc.precipitate_power.registry.ModItems;
 import top.realme.mc.precipitate_power.util.FormulaParser;
 import top.realme.mc.precipitate_power.util.SockDataUtil;
@@ -35,6 +36,8 @@ import top.realme.mc.precipitate_power.util.SockDataUtil;
 public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer {
     protected static final int INPUT_SLOT = 0;
     protected static final int OUTPUT_SLOT = 1;
+    private static final String EXTRA_MAX_EXTRACT_TAG = "ExtraMaxExtract";
+    private static final String EXTRA_CAPACITY_TAG = "ExtraCapacity";
     private static final double ATHLETIC_COGNITION_LOSS_CHANCE = 0.5D;
     private static final double ATHLETIC_COGNITION_LOSS_AMOUNT = 0.01D;
 
@@ -47,6 +50,8 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
     private final InvWrapper internalItemHandler = new InvWrapper(this);
     private final SidedInvWrapper upwardItemHandler = new SidedInvWrapper(this, Direction.UP);
     private final SidedInvWrapper downwardItemHandler = new SidedInvWrapper(this, Direction.DOWN);
+    private int extraMaxExtract;
+    private int extraCapacity;
 
     private final ContainerData data = new ContainerData() {
         @Override
@@ -58,6 +63,8 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
                 case 3 -> SockDataUtil.getDirtyCount(items.get(INPUT_SLOT));
                 case 4 -> getWaterStored();
                 case 5 -> getWaterCapacity();
+                case 6 -> getMaxExtract();
+                case 7 -> extraMaxExtract;
                 default -> 0;
             };
         }
@@ -71,7 +78,7 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
 
         @Override
         public int getCount() {
-            return 6;
+            return 8;
         }
     };
 
@@ -98,6 +105,10 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
 
         pushEnergyToNeighbors();
 
+        if (level != null && level.getGameTime() % 20L == 0L && stack.is(ModItems.BOAT_SOCK.get())) {
+            growCapacityWithBoatSock(stack);
+        }
+
         if (level != null && level.getGameTime() % 20L == 0L && level.random.nextDouble() < Config.PRECIPITATE_CHANCE.get()) {
             SockDataUtil.addPrecipitation(stack, 1);
             setChanged();
@@ -109,7 +120,11 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
     private int calculateGeneration(ItemStack stack, int precipitation) {
         double coefficient = SockDataUtil.getPowerCoefficient(stack);
         double baseGeneration = FormulaParser.evaluate(Config.GENERATION_FORMULA.get(), precipitation);
-        return (int) Math.max(0, Math.floor(baseGeneration * coefficient * getGenerationMultiplier()));
+        double multiplier = getGenerationMultiplier();
+        if (stack.is(ModItems.TRAVEL_DISPOSABLE_SOCK.get())) {
+            multiplier *= Config.TRAVEL_SOCK_GENERATION_MULTIPLIER.get();
+        }
+        return (int) Math.max(0, Math.floor(baseGeneration * coefficient * multiplier));
     }
 
     private void applyDirtyLogic(ItemStack stack, int precipitation) {
@@ -117,11 +132,19 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
             return;
         }
 
+        if (stack.is(ModItems.BOAT_SOCK.get())) {
+            return;
+        }
+
         double dirtyChance = Config.DIRTY_BASE_CHANCE.get() + precipitation * Config.DIRTY_CHANCE_PER_PRECIPITATION.get();
         dirtyChance *= getDirtyChanceMultiplier();
-        int unbreaking = stack.getEnchantmentLevel(level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.UNBREAKING));
-        dirtyChance /= (1.0D + unbreaking);
         if (level.random.nextDouble() >= dirtyChance) {
+            return;
+        }
+
+        if (stack.is(ModItems.TRAVEL_DISPOSABLE_SOCK.get())) {
+            damageTravelSock(stack);
+            setChanged();
             return;
         }
 
@@ -136,6 +159,68 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
             transformSockToDirty(stack);
         }
         setChanged();
+    }
+
+    private void damageTravelSock(ItemStack stack) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        int multiplier = consumeDurabilityWithSockEnchantments(stack, serverLevel);
+        if (multiplier <= 0) {
+            return;
+        }
+
+        if (stack.isEmpty()) {
+            extraMaxExtract = Math.max(0, extraMaxExtract + Config.TRAVEL_SOCK_MAX_EXTRACT_BOOST.get() * multiplier);
+            items.set(INPUT_SLOT, ItemStack.EMPTY);
+        }
+    }
+
+    private void growCapacityWithBoatSock(ItemStack stack) {
+        if (!(level instanceof ServerLevel serverLevel) || SockDataUtil.isUnbreakable(stack)) {
+            return;
+        }
+
+        int multiplier = consumeDurabilityWithSockEnchantments(stack, serverLevel);
+        if (multiplier <= 0) {
+            setChanged();
+            return;
+        }
+
+        extraCapacity = Math.max(0, extraCapacity + SockDataUtil.getBoatSockCapacityBoost(stack) * multiplier);
+        if (stack.isEmpty()) {
+            items.set(INPUT_SLOT, ItemStack.EMPTY);
+        }
+        setChanged();
+    }
+
+    private int consumeDurabilityWithSockEnchantments(ItemStack stack, ServerLevel serverLevel) {
+        int humility = getSockEnchantmentLevel(stack, ModEnchantments.HUMILITY);
+        if (humility > 0 && serverLevel.random.nextDouble() < Math.min(0.99D, 0.33D * Math.min(3, humility))) {
+            return 0;
+        }
+
+        int multiplier = getPrideDurabilityMultiplier(stack);
+        stack.hurtAndBreak(1, serverLevel, null, item -> {
+        });
+        return multiplier;
+    }
+
+    private int getPrideDurabilityMultiplier(ItemStack stack) {
+        int pride = Math.min(3, getSockEnchantmentLevel(stack, ModEnchantments.PRIDE));
+        int multiplier = 1;
+        for (int i = 0; i < pride; i++) {
+            multiplier *= 6;
+        }
+        return multiplier;
+    }
+
+    private int getSockEnchantmentLevel(ItemStack stack, net.minecraft.resources.ResourceKey<net.minecraft.world.item.enchantment.Enchantment> enchantment) {
+        if (level == null) {
+            return 0;
+        }
+        return stack.getEnchantmentLevel(level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(enchantment));
     }
 
     private void transformSockToDirty(ItemStack originalStack) {
@@ -168,7 +253,7 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
                 continue;
             }
 
-            int maxExtract = energyStorage.extractEnergy(Config.GENERATOR_MAX_EXTRACT.get(), true);
+            int maxExtract = energyStorage.extractEnergy(getMaxExtract(), true);
             if (maxExtract <= 0) {
                 break;
             }
@@ -199,6 +284,14 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
 
     public ContainerData getData() {
         return data;
+    }
+
+    public int getMaxExtract() {
+        return Math.max(0, Config.GENERATOR_MAX_EXTRACT.get() + extraMaxExtract);
+    }
+
+    public int getMaxEnergyCapacity() {
+        return Math.max(0, Config.GENERATOR_CAPACITY.get() + extraCapacity);
     }
 
     @Override
@@ -301,6 +394,8 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         ContainerHelper.loadAllItems(tag, items, registries);
+        extraMaxExtract = Math.max(0, tag.getInt(EXTRA_MAX_EXTRACT_TAG));
+        extraCapacity = Math.max(0, tag.getInt(EXTRA_CAPACITY_TAG));
         energyStorage.setEnergy(tag.getInt("Energy"));
         loadGeneratorData(tag, registries);
     }
@@ -310,6 +405,8 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
         super.saveAdditional(tag, registries);
         ContainerHelper.saveAllItems(tag, items, registries);
         tag.putInt("Energy", energyStorage.getEnergyStored());
+        tag.putInt(EXTRA_MAX_EXTRACT_TAG, extraMaxExtract);
+        tag.putInt(EXTRA_CAPACITY_TAG, extraCapacity);
         saveGeneratorData(tag, registries);
     }
 
@@ -347,6 +444,29 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
     private final class GeneratorEnergyStorage extends EnergyStorage {
         private GeneratorEnergyStorage() {
             super(Config.GENERATOR_CAPACITY.get(), 0, Config.GENERATOR_MAX_EXTRACT.get());
+        }
+
+        @Override
+        public int extractEnergy(int toExtract, boolean simulate) {
+            if (!canExtract() || toExtract <= 0) {
+                return 0;
+            }
+
+            int extracted = Math.min(this.energy, Math.min(getMaxExtract(), toExtract));
+            if (!simulate) {
+                this.energy -= extracted;
+            }
+            return extracted;
+        }
+
+        @Override
+        public boolean canExtract() {
+            return getMaxExtract() > 0;
+        }
+
+        @Override
+        public int getMaxEnergyStored() {
+            return getMaxEnergyCapacity();
         }
 
         private void setEnergy(int energy) {

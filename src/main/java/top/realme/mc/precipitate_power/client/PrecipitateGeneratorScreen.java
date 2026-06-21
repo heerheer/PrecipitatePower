@@ -45,8 +45,9 @@ public class PrecipitateGeneratorScreen extends AbstractContainerScreen<Precipit
         //guiGraphics.drawString(font, title, titleLabelX, titleLabelY, 0xF0F0F0, false);
         guiGraphics.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0xC7CBD6, false);
         guiGraphics.drawString(font, Component.translatable("gui.precipitate_power.energy", menu.getEnergyStored(), menu.getMaxEnergyStored()), 8, 6, 0x8ED0A7, false);
+        guiGraphics.drawString(font, Component.translatable("gui.precipitate_power.max_extract", menu.getMaxExtract(), menu.getExtraMaxExtract()), 8, 18, 0xE7C166, false);
         if (menu.getMaxWaterStored() > 0) {
-            guiGraphics.drawString(font, Component.translatable("gui.precipitate_power.water", menu.getWaterStored(), menu.getMaxWaterStored()), 8, 18, 0x7DB7FF, false);
+            guiGraphics.drawString(font, Component.translatable("gui.precipitate_power.water", menu.getWaterStored(), menu.getMaxWaterStored()), 8, 30, 0x7DB7FF, false);
         }
 //        guiGraphics.drawString(font, Component.translatable("gui.precipitate_power.precipitation", menu.getPrecipitationLevel()), 8, 18, 0x8AC7FF, false);
 //        guiGraphics.drawString(font, Component.translatable("gui.precipitate_power.dirty_count", menu.getDirtyCount()), 8, 30, 0xD7DCE6, false);

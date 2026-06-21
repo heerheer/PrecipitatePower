@@ -17,10 +17,12 @@ public final class ModBlockEntities {
             () -> BlockEntityType.Builder.of(PrecipitateGeneratorBlockEntity::new, ModBlocks.PRECIPITATE_GENERATOR.get()).build(null)
     );
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AdvancedPrecipitateGeneratorBlockEntity>> ADVANCED_PRECIPITATE_GENERATOR = REGISTER.register(
-            "advanced_precipitate_generator",
-            () -> BlockEntityType.Builder.of(AdvancedPrecipitateGeneratorBlockEntity::new, ModBlocks.ADVANCED_PRECIPITATE_GENERATOR.get()).build(null)
-    );
+    // Temporarily disabled with the advanced generator block registration.
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AdvancedPrecipitateGeneratorBlockEntity>> ADVANCED_PRECIPITATE_GENERATOR =
+            ModBlocks.REGISTER_ADVANCED_PRECIPITATE_GENERATOR ? REGISTER.register(
+                    "advanced_precipitate_generator",
+                    () -> BlockEntityType.Builder.of(AdvancedPrecipitateGeneratorBlockEntity::new, ModBlocks.ADVANCED_PRECIPITATE_GENERATOR.get()).build(null)
+            ) : null;
 
     private ModBlockEntities() {
     }

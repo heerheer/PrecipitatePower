@@ -13,6 +13,8 @@ public final class CuriosCompat {
         event.enqueueWork(() -> {
             CuriosApi.registerCurio(ModItems.WHITE_SOCK.get(), SockCurio.INSTANCE);
             CuriosApi.registerCurio(ModItems.RAINBOW_WHITE_SOCK.get(), SockCurio.INSTANCE);
+            CuriosApi.registerCurio(ModItems.TRAVEL_DISPOSABLE_SOCK.get(), SockCurio.INSTANCE);
+            CuriosApi.registerCurio(ModItems.BOAT_SOCK.get(), SockCurio.INSTANCE);
             CuriosApi.registerCurio(ModItems.DIRTY_WHITE_SOCK.get(), SockCurio.INSTANCE);
             PrecipitatePower.LOGGER.info("Enabled Curios compat for sock items");
         });

@@ -19,6 +19,8 @@ public final class SockDataUtil {
     public static final double RAINBOW_POWER_COEFFICIENT = 2778.0D;
     public static final double RAINBOW_ATHLETIC_COGNITION = 1.0D;
     public static final double DIRTY_SOCK_SPEED_PENALTY = -0.10D;
+    public static final double BOAT_SOCK_SPEED_PENALTY = -0.20D;
+    public static final double BOAT_SOCK_PAIR_SPEED_PENALTY = -0.10D;
 
     // 沉淀等级
     public static final String TAG_PRECIPITATION = "PrecipitationLevel";
@@ -31,6 +33,9 @@ public final class SockDataUtil {
 
     // 污渍等级
     public static final String TAG_DIRTY_COUNT = "DirtyCount";
+
+    // 船袜每 20 tick 增加的机器储电量
+    public static final String TAG_BOAT_SOCK_CAPACITY_BOOST = "BoatSockCapacityBoost";
 
     private SockDataUtil() {
     }
@@ -112,6 +117,15 @@ public final class SockDataUtil {
         updateData(stack, tag -> tag.putDouble(TAG_ATHLETIC_COGNITION, clampPercentage(cognition)));
     }
 
+    public static int getBoatSockCapacityBoost(ItemStack stack) {
+        CompoundTag tag = getData(stack);
+        return tag.contains(TAG_BOAT_SOCK_CAPACITY_BOOST) ? Math.max(1, tag.getInt(TAG_BOAT_SOCK_CAPACITY_BOOST)) : 1;
+    }
+
+    public static void setBoatSockCapacityBoost(ItemStack stack, int capacityBoost) {
+        setInt(stack, TAG_BOAT_SOCK_CAPACITY_BOOST, Math.max(1, Math.min(100, capacityBoost)));
+    }
+
     /**
      * 检查是否应该变脏
      * @param stack
@@ -122,7 +136,10 @@ public final class SockDataUtil {
     }
 
     public static boolean isGeneratorSock(ItemStack stack) {
-        return stack.is(ModItems.WHITE_SOCK.get()) || stack.is(ModItems.RAINBOW_WHITE_SOCK.get());
+        return stack.is(ModItems.WHITE_SOCK.get())
+                || stack.is(ModItems.RAINBOW_WHITE_SOCK.get())
+                || stack.is(ModItems.TRAVEL_DISPOSABLE_SOCK.get())
+                || stack.is(ModItems.BOAT_SOCK.get());
     }
 
     public static boolean isUnbreakable(ItemStack stack) {
@@ -133,6 +150,10 @@ public final class SockDataUtil {
         setPowerCoefficient(stack, RAINBOW_POWER_COEFFICIENT);
         setAthleticCognition(stack, RAINBOW_ATHLETIC_COGNITION);
         stack.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
+    }
+
+    public static void initializeBoatSock(ItemStack stack, int capacityBoost) {
+        setBoatSockCapacityBoost(stack, capacityBoost);
     }
 
     /**
