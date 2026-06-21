@@ -36,12 +36,11 @@ repositories {
     maven { url = "https://code.redspace.io/releases" } // Iron's Spells API
     //maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
     maven { url = "https://maven.createmod.net" }
-    maven {url = "https://maven.tterrag.com"}
+    maven { url = "https://maven.firstdark.dev/snapshots" } // LDLib2
     maven {
         name = "Modrinth"
         url = "https://api.modrinth.com/maven"
     }
-
 }
 
 base {
@@ -132,6 +131,10 @@ configurations {
 }
 
 dependencies {
+
+    // ===== LDLib2 =====
+    implementation("com.lowdragmc.ldlib2:ldlib2-neoforge-${minecraft_version}:${ldlib2_version}:all")
+
 
     // ===== JEI ===== 暂时不支持!
 //    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
@@ -245,3 +248,4 @@ idea {
         downloadJavadoc = true
     }
 }
+
