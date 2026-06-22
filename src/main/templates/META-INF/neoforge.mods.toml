@@ -116,7 +116,7 @@ A simple power generation module that provides a precipitation that can be found
 #openGLVersion="[3.2,)"
 
 [[dependencies.${mod_id}]]
-    modId="ldlib"
+    modId="ldlib2"
     type="required"
     versionRange="[2.2.1,)"
     ordering="NONE"

@@ -1,0 +1,140 @@
+<ldlib2-ui>
+  <style>
+    #generator-root {
+      width: 176;
+      height: 166;
+      background: #ff1e2026;
+    }
+
+    #machine-panel {
+      position: absolute;
+      left: 6;
+      top: 17;
+      width: 164;
+      height: 54;
+      background: #ff2a2d36;
+    }
+
+    #input-slot-panel, #output-slot-panel {
+      position: absolute;
+      top: 34;
+      width: 18;
+      height: 18;
+      background: #ff4b5160;
+    }
+
+    #input-slot-panel {
+      left: 43;
+    }
+
+    #output-slot-panel {
+      left: 115;
+    }
+
+    #machine-input-slot, #machine-output-slot {
+      position: absolute;
+      top: 34;
+      slot-overlay: #4421262d;
+      hover-overlay: #66ffffff;
+    }
+
+    #machine-input-slot {
+      left: 43;
+    }
+
+    #machine-output-slot {
+      left: 115;
+    }
+
+    #water-bar-bg, #energy-bar-bg {
+      position: absolute;
+      top: 18;
+      width: 16;
+      height: 52;
+      background: #ff16181d;
+    }
+
+    #water-bar-bg {
+      left: 62;
+    }
+
+    #energy-bar-bg {
+      left: 80;
+    }
+
+    #water-bar, #energy-bar {
+      position: absolute;
+      top: 18;
+      width: 12;
+      height: 50;
+      fill-direction: down-to-up;
+    }
+
+    #water-bar {
+      left: 64;
+    }
+
+    #energy-bar {
+      left: 82;
+    }
+
+    #energy-label, #max-extract-label, #water-label, #precipitation-label, #dirty-count-label {
+      position: absolute;
+      left: 8;
+      text-color: #ffe8edf7;
+      text-shadow: true;
+    }
+
+    #energy-label {
+      top: 6;
+    }
+
+    #max-extract-label {
+      top: 18;
+    }
+
+    #water-label {
+      top: 30;
+    }
+
+    #precipitation-label {
+      top: 42;
+    }
+
+    #dirty-count-label {
+      top: 54;
+    }
+
+    #player-inventory {
+      position: absolute;
+      left: 7;
+      top: 83;
+      gap-row: 0;
+      gap-column: 0;
+    }
+
+    #player-inventory item-slot {
+      slot-overlay: #33181c22;
+      hover-overlay: #66ffffff;
+    }
+  </style>
+  <root id="generator-root">
+    <element id="machine-panel"/>
+    <element id="input-slot-panel"/>
+    <element id="output-slot-panel"/>
+    <item-slot id="machine-input-slot"/>
+    <item-slot id="machine-output-slot"/>
+    <element id="water-bar-bg"/>
+    <element id="energy-bar-bg"/>
+
+    <label id="energy-label">Energy</label>
+    <label id="max-extract-label">Max Output</label>
+    <label id="water-label">Water</label>
+    <label id="precipitation-label">Precipitation</label>
+    <label id="dirty-count-label">Stains</label>
+
+    <progress-bar id="energy-bar" min-value="0" max-value="1" value="0"/>
+    <progress-bar id="water-bar" min-value="0" max-value="1" value="0"/>
+    <inventory-slots id="player-inventory"/>
+  </root>
+</ldlib2-ui>

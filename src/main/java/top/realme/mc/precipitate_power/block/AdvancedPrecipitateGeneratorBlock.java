@@ -1,11 +1,13 @@
 package top.realme.mc.precipitate_power.block;
 
 import com.mojang.serialization.MapCodec;
+import com.lowdragmc.lowdraglib2.gui.factory.BlockUIMenuType;
+import com.lowdragmc.lowdraglib2.gui.ui.ModularUI;
+import com.lowdragmc.lowdraglib2.gui.ui.UI;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -27,9 +29,10 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import top.realme.mc.precipitate_power.block.entity.AbstractPrecipitateGeneratorBlockEntity;
 import top.realme.mc.precipitate_power.block.entity.AdvancedPrecipitateGeneratorBlockEntity;
+import top.realme.mc.precipitate_power.menu.PrecipitateGeneratorMenu;
 import top.realme.mc.precipitate_power.registry.ModBlockEntities;
 
-public class AdvancedPrecipitateGeneratorBlock extends BaseEntityBlock {
+public class AdvancedPrecipitateGeneratorBlock extends BaseEntityBlock implements BlockUIMenuType.BlockUI {
     public static final MapCodec<AdvancedPrecipitateGeneratorBlock> CODEC = simpleCodec(AdvancedPrecipitateGeneratorBlock::new);
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
@@ -84,10 +87,18 @@ public class AdvancedPrecipitateGeneratorBlock extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof AdvancedPrecipitateGeneratorBlockEntity blockEntity && player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.openMenu(blockEntity, pos);
+        if (!level.isClientSide && player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+            BlockUIMenuType.openUI(serverPlayer, pos);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    @Override
+    public ModularUI createUI(BlockUIMenuType.BlockUIHolder holder) {
+        if (holder.player.level().getBlockEntity(holder.pos) instanceof AbstractPrecipitateGeneratorBlockEntity generator) {
+            return PrecipitateGeneratorMenu.createUI(generator, holder.player);
+        }
+        return new ModularUI(UI.of());
     }
 
     @Nullable
