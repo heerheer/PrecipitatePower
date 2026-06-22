@@ -114,3 +114,10 @@ A simple power generation module that provides a precipitation that can be found
 # stop your mod loading on the server for example.
 #[features.${mod_id}]
 #openGLVersion="[3.2,)"
+
+[[dependencies.${mod_id}]]
+    modId="ldlib2"
+    type="required"
+    versionRange="[2.2.1,)"
+    ordering="NONE"
+    side="BOTH"

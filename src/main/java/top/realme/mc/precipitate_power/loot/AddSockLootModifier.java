@@ -4,12 +4,9 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
@@ -19,8 +16,6 @@ import top.realme.mc.precipitate_power.registry.ModEnchantments;
 import top.realme.mc.precipitate_power.registry.ModItems;
 import top.realme.mc.precipitate_power.registry.ModLootModifiers;
 import top.realme.mc.precipitate_power.util.SockDataUtil;
-
-import java.util.Map;
 
 public class AddSockLootModifier extends LootModifier {
     private static final double BOAT_SOCK_DUNGEON_CHANCE = 0.025D;
