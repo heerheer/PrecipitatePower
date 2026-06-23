@@ -11,13 +11,16 @@ import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.slf4j.Logger;
 import top.realme.mc.precipitate_power.compat.curios.CuriosCompat;
+import top.realme.mc.precipitate_power.event.ModEvents;
 import top.realme.mc.precipitate_power.registry.ModBlockEntities;
 import top.realme.mc.precipitate_power.registry.ModBlocks;
+import top.realme.mc.precipitate_power.registry.ModEffects;
 import top.realme.mc.precipitate_power.registry.ModItems;
 import top.realme.mc.precipitate_power.registry.ModLootModifiers;
 import top.realme.mc.precipitate_power.registry.ModMenus;
@@ -41,6 +44,12 @@ public class PrecipitatePower {
                         output.accept(ModItems.RAINBOW_WHITE_SOCK.get().getDefaultInstance());
                         output.accept(ModItems.TRAVEL_DISPOSABLE_SOCK.get());
                         output.accept(ModItems.BOAT_SOCK.get().getDefaultInstance());
+                        output.accept(ModItems.OVER_KNEE_SOCK.get());
+                        output.accept(ModItems.SPORT_CREW_SOCK.get());
+                        output.accept(ModItems.PANTYHOSE.get());
+                        output.accept(ModItems.SPLIT_TOE_SOCK.get());
+                        output.accept(ModItems.STOCKINGS.get());
+                        output.accept(ModItems.ZHAOZHAO_ORIGINAL_SCENT.get());
                         output.accept(ModItems.DIRTY_WHITE_SOCK.get());
                         output.accept(ModBlocks.PRECIPITATE_GENERATOR_ITEM.get());
                         if (ModBlocks.REGISTER_ADVANCED_PRECIPITATE_GENERATOR) {
@@ -56,6 +65,7 @@ public class PrecipitatePower {
         ModBlockEntities.REGISTER.register(modEventBus);
         ModMenus.REGISTER.register(modEventBus);
         ModLootModifiers.REGISTER.register(modEventBus);
+        ModEffects.REGISTER.register(modEventBus);
         CREATIVE_TABS.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
@@ -66,7 +76,7 @@ public class PrecipitatePower {
             modEventBus.addListener(CuriosCompat::onCommonSetup);
         }
 
-        //NeoForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.register(ModEvents.class);
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 
@@ -89,6 +99,12 @@ public class PrecipitatePower {
             event.accept(ModItems.RAINBOW_WHITE_SOCK.get());
             event.accept(ModItems.TRAVEL_DISPOSABLE_SOCK.get());
             event.accept(ModItems.BOAT_SOCK.get().getDefaultInstance());
+            event.accept(ModItems.OVER_KNEE_SOCK.get());
+            event.accept(ModItems.SPORT_CREW_SOCK.get());
+            event.accept(ModItems.PANTYHOSE.get());
+            event.accept(ModItems.SPLIT_TOE_SOCK.get());
+            event.accept(ModItems.STOCKINGS.get());
+            event.accept(ModItems.ZHAOZHAO_ORIGINAL_SCENT.get());
             event.accept(ModItems.DIRTY_WHITE_SOCK.get());
         }
     }

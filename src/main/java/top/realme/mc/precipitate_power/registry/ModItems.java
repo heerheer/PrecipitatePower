@@ -5,10 +5,14 @@ import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import top.realme.mc.precipitate_power.PrecipitatePower;
+import top.realme.mc.precipitate_power.item.BasicStyledSockItem;
 import top.realme.mc.precipitate_power.item.BoatSockItem;
+import top.realme.mc.precipitate_power.item.FushengOriginalScentItem;
+import top.realme.mc.precipitate_power.item.OriginalScentItem;
 import top.realme.mc.precipitate_power.item.RainbowWhiteSockItem;
 import top.realme.mc.precipitate_power.item.TravelDisposableSockItem;
 import top.realme.mc.precipitate_power.item.WhiteSockItem;
+import top.realme.mc.precipitate_power.item.ZhaozhaoOriginalScentItem;
 
 public final class ModItems {
     public static final DeferredRegister.Items REGISTER = DeferredRegister.createItems(PrecipitatePower.MODID);
@@ -36,6 +40,46 @@ public final class ModItems {
     public static final DeferredItem<Item> BOAT_SOCK = REGISTER.register(
             "boat_sock",
             () -> new BoatSockItem(new Item.Properties().stacksTo(1).durability(32))
+    );
+
+    public static final DeferredItem<Item> OVER_KNEE_SOCK = REGISTER.register(
+            "over_knee_sock",
+            () -> new BasicStyledSockItem(new Item.Properties().stacksTo(1).durability(64))
+    );
+
+    public static final DeferredItem<Item> SPORT_CREW_SOCK = REGISTER.register(
+            "sport_crew_sock",
+            () -> new BasicStyledSockItem(new Item.Properties().stacksTo(1).durability(64))
+    );
+
+    public static final DeferredItem<Item> PANTYHOSE = REGISTER.register(
+            "pantyhose",
+            () -> new BasicStyledSockItem(new Item.Properties().stacksTo(1).durability(64))
+    );
+
+    public static final DeferredItem<Item> SPLIT_TOE_SOCK = REGISTER.register(
+            "split_toe_sock",
+            () -> new BasicStyledSockItem(new Item.Properties().stacksTo(1).durability(64))
+    );
+
+    public static final DeferredItem<Item> STOCKINGS = REGISTER.register(
+            "stockings",
+            () -> new BasicStyledSockItem(new Item.Properties().stacksTo(1).durability(64))
+    );
+
+    public static final DeferredItem<Item> ZHAOZHAO_ORIGINAL_SCENT = REGISTER.register(
+            "zhaozhao_original_scent",
+            () -> new ZhaozhaoOriginalScentItem(new Item.Properties().stacksTo(1))
+    );
+
+    public static final DeferredItem<Item> FUSHENG_ORIGINAL_SCENT = REGISTER.register(
+            "fusheng_original_scent",
+            () -> new FushengOriginalScentItem(new Item.Properties().stacksTo(1))
+    );
+
+    public static final DeferredItem<Item> DATOU_ORIGINAL_SCENT = REGISTER.register(
+            "datou_original_scent",
+            () -> new OriginalScentItem(new Item.Properties().stacksTo(1), "tooltip.precipitate_power.datou_original_scent")
     );
 
     private ModItems() {

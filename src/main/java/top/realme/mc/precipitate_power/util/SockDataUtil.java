@@ -2,13 +2,20 @@ package top.realme.mc.precipitate_power.util;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.function.ToDoubleFunction;
+import java.util.stream.Collectors;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.Unbreakable;
+import top.realme.mc.precipitate_power.item.AbstractSockItem;
+import top.realme.mc.precipitate_power.item.SockMaterial;
 import top.realme.mc.precipitate_power.Config;
 import top.realme.mc.precipitate_power.registry.ModItems;
 
@@ -36,6 +43,11 @@ public final class SockDataUtil {
 
     // 船袜每 20 tick 增加的机器储电量
     public static final String TAG_BOAT_SOCK_CAPACITY_BOOST = "BoatSockCapacityBoost";
+    public static final String TAG_MATERIALS = "Materials";
+    public static final String TAG_MATERIAL_ID = "Id";
+    public static final String TAG_MATERIAL_SHARE = "Share";
+    public static final String TAG_DIAMOND_BONUS_MAX = "DiamondBonusDurabilityMax";
+    public static final String TAG_DIAMOND_BONUS_REMAINING = "DiamondBonusDurabilityRemaining";
 
     private SockDataUtil() {
     }
@@ -136,10 +148,11 @@ public final class SockDataUtil {
     }
 
     public static boolean isGeneratorSock(ItemStack stack) {
-        return stack.is(ModItems.WHITE_SOCK.get())
-                || stack.is(ModItems.RAINBOW_WHITE_SOCK.get())
-                || stack.is(ModItems.TRAVEL_DISPOSABLE_SOCK.get())
-                || stack.is(ModItems.BOAT_SOCK.get());
+        return stack.getItem() instanceof AbstractSockItem;
+    }
+
+    public static boolean isWearableSock(ItemStack stack) {
+        return stack.getItem() instanceof AbstractSockItem sockItem && sockItem.isWearableSock(stack);
     }
 
     public static boolean isUnbreakable(ItemStack stack) {
@@ -156,6 +169,83 @@ public final class SockDataUtil {
         setBoatSockCapacityBoost(stack, capacityBoost);
     }
 
+    public static void setMaterials(ItemStack stack, List<MaterialEntry> materials) {
+        updateData(stack, tag -> {
+            ListTag listTag = new ListTag();
+            for (MaterialEntry entry : materials) {
+                CompoundTag materialTag = new CompoundTag();
+                materialTag.putString(TAG_MATERIAL_ID, entry.material().id());
+                materialTag.putDouble(TAG_MATERIAL_SHARE, entry.share());
+                listTag.add(materialTag);
+            }
+            tag.put(TAG_MATERIALS, listTag);
+        });
+    }
+
+    public static List<MaterialEntry> getMaterials(ItemStack stack) {
+        ListTag listTag = getData(stack).getList(TAG_MATERIALS, Tag.TAG_COMPOUND);
+        return listTag.stream()
+                .filter(CompoundTag.class::isInstance)
+                .map(CompoundTag.class::cast)
+                .map(tag -> SockMaterial.byId(tag.getString(TAG_MATERIAL_ID))
+                        .map(material -> new MaterialEntry(material, Math.max(0.0D, tag.getDouble(TAG_MATERIAL_SHARE))))
+                        .orElse(null))
+                .filter(java.util.Objects::nonNull)
+                .toList();
+    }
+
+    public static double getMaterialScalar(ItemStack stack, SockMaterial target, ToDoubleFunction<SockMaterial> extractor) {
+        return getMaterials(stack).stream()
+                .filter(entry -> entry.material() == target)
+                .mapToDouble(entry -> extractor.applyAsDouble(entry.material()) * entry.share())
+                .sum();
+    }
+
+    public static double getMaterialScalar(ItemStack stack, ToDoubleFunction<SockMaterial> extractor) {
+        return getMaterials(stack).stream().mapToDouble(entry -> extractor.applyAsDouble(entry.material()) * entry.share()).sum();
+    }
+
+    public static int applyMaterialGenerationFlatBonus(ItemStack stack, int baseGeneration) {
+        double flat = getMaterials(stack).stream().mapToDouble(entry -> entry.material().generationFlatBonus() * entry.share()).sum();
+        return (int) Math.max(0, Math.floor(baseGeneration + flat));
+    }
+
+    public static int applyMaterialGenerationMultiplier(ItemStack stack, int baseGeneration) {
+        double bonus = getMaterials(stack).stream().mapToDouble(entry -> entry.material().generationMultiplierBonus() * entry.share()).sum();
+        return (int) Math.max(0, Math.floor(baseGeneration * (1.0D + bonus)));
+    }
+
+    public static void initializeDiamondDurability(ItemStack stack) {
+        if (stack.isEmpty() || stack.getMaxDamage() <= 0) {
+            return;
+        }
+        int bonus = (int) Math.round(stack.getMaxDamage() * getMaterials(stack).stream()
+                .mapToDouble(entry -> entry.material().diamondDurabilityMultiplier() * entry.share())
+                .sum());
+        if (bonus <= 0) {
+            return;
+        }
+        updateData(stack, tag -> {
+            tag.putInt(TAG_DIAMOND_BONUS_MAX, bonus);
+            tag.putInt(TAG_DIAMOND_BONUS_REMAINING, bonus);
+        });
+    }
+
+    public static boolean consumeDiamondDurability(ItemStack stack, int amount) {
+        CompoundTag tag = getData(stack);
+        int remaining = Math.max(0, tag.getInt(TAG_DIAMOND_BONUS_REMAINING));
+        if (remaining <= 0) {
+            return false;
+        }
+        int consumed = Math.min(remaining, Math.max(1, amount));
+        updateData(stack, update -> update.putInt(TAG_DIAMOND_BONUS_REMAINING, remaining - consumed));
+        return true;
+    }
+
+    public static int getDiamondBonusRemaining(ItemStack stack) {
+        return Math.max(0, getData(stack).getInt(TAG_DIAMOND_BONUS_REMAINING));
+    }
+
     /**
      * 在物品提示中添加沉淀等级、污渍等级和功率系数等信息
      * @param stack
@@ -170,7 +260,22 @@ public final class SockDataUtil {
         tooltip.add(Component.translatable("tooltip.precipitate_power.sock.power_coefficient", formatDecimal(getPowerCoefficient(stack))).withStyle(ChatFormatting.GOLD));
         
         tooltip.add(Component.translatable("tooltip.precipitate_power.sock.athletic_cognition", formatPercent(getAthleticCognition(stack))).withStyle(ChatFormatting.GOLD));
-        
+
+        if (!getMaterials(stack).isEmpty()) {
+            tooltip.add(Component.translatable("tooltip.precipitate_power.sock.materials",
+                    getMaterials(stack).stream()
+                            .map(entry -> Component.translatable("material.precipitate_power." + entry.material().id())
+                                    .append(" ")
+                                    .append(Component.literal(formatPercent(entry.share())).withStyle(ChatFormatting.GRAY)))
+                            .map(Component::getString)
+                            .collect(Collectors.joining(", ")))
+                    .withStyle(ChatFormatting.AQUA));
+        }
+
+        if (getDiamondBonusRemaining(stack) > 0) {
+            tooltip.add(Component.translatable("tooltip.precipitate_power.sock.diamond_bonus", getDiamondBonusRemaining(stack)).withStyle(ChatFormatting.BLUE));
+        }
+
         if (isUnbreakable(stack)) {
             tooltip.add(Component.translatable("tooltip.precipitate_power.sock.unbreakable").withStyle(ChatFormatting.LIGHT_PURPLE));
         }
@@ -199,5 +304,8 @@ public final class SockDataUtil {
     private static void updateData(ItemStack stack, java.util.function.Consumer<CompoundTag> consumer) {
         CustomData updated = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).update(consumer);
         stack.set(DataComponents.CUSTOM_DATA, updated);
+    }
+
+    public record MaterialEntry(SockMaterial material, double share) {
     }
 }

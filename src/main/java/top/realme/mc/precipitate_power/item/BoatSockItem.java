@@ -20,6 +20,32 @@ public class BoatSockItem extends WhiteSockItem {
     }
 
     @Override
+    public GeneratorTickResult tickInGenerator(GeneratorTickContext context) {
+        ItemStack stack = context.inputStack();
+        int precipitation = SockDataUtil.getPrecipitationLevel(stack);
+        int generated = super.calculateBaseGeneration(context, precipitation);
+        generated = SockDataUtil.applyMaterialGenerationFlatBonus(stack, generated);
+        generated = SockDataUtil.applyMaterialGenerationMultiplier(stack, generated);
+        boolean changed = false;
+
+        if (generated > 0 && context.canConsumeGenerationResource(precipitation)) {
+            context.consumeGenerationResource(precipitation);
+            changed = true;
+        } else {
+            generated = 0;
+        }
+
+        if (context.level().getGameTime() % 20L == 0L) {
+            int multiplier = consumeDurabilityWithModifiers(stack, context.level());
+            if (multiplier > 0) {
+                context.generator().addExtraCapacity(SockDataUtil.getBoatSockCapacityBoost(stack) * multiplier);
+            }
+            changed = true;
+        }
+        return GeneratorTickResult.handled(generated, 0, changed, stack.isEmpty() ? ItemStack.EMPTY : stack, ItemStack.EMPTY);
+    }
+
+    @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (tooltipFlag.hasShiftDown()) {
             super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);

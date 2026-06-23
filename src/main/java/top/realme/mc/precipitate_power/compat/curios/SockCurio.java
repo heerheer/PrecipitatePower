@@ -8,9 +8,11 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
-import top.realme.mc.precipitate_power.PrecipitatePower;
 import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.common.NeoForgeMod;
+import top.realme.mc.precipitate_power.PrecipitatePower;
 import top.realme.mc.precipitate_power.compat.ironsspellbooks.IronsSpellbooksCompat;
+import top.realme.mc.precipitate_power.item.SockMaterial;
 import top.realme.mc.precipitate_power.registry.ModItems;
 import top.realme.mc.precipitate_power.util.SockDataUtil;
 import top.theillusivec4.curios.api.CuriosApi;
@@ -55,13 +57,14 @@ public final class SockCurio implements ICurioItem {
             if (isFirstBoatSock(slotContext) && countEquippedBoatSocks(slotContext) >= 2) {
                 addMultiplierModifier(modifiers, Attributes.MOVEMENT_SPEED, BOAT_PAIR_SPEED_MODIFIER_ID, SockDataUtil.BOAT_SOCK_PAIR_SPEED_PENALTY);
             }
-            return modifiers;
         }
 
         double athleticCognition = SockDataUtil.getAthleticCognition(stack);
         if (athleticCognition > 0.0D) {
             addMultiplierModifier(modifiers, Attributes.MOVEMENT_SPEED, SPEED_MODIFIER_ID, athleticCognition * 0.45D);
         }
+
+        addMaterialModifiers(modifiers, id, stack);
 
         if (stack.is(ModItems.RAINBOW_WHITE_SOCK.get())) {
             addValueModifier(modifiers, Attributes.ATTACK_DAMAGE, RAINBOW_DAMAGE_MODIFIER_ID, 2.0D);
@@ -74,6 +77,43 @@ public final class SockCurio implements ICurioItem {
             }
         }
         return modifiers;
+    }
+
+    private static void addMaterialModifiers(Multimap<Holder<Attribute>, AttributeModifier> modifiers, ResourceLocation id, ItemStack stack) {
+        double cottonSpeed = SockDataUtil.getMaterialScalar(stack, SockMaterial.COTTON, SockMaterial::movementSpeedBonus);
+        if (cottonSpeed > 0.0D) {
+            addMultiplierModifier(modifiers, Attributes.MOVEMENT_SPEED, id.withSuffix("_cotton_speed"), cottonSpeed);
+        }
+
+        double woolHealth = SockDataUtil.getMaterialScalar(stack, SockMaterial.WOOL, SockMaterial::maxHealthBonus);
+        if (woolHealth > 0.0D) {
+            addValueModifier(modifiers, Attributes.MAX_HEALTH, id.withSuffix("_wool_health"), woolHealth);
+        }
+
+        double nylonKb = SockDataUtil.getMaterialScalar(stack, SockMaterial.NYLON, SockMaterial::knockbackResistanceBonus);
+        if (nylonKb > 0.0D) {
+            addValueModifier(modifiers, Attributes.KNOCKBACK_RESISTANCE, id.withSuffix("_nylon_kb"), nylonKb);
+        }
+
+        double ironDamage = SockDataUtil.getMaterialScalar(stack, SockMaterial.IRON, SockMaterial::attackDamageBonus);
+        if (ironDamage > 0.0D) {
+            addValueModifier(modifiers, Attributes.ATTACK_DAMAGE, id.withSuffix("_iron_damage"), ironDamage);
+        }
+
+        double diamondArmor = SockDataUtil.getMaterialScalar(stack, SockMaterial.DIAMOND, SockMaterial::armorBonus);
+        if (diamondArmor > 0.0D) {
+            addValueModifier(modifiers, Attributes.ARMOR, id.withSuffix("_diamond_armor"), diamondArmor);
+        }
+
+        double goldLuck = SockDataUtil.getMaterialScalar(stack, SockMaterial.GOLD, SockMaterial::luckBonus);
+        if (goldLuck > 0.0D) {
+            addValueModifier(modifiers, Attributes.LUCK, id.withSuffix("_gold_luck"), goldLuck);
+        }
+
+        double swimSpeed = SockDataUtil.getMaterialScalar(stack, SockMaterial.POLYESTER, SockMaterial::swimSpeedBonus);
+        if (swimSpeed > 0.0D) {
+            modifiers.put(NeoForgeMod.SWIM_SPEED, new AttributeModifier(id.withSuffix("_poly_swim"), swimSpeed, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+        }
     }
 
     private static int countEquippedBoatSocks(SlotContext slotContext) {

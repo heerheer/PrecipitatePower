@@ -12,6 +12,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
 import top.realme.mc.precipitate_power.Config;
+import top.realme.mc.precipitate_power.item.SockMaterialRoller;
 import top.realme.mc.precipitate_power.registry.ModEnchantments;
 import top.realme.mc.precipitate_power.registry.ModItems;
 import top.realme.mc.precipitate_power.registry.ModLootModifiers;
@@ -33,19 +34,27 @@ public class AddSockLootModifier extends LootModifier {
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
         String path = context.getQueriedLootTableId().getPath();
 
-        if(!isChest(path)) {
+        if (!isChest(path)) {
             return generatedLoot;
+        }
+
+        if (path.equals("chests/end_city_treasure") && context.getRandom().nextDouble() < 0.01D) {
+            ItemStack scent = new ItemStack(ModItems.ZHAOZHAO_ORIGINAL_SCENT.get());
+            enchantFixedPrideAndHumility(scent, context);
+            generatedLoot.add(scent);
         }
 
         if (isDungeonChest(path) && context.getRandom().nextDouble() < BOAT_SOCK_DUNGEON_CHANCE) {
             ItemStack boatSock = new ItemStack(ModItems.BOAT_SOCK.get());
             SockDataUtil.initializeBoatSock(boatSock, rollBoatSockCapacityBoost(context));
+            SockMaterialRoller.initializeRolledSock(boatSock, context.getRandom());
             enchantWithRandomPrideOrHumility(boatSock, context);
             generatedLoot.add(boatSock);
         }
 
         if (context.getRandom().nextDouble() < TRAVEL_SOCK_CHEST_CHANCE) {
             ItemStack travelSock = new ItemStack(ModItems.TRAVEL_DISPOSABLE_SOCK.get());
+            SockMaterialRoller.initializeRolledSock(travelSock, context.getRandom());
             enchantWithRandomPrideOrHumility(travelSock, context);
             generatedLoot.add(travelSock);
         }
@@ -60,19 +69,9 @@ public class AddSockLootModifier extends LootModifier {
             stack = new ItemStack(ModItems.RAINBOW_WHITE_SOCK.get());
             SockDataUtil.initializeRainbowSock(stack);
         } else {
-            stack = new ItemStack(ModItems.WHITE_SOCK.get());
+            stack = rollBaseSock(context);
         }
-        if (stack.is(ModItems.WHITE_SOCK.get()) && context.getRandom().nextDouble() < Config.LOOT_BONUS_CHANCE.get()) {
-            double min = Math.min(Config.LOOT_MIN_COEFFICIENT.get(), Config.LOOT_MAX_COEFFICIENT.get());
-            double max = Math.max(Config.LOOT_MIN_COEFFICIENT.get(), Config.LOOT_MAX_COEFFICIENT.get());
-            double coefficient = min + context.getRandom().nextDouble() * (max - min);
-            SockDataUtil.setPowerCoefficient(stack, coefficient);
-        }
-
-        if (stack.is(ModItems.WHITE_SOCK.get())) {
-            double athleticCognition = Math.pow(context.getRandom().nextDouble(), 2.0D);
-            SockDataUtil.setAthleticCognition(stack, athleticCognition);
-        }
+        SockMaterialRoller.initializeRolledSock(stack, context.getRandom());
 
         // 增加随机耐久附魔等级 1/2/3
         double unbreakingChance = context.getRandom().nextDouble();
@@ -92,6 +91,18 @@ public class AddSockLootModifier extends LootModifier {
         return generatedLoot;
     }
 
+    private static ItemStack rollBaseSock(LootContext context) {
+        int roll = context.getRandom().nextInt(6);
+        return switch (roll) {
+            case 1 -> new ItemStack(ModItems.OVER_KNEE_SOCK.get());
+            case 2 -> new ItemStack(ModItems.SPORT_CREW_SOCK.get());
+            case 3 -> new ItemStack(ModItems.PANTYHOSE.get());
+            case 4 -> new ItemStack(ModItems.SPLIT_TOE_SOCK.get());
+            case 5 -> new ItemStack(ModItems.STOCKINGS.get());
+            default -> new ItemStack(ModItems.WHITE_SOCK.get());
+        };
+    }
+
     private static void enchantWithRandomPrideOrHumility(ItemStack stack, LootContext context) {
         HolderLookup.Provider lookupProvider = context.getLevel().registryAccess();
         var enchantmentLookup = lookupProvider.lookupOrThrow(Registries.ENCHANTMENT);
@@ -100,6 +111,13 @@ public class AddSockLootModifier extends LootModifier {
                 : enchantmentLookup.get(ModEnchantments.HUMILITY);
         int level = 1 + context.getRandom().nextInt(3);
         enchantment.ifPresent(holder -> stack.enchant(holder, level));
+    }
+
+    private static void enchantFixedPrideAndHumility(ItemStack stack, LootContext context) {
+        HolderLookup.Provider lookupProvider = context.getLevel().registryAccess();
+        var enchantmentLookup = lookupProvider.lookupOrThrow(Registries.ENCHANTMENT);
+        enchantmentLookup.get(ModEnchantments.PRIDE).ifPresent(holder -> stack.enchant(holder, 3));
+        enchantmentLookup.get(ModEnchantments.HUMILITY).ifPresent(holder -> stack.enchant(holder, 3));
     }
 
     private static boolean isNetherOrEndChest(String path) {
