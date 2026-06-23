@@ -7,6 +7,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import top.realme.mc.precipitate_power.PrecipitatePower;
 import top.realme.mc.precipitate_power.item.BasicStyledSockItem;
 import top.realme.mc.precipitate_power.item.BoatSockItem;
+import top.realme.mc.precipitate_power.item.DatouOriginalScentItem;
 import top.realme.mc.precipitate_power.item.FushengOriginalScentItem;
 import top.realme.mc.precipitate_power.item.OriginalScentItem;
 import top.realme.mc.precipitate_power.item.RainbowWhiteSockItem;
@@ -79,7 +80,7 @@ public final class ModItems {
 
     public static final DeferredItem<Item> DATOU_ORIGINAL_SCENT = REGISTER.register(
             "datou_original_scent",
-            () -> new OriginalScentItem(new Item.Properties().stacksTo(1), "tooltip.precipitate_power.datou_original_scent")
+            () -> new DatouOriginalScentItem(new Item.Properties().stacksTo(1))
     );
 
     private ModItems() {

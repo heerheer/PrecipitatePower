@@ -1,6 +1,7 @@
 package top.realme.mc.precipitate_power.event;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -12,10 +13,12 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import top.realme.mc.precipitate_power.PrecipitatePower;
 import top.realme.mc.precipitate_power.compat.curios.CuriosCompat;
+import top.realme.mc.precipitate_power.item.DatouOriginalScentItem;
 import top.realme.mc.precipitate_power.item.FushengOriginalScentItem;
 import top.realme.mc.precipitate_power.item.SockMaterial;
 import top.realme.mc.precipitate_power.registry.ModAdvancements;
@@ -66,6 +69,24 @@ public final class ModEvents {
         ItemStack stack = event.getEntity().getItem();
         if (stack.is(ModItems.FUSHENG_ORIGINAL_SCENT.get())) {
             FushengOriginalScentItem.bindOwner(stack, event.getPlayer().getUUID());
+        }
+    }
+
+
+    @SubscribeEvent
+    public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
+        ItemStack stack = event.getEntity().getItemInHand(event.getHand());
+        if (!(stack.getItem() instanceof DatouOriginalScentItem datouItem)) {
+            return;
+        }
+        if (!(event.getTarget() instanceof LivingEntity livingEntity)) {
+            return;
+        }
+
+        InteractionResult result = datouItem.handleEntityInteraction(stack, event.getEntity(), livingEntity, event.getHand());
+        if (result != InteractionResult.PASS) {
+            event.setCancellationResult(result);
+            event.setCanceled(true);
         }
     }
 

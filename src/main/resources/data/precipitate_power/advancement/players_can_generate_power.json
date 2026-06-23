@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "id": "precipitate_power:datou_original_scent"
+    },
+    "title": {
+      "translate": "advancement.precipitate_power.players_can_generate_power.title"
+    },
+    "description": {
+      "translate": "advancement.precipitate_power.players_can_generate_power.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "unlock": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

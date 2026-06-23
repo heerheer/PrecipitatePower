@@ -83,11 +83,19 @@
   "tooltip.precipitate_power.fusheng_original_scent.summary": "这双袜子散发着一种适合种地的诡异气息。",
   "tooltip.precipitate_power.fusheng_original_scent.detail": "放进发电机不会发电，只会冒出催熟的粒子；丢在耕地上时会持续尝试催熟并收获作物。",
   "tooltip.precipitate_power.fusheng_original_scent.shift_detail": "fusheng！！！！！",
-  "tooltip.precipitate_power.datou_original_scent.summary": "另一双神秘的袜子，似乎也在等待后续安排。",
-  "tooltip.precipitate_power.datou_original_scent.detail": "当前版本不可穿戴；放进发电机也不会发电。",
+  "tooltip.precipitate_power.datou_original_scent.summary": "这双袜子里潜伏着一种专门榨出生电价值的力量。",
+  "tooltip.precipitate_power.datou_original_scent.detail": "右键村民可强制升 1 级；右键敌对生物可榨出 1 份掉落物。双计数都达到 100 后觉醒，并可令玩家随机掉落背包物品。",
   "tooltip.precipitate_power.datou_original_scent.shift_detail": "MarverlousDT！！！！",
   "tooltip.precipitate_power.fusheng_original_scent.shift_effect": "丢在地上后，这双袜子似乎会释放出某种营养物质促进作物生长...",
   "tooltip.precipitate_power.fusheng_original_scent.growth_count": "催熟次数：%s / %s",
   "advancement.precipitate_power.it_was_fusheng.title": "原来是腐生！",
-  "advancement.precipitate_power.it_was_fusheng.description": "拥有一双催熟了100次作物的腐生原味"
+  "advancement.precipitate_power.it_was_fusheng.description": "拥有一双催熟了100次作物的腐生原味",
+  "tooltip.precipitate_power.datou_original_scent.villager_count": "村民升级数：%s / %s",
+  "tooltip.precipitate_power.datou_original_scent.enemy_count": "生物掉落数：%s / %s",
+  "tooltip.precipitate_power.datou_original_scent.awakened": "DT 原味已觉醒：现在可以强制玩家掉落物品",
+  "tooltip.precipitate_power.datou_original_scent.dormant": "DT 原味尚未觉醒：还需要继续榨取生电之力",
+  "advancement.precipitate_power.power_belongs_to_dt.title": "生电还得看DT",
+  "advancement.precipitate_power.power_belongs_to_dt.description": "让一双大头的原味完成觉醒",
+  "advancement.precipitate_power.players_can_generate_power.title": "原来玩家也能生电吗",
+  "advancement.precipitate_power.players_can_generate_power.description": "第一次让玩家被 DT 的原味强制掉落物品"
 }

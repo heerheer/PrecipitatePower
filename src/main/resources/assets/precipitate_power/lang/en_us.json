@@ -83,11 +83,19 @@
   "tooltip.precipitate_power.fusheng_original_scent.summary": "This sock gives off a strange farming-friendly scent.",
   "tooltip.precipitate_power.fusheng_original_scent.detail": "It will not generate power in a generator, only bonemeal particles; on farmland, it keeps trying to grow and harvest crops.",
   "tooltip.precipitate_power.fusheng_original_scent.shift_detail": "fusheng！！！！！",
-  "tooltip.precipitate_power.datou_original_scent.summary": "Another mysterious sock waiting for its real effect.",
-  "tooltip.precipitate_power.datou_original_scent.detail": "Not wearable for now, and it will not generate power in a generator.",
+  "tooltip.precipitate_power.datou_original_scent.summary": "A sock hiding a power devoted to squeezing electricity out of life.",
+  "tooltip.precipitate_power.datou_original_scent.detail": "Right-click villagers to force one level up; right-click enemies to squeeze out one loot drop. When both counts hit 100, it awakens and can force players to drop an item.",
   "tooltip.precipitate_power.datou_original_scent.shift_detail": "MarverlousDT！！！！",
   "tooltip.precipitate_power.fusheng_original_scent.shift_effect": "After being dropped on the ground, it seems to release some nutrient that promotes crop growth...",
   "tooltip.precipitate_power.fusheng_original_scent.growth_count": "Crop Growth Triggers: %s / %s",
   "advancement.precipitate_power.it_was_fusheng.title": "So It Was Fusheng!",
-  "advancement.precipitate_power.it_was_fusheng.description": "Own a Fusheng's Original Scent that has ripened 100 crops"
+  "advancement.precipitate_power.it_was_fusheng.description": "Own a Fusheng's Original Scent that has ripened 100 crops",
+  "tooltip.precipitate_power.datou_original_scent.villager_count": "Villager Upgrades: %s / %s",
+  "tooltip.precipitate_power.datou_original_scent.enemy_count": "Enemy Drops Taken: %s / %s",
+  "tooltip.precipitate_power.datou_original_scent.awakened": "Datou's Original Scent has awakened: it can now force players to drop items",
+  "tooltip.precipitate_power.datou_original_scent.dormant": "Datou's Original Scent is still dormant: more bioelectric power is needed",
+  "advancement.precipitate_power.power_belongs_to_dt.title": "DT Owns the Power",
+  "advancement.precipitate_power.power_belongs_to_dt.description": "Awaken a Datou's Original Scent",
+  "advancement.precipitate_power.players_can_generate_power.title": "So Players Can Generate Power Too?",
+  "advancement.precipitate_power.players_can_generate_power.description": "Force a player to drop an item with Datou's awakened Original Scent for the first time"
 }

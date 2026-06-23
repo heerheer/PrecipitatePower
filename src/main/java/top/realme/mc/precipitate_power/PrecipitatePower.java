@@ -50,6 +50,8 @@ public class PrecipitatePower {
                         output.accept(ModItems.SPLIT_TOE_SOCK.get());
                         output.accept(ModItems.STOCKINGS.get());
                         output.accept(ModItems.ZHAOZHAO_ORIGINAL_SCENT.get());
+                        output.accept(ModItems.FUSHENG_ORIGINAL_SCENT.get());
+                        output.accept(ModItems.DATOU_ORIGINAL_SCENT.get());
                         output.accept(ModItems.DIRTY_WHITE_SOCK.get());
                         output.accept(ModBlocks.PRECIPITATE_GENERATOR_ITEM.get());
                         if (ModBlocks.REGISTER_ADVANCED_PRECIPITATE_GENERATOR) {
