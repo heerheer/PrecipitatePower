@@ -17,7 +17,10 @@ public enum SockMaterial {
     FLESH("flesh", 0.30D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D),
     GOLD("gold", 0.30D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.15D, 0.0D, 0.0D),
     MITHRIL_WEAVE("mithril_weave", 0.30D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D),
-    ARCANE_CLOTH("arcane_cloth", 0.30D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
+    ARCANE_CLOTH("arcane_cloth", 0.30D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D),
+    SNIFFER_FUR("sniffer_fur", 0.70D, 0.10D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D),
+    GOLDEN_FABRIC("golden_fabric", 0.30D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D),
+    ANCIENT_FIBER("ancient_fiber", 0.30D, -0.05D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
 
     public static final List<SockMaterial> VALUES = List.of(values());
 
@@ -145,6 +148,14 @@ public enum SockMaterial {
 
     public double manaRegenBonus() {
         return this == ARCANE_CLOTH ? 0.03D : 0.0D;
+    }
+
+    public double snifferFurSpeedBonus() {
+        return this == SNIFFER_FUR ? movementSpeedBonus : 0.0D;
+    }
+
+    public double ancientFiberSpeedPenalty() {
+        return this == ANCIENT_FIBER ? movementSpeedBonus : 0.0D;
     }
 
     public static Optional<SockMaterial> byId(String id) {

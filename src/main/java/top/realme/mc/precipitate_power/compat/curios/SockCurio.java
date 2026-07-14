@@ -85,6 +85,16 @@ public final class SockCurio implements ICurioItem {
             addMultiplierModifier(modifiers, Attributes.MOVEMENT_SPEED, id.withSuffix("_cotton_speed"), cottonSpeed);
         }
 
+        double snifferFurSpeed = SockDataUtil.getMaterialScalar(stack, SockMaterial.SNIFFER_FUR, SockMaterial::snifferFurSpeedBonus);
+        if (snifferFurSpeed > 0.0D) {
+            addMultiplierModifier(modifiers, Attributes.MOVEMENT_SPEED, id.withSuffix("_sniffer_fur_speed"), snifferFurSpeed);
+        }
+
+        double ancientFiberSpeed = SockDataUtil.getMaterialScalar(stack, SockMaterial.ANCIENT_FIBER, SockMaterial::ancientFiberSpeedPenalty);
+        if (ancientFiberSpeed < 0.0D) {
+            addMultiplierModifier(modifiers, Attributes.MOVEMENT_SPEED, id.withSuffix("_ancient_fiber_speed"), ancientFiberSpeed);
+        }
+
         double woolHealth = SockDataUtil.getMaterialScalar(stack, SockMaterial.WOOL, SockMaterial::maxHealthBonus);
         if (woolHealth > 0.0D) {
             addValueModifier(modifiers, Attributes.MAX_HEALTH, id.withSuffix("_wool_health"), woolHealth);

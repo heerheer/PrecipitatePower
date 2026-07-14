@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "id": "immortalers_delight:sniffer_fur"
+    },
+    "title": {
+      "translate": "advancement.precipitate_power.sniffer_sock.title"
+    },
+    "description": {
+      "translate": "advancement.precipitate_power.sniffer_sock.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "unlock": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

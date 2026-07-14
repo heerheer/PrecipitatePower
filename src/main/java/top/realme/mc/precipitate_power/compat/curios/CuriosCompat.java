@@ -1,5 +1,6 @@
 package top.realme.mc.precipitate_power.compat.curios;
 
+import java.util.List;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -42,5 +43,13 @@ public final class CuriosCompat {
                         .mapToDouble(result -> SockDataUtil.getMaterialScalar(result.stack(), target, extractor))
                         .sum())
                 .orElse(0.0D);
+    }
+
+    public static List<ItemStack> getEquippedWearableSocks(LivingEntity entity) {
+        return CuriosApi.getCuriosInventory(entity)
+                .map(handler -> handler.findCurios(stack -> stack.getItem() instanceof AbstractSockItem sockItem && sockItem.isWearableSock(stack)).stream()
+                        .map(result -> result.stack())
+                        .toList())
+                .orElse(List.of());
     }
 }

@@ -12,6 +12,7 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.Unbreakable;
 import top.realme.mc.precipitate_power.item.AbstractSockItem;
@@ -48,6 +49,8 @@ public final class SockDataUtil {
     public static final String TAG_MATERIAL_SHARE = "Share";
     public static final String TAG_DIAMOND_BONUS_MAX = "DiamondBonusDurabilityMax";
     public static final String TAG_DIAMOND_BONUS_REMAINING = "DiamondBonusDurabilityRemaining";
+    public static final String TAG_SNIFFER_FUR_DISTANCE = "SnifferFurDistance";
+    public static final double SNIFFER_FUR_DISTANCE_PER_SEED = 1000.0D;
 
     private SockDataUtil() {
     }
@@ -136,6 +139,18 @@ public final class SockDataUtil {
 
     public static void setBoatSockCapacityBoost(ItemStack stack, int capacityBoost) {
         setInt(stack, TAG_BOAT_SOCK_CAPACITY_BOOST, Math.max(1, Math.min(100, capacityBoost)));
+    }
+
+    public static double getSnifferFurDistance(ItemStack stack) {
+        return Math.max(0.0D, getData(stack).getDouble(TAG_SNIFFER_FUR_DISTANCE));
+    }
+
+    public static boolean hasSnifferFurDistance(ItemStack stack) {
+        return getData(stack).contains(TAG_SNIFFER_FUR_DISTANCE, Tag.TAG_DOUBLE);
+    }
+
+    public static void setSnifferFurDistance(ItemStack stack, double distance) {
+        updateData(stack, tag -> tag.putDouble(TAG_SNIFFER_FUR_DISTANCE, Math.max(0.0D, distance)));
     }
 
     /**
@@ -251,7 +266,7 @@ public final class SockDataUtil {
      * @param stack
      * @param tooltip
      */
-    public static void appendTooltip(ItemStack stack, List<Component> tooltip) {
+    public static void appendTooltip(ItemStack stack, List<Component> tooltip, TooltipFlag tooltipFlag) {
         tooltip.add(Component.translatable("tooltip.precipitate_power.sock.precipitation", getPrecipitationLevel(stack)).withStyle(ChatFormatting.AQUA));
 
         if (!stack.has(DataComponents.UNBREAKABLE) && getDirtyCount(stack) > 0) // 污渍等级的显示优化
@@ -276,6 +291,18 @@ public final class SockDataUtil {
             tooltip.add(Component.translatable("tooltip.precipitate_power.sock.diamond_bonus", getDiamondBonusRemaining(stack)).withStyle(ChatFormatting.BLUE));
         }
 
+        if (getMaterialScalar(stack, SockMaterial.SNIFFER_FUR, SockMaterial::snifferFurSpeedBonus) > 0.0D) {
+            if (tooltipFlag.hasShiftDown()) {
+                tooltip.add(Component.translatable(
+                        "tooltip.precipitate_power.sock.sniffer_fur_progress",
+                        formatDistance(getSnifferFurDistance(stack)),
+                        formatDistance(SNIFFER_FUR_DISTANCE_PER_SEED)
+                ).withStyle(ChatFormatting.GREEN));
+            } else {
+                tooltip.add(Component.translatable("tooltip.precipitate_power.sock.sniffer_fur_hold_shift").withStyle(ChatFormatting.DARK_GRAY));
+            }
+        }
+
         if (isUnbreakable(stack)) {
             tooltip.add(Component.translatable("tooltip.precipitate_power.sock.unbreakable").withStyle(ChatFormatting.LIGHT_PURPLE));
         }
@@ -291,6 +318,10 @@ public final class SockDataUtil {
 
     private static String formatPercent(double value) {
         return String.format(Locale.ROOT, "%.0f%%", clampPercentage(value) * 100.0D);
+    }
+
+    private static String formatDistance(double value) {
+        return String.format(Locale.ROOT, "%.0f", value);
     }
 
     private static CompoundTag getData(ItemStack stack) {

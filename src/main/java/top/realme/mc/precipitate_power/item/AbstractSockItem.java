@@ -139,7 +139,7 @@ public abstract class AbstractSockItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        SockDataUtil.appendTooltip(stack, tooltipComponents);
+        SockDataUtil.appendTooltip(stack, tooltipComponents, tooltipFlag);
     }
 
     @Override

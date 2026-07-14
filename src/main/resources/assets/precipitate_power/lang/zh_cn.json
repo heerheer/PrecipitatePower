@@ -26,6 +26,8 @@
   "tooltip.precipitate_power.sock.materials": "材质混纺：%s",
   "tooltip.precipitate_power.sock.diamond_bonus": "钻石附加耐久：%s",
   "tooltip.precipitate_power.sock.unbreakable": "小赫给予了这个袜子永恒的光辉",
+  "tooltip.precipitate_power.sock.sniffer_fur_hold_shift": "按住 Shift 查看嗅探兽毛进度",
+  "tooltip.precipitate_power.sock.sniffer_fur_progress": "嗅探兽毛彩蛋进度：%s / %s 等效步数",
   "tooltip.precipitate_power.sock.tag": "标签：%s",
   "tooltip.precipitate_power.travel_disposable_sock.summary": "一次性旅行袜，但是似乎可以提升什么...",
   "tooltip.precipitate_power.travel_disposable_sock.hold_shift": "按住 Shift 查看更多",
@@ -71,6 +73,9 @@
   "material.precipitate_power.gold": "金",
   "material.precipitate_power.mithril_weave": "秘银织物",
   "material.precipitate_power.arcane_cloth": "奥术布匹",
+  "material.precipitate_power.sniffer_fur": "嗅探兽毛",
+  "material.precipitate_power.golden_fabric": "金丝织缕",
+  "material.precipitate_power.ancient_fiber": "远古纤维",
   "effect.precipitate_power.lust": "情欲状态",
   "advancement.precipitate_power.the_real_taste.title": "这味道，真地道！",
   "advancement.precipitate_power.the_real_taste.description": "第一次使用昭昭的原味",
@@ -102,6 +107,9 @@
   "advancement.precipitate_power.players_can_generate_power.description": "第一次让玩家被 DT 的原味强制掉落物品",
   "advancement.precipitate_power.sock_final_home.title": "一只袜子的归宿",
   "advancement.precipitate_power.sock_final_home.description": "让一双彩蛋袜与它真正对应的玩家融为一体",
+  "advancement.precipitate_power.sniffer_sock.title": "嗅探袜！",
+  "advancement.precipitate_power.sniffer_sock.description": "通过嗅探兽毛混纺袜获得一枚千古乐事种子",
   "message.precipitate_power.original_scent_merged": "%s 已经与 %s 融为一体了！",
+  "message.precipitate_power.sniffer_fur_seed_found": "你的袜子嗅到了什么东西...",
   "message.precipitate_power.datou_original_scent_player_drop": "你闻到了一些刺鼻的味道...."
 }

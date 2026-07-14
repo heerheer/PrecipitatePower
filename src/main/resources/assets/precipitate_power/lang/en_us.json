@@ -26,6 +26,8 @@
   "tooltip.precipitate_power.sock.materials": "Material Blend: %s",
   "tooltip.precipitate_power.sock.diamond_bonus": "Diamond Bonus Durability: %s",
   "tooltip.precipitate_power.sock.unbreakable": "Harmog gave this sock eternal brilliance",
+  "tooltip.precipitate_power.sock.sniffer_fur_hold_shift": "Hold Shift to view Sniffer Fur progress",
+  "tooltip.precipitate_power.sock.sniffer_fur_progress": "Sniffer Fur Easter Egg Progress: %s / %s effective steps",
   "tooltip.precipitate_power.sock.tag": "Tag: %s",
   "tooltip.precipitate_power.travel_disposable_sock.summary": "A disposable travel sock, but it seems to improve something...",
   "tooltip.precipitate_power.travel_disposable_sock.hold_shift": "Hold Shift for more",
@@ -71,6 +73,9 @@
   "material.precipitate_power.gold": "Gold",
   "material.precipitate_power.mithril_weave": "Mithril Weave",
   "material.precipitate_power.arcane_cloth": "Arcane Cloth",
+  "material.precipitate_power.sniffer_fur": "Sniffer Fur",
+  "material.precipitate_power.golden_fabric": "Golden Fabric",
+  "material.precipitate_power.ancient_fiber": "Ancient Fiber",
   "effect.precipitate_power.lust": "Lust",
   "advancement.precipitate_power.the_real_taste.title": "Now That's the Real Flavor!",
   "advancement.precipitate_power.the_real_taste.description": "Use Zhaozhao's Original Scent for the first time",
@@ -102,6 +107,9 @@
   "advancement.precipitate_power.players_can_generate_power.description": "Force a player to drop an item with Datou's awakened Original Scent for the first time",
   "advancement.precipitate_power.sock_final_home.title": "A Sock's Final Home",
   "advancement.precipitate_power.sock_final_home.description": "Let an easter-egg sock become one with its destined player",
+  "advancement.precipitate_power.sniffer_sock.title": "Sniffer Sock!",
+  "advancement.precipitate_power.sniffer_sock.description": "Obtain an Immortalers Delight seed through a Sniffer Fur-blended sock",
   "message.precipitate_power.original_scent_merged": "%s has become one with %s!",
+  "message.precipitate_power.sniffer_fur_seed_found": "Your socks sniffed out something...",
   "message.precipitate_power.datou_original_scent_player_drop": "You smell something pungent..."
 }

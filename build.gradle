@@ -152,6 +152,14 @@ dependencies {
 
     // ===== Iron's Spells 'n Spellbooks =====
     compileOnly "io.redspace:irons_spellbooks:${irons_spellbooks_version}:api"
+
+    // ===== Immortalers Delight =====
+    compileOnly "curse.maven:immortalers-delight-1196075:8327137"
+    localRuntime "curse.maven:immortalers-delight-1196075:8327137"
+
+    // ===== Farmer's Delight =====
+    compileOnly "curse.maven:farmers-delight-398521:8083481"
+    localRuntime "curse.maven:farmers-delight-398521:8083481"
     
 
     // ===== Iron's runtime dependencies =====
