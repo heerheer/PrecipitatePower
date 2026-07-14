@@ -18,8 +18,8 @@ import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import top.realme.mc.precipitate_power.PrecipitatePower;
 import top.realme.mc.precipitate_power.compat.curios.CuriosCompat;
-import top.realme.mc.precipitate_power.item.DatouOriginalScentItem;
 import top.realme.mc.precipitate_power.item.FushengOriginalScentItem;
+import top.realme.mc.precipitate_power.item.OriginalScentItem;
 import top.realme.mc.precipitate_power.item.SockMaterial;
 import top.realme.mc.precipitate_power.registry.ModAdvancements;
 import top.realme.mc.precipitate_power.registry.ModEffects;
@@ -72,18 +72,17 @@ public final class ModEvents {
         }
     }
 
-
     @SubscribeEvent
     public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
         ItemStack stack = event.getEntity().getItemInHand(event.getHand());
-        if (!(stack.getItem() instanceof DatouOriginalScentItem datouItem)) {
+        if (!(stack.getItem() instanceof OriginalScentItem originalScentItem)) {
             return;
         }
         if (!(event.getTarget() instanceof LivingEntity livingEntity)) {
             return;
         }
 
-        InteractionResult result = datouItem.handleEntityInteraction(stack, event.getEntity(), livingEntity, event.getHand());
+        InteractionResult result = originalScentItem.handleEntityInteraction(stack, event.getEntity(), livingEntity, event.getHand());
         if (result != InteractionResult.PASS) {
             event.setCancellationResult(result);
             event.setCanceled(true);

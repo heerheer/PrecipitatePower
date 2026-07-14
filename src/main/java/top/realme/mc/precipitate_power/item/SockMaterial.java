@@ -15,7 +15,9 @@ public enum SockMaterial {
     DIAMOND("diamond", 0.30D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D),
     SILK("silk", 0.30D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D),
     FLESH("flesh", 0.30D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D),
-    GOLD("gold", 0.30D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.15D, 0.0D, 0.0D);
+    GOLD("gold", 0.30D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.15D, 0.0D, 0.0D),
+    MITHRIL_WEAVE("mithril_weave", 0.30D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D),
+    ARCANE_CLOTH("arcane_cloth", 0.30D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
 
     public static final List<SockMaterial> VALUES = List.of(values());
 
@@ -123,6 +125,26 @@ public enum SockMaterial {
 
     public double fleshRegenBonus() {
         return this == FLESH ? 1.0D : 0.0D;
+    }
+
+    public double maxManaBonus() {
+        return this == MITHRIL_WEAVE ? 20.0D : 0.0D;
+    }
+
+    public double spellPowerBonus() {
+        return this == MITHRIL_WEAVE ? 0.10D : 0.0D;
+    }
+
+    public double cooldownReductionBonus() {
+        return this == ARCANE_CLOTH ? 0.02D : 0.0D;
+    }
+
+    public double castTimeReductionBonus() {
+        return this == ARCANE_CLOTH ? 0.02D : 0.0D;
+    }
+
+    public double manaRegenBonus() {
+        return this == ARCANE_CLOTH ? 0.03D : 0.0D;
     }
 
     public static Optional<SockMaterial> byId(String id) {

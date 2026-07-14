@@ -34,11 +34,11 @@ public class DatouOriginalScentItem extends OriginalScentItem {
     private static final String TAG_ENEMY_COUNT = "DatouEnemyDropCount";
     private static final String TAG_AWAKENED = "DatouOriginalScentAwakened";
     private static final int TARGET_COUNT = 100;
-    private static final int PLAYER_DROP_COOLDOWN_TICKS = 20 * 200;
+    private static final int PLAYER_DROP_COOLDOWN_TICKS = 20 * 600;
     private static final int MAX_LOOT_ATTEMPTS = 8;
 
     public DatouOriginalScentItem(Properties properties) {
-        super(properties, "tooltip.precipitate_power.datou_original_scent");
+        super(properties, "tooltip.precipitate_power.datou_original_scent", "MarverlousDT");
     }
 
     @Override
@@ -55,7 +55,12 @@ public class DatouOriginalScentItem extends OriginalScentItem {
         return handleEntityInteraction(stack, player, interactionTarget, usedHand);
     }
 
+    @Override
     public InteractionResult handleEntityInteraction(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand) {
+        InteractionResult mergeResult = super.handleEntityInteraction(stack, player, interactionTarget, usedHand);
+        if (mergeResult != InteractionResult.PASS) {
+            return mergeResult;
+        }
         if (player.level().isClientSide()) {
             return InteractionResult.SUCCESS;
         }
@@ -126,6 +131,7 @@ public class DatouOriginalScentItem extends OriginalScentItem {
             return InteractionResult.FAIL;
         }
 
+        targetPlayer.displayClientMessage(Component.translatable("message.precipitate_power.datou_original_scent_player_drop"), true);
         player.getCooldowns().addCooldown(this, PLAYER_DROP_COOLDOWN_TICKS);
         if (player instanceof ServerPlayer serverPlayer) {
             ModAdvancements.grant(serverPlayer, ModAdvancements.PLAYERS_CAN_GENERATE_POWER);

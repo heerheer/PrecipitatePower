@@ -12,6 +12,7 @@ public final class ModAdvancements {
     public static final ResourceLocation IT_WAS_FUSHENG = ResourceLocation.fromNamespaceAndPath(PrecipitatePower.MODID, "it_was_fusheng");
     public static final ResourceLocation POWER_BELONGS_TO_DT = ResourceLocation.fromNamespaceAndPath(PrecipitatePower.MODID, "power_belongs_to_dt");
     public static final ResourceLocation PLAYERS_CAN_GENERATE_POWER = ResourceLocation.fromNamespaceAndPath(PrecipitatePower.MODID, "players_can_generate_power");
+    public static final ResourceLocation SOCK_FINAL_HOME = ResourceLocation.fromNamespaceAndPath(PrecipitatePower.MODID, "sock_final_home");
 
     private ModAdvancements() {
     }

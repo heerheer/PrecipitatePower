@@ -26,7 +26,7 @@ public class FushengOriginalScentItem extends OriginalScentItem {
     private static final int ADVANCEMENT_TARGET = 100;
 
     public FushengOriginalScentItem(Properties properties) {
-        super(properties, "tooltip.precipitate_power.fusheng_original_scent");
+        super(properties, "tooltip.precipitate_power.fusheng_original_scent", "fusheng");
     }
 
     @Override

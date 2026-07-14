@@ -69,6 +69,8 @@
   "material.precipitate_power.silk": "Silk",
   "material.precipitate_power.flesh": "Flesh",
   "material.precipitate_power.gold": "Gold",
+  "material.precipitate_power.mithril_weave": "Mithril Weave",
+  "material.precipitate_power.arcane_cloth": "Arcane Cloth",
   "effect.precipitate_power.lust": "Lust",
   "advancement.precipitate_power.the_real_taste.title": "Now That's the Real Flavor!",
   "advancement.precipitate_power.the_real_taste.description": "Use Zhaozhao's Original Scent for the first time",
@@ -97,5 +99,9 @@
   "advancement.precipitate_power.power_belongs_to_dt.title": "DT Owns the Power",
   "advancement.precipitate_power.power_belongs_to_dt.description": "Awaken a Datou's Original Scent",
   "advancement.precipitate_power.players_can_generate_power.title": "So Players Can Generate Power Too?",
-  "advancement.precipitate_power.players_can_generate_power.description": "Force a player to drop an item with Datou's awakened Original Scent for the first time"
+  "advancement.precipitate_power.players_can_generate_power.description": "Force a player to drop an item with Datou's awakened Original Scent for the first time",
+  "advancement.precipitate_power.sock_final_home.title": "A Sock's Final Home",
+  "advancement.precipitate_power.sock_final_home.description": "Let an easter-egg sock become one with its destined player",
+  "message.precipitate_power.original_scent_merged": "%s has become one with %s!",
+  "message.precipitate_power.datou_original_scent_player_drop": "You smell something pungent..."
 }

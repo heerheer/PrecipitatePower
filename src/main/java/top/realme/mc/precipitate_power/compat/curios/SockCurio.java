@@ -114,6 +114,10 @@ public final class SockCurio implements ICurioItem {
         if (swimSpeed > 0.0D) {
             modifiers.put(NeoForgeMod.SWIM_SPEED, new AttributeModifier(id.withSuffix("_poly_swim"), swimSpeed, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
         }
+
+        if (ModList.get().isLoaded("irons_spellbooks")) {
+            IronsSpellbooksCompat.addMaterialModifiers(modifiers, id, stack);
+        }
     }
 
     private static int countEquippedBoatSocks(SlotContext slotContext) {

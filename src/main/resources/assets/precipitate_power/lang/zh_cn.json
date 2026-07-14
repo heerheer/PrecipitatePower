@@ -69,6 +69,8 @@
   "material.precipitate_power.silk": "蜘蛛丝",
   "material.precipitate_power.flesh": "腐肉",
   "material.precipitate_power.gold": "金",
+  "material.precipitate_power.mithril_weave": "秘银织物",
+  "material.precipitate_power.arcane_cloth": "奥术布匹",
   "effect.precipitate_power.lust": "情欲状态",
   "advancement.precipitate_power.the_real_taste.title": "这味道，真地道！",
   "advancement.precipitate_power.the_real_taste.description": "第一次使用昭昭的原味",
@@ -97,5 +99,9 @@
   "advancement.precipitate_power.power_belongs_to_dt.title": "生电还得看DT",
   "advancement.precipitate_power.power_belongs_to_dt.description": "让一双大头的原味完成觉醒",
   "advancement.precipitate_power.players_can_generate_power.title": "原来玩家也能生电吗",
-  "advancement.precipitate_power.players_can_generate_power.description": "第一次让玩家被 DT 的原味强制掉落物品"
+  "advancement.precipitate_power.players_can_generate_power.description": "第一次让玩家被 DT 的原味强制掉落物品",
+  "advancement.precipitate_power.sock_final_home.title": "一只袜子的归宿",
+  "advancement.precipitate_power.sock_final_home.description": "让一双彩蛋袜与它真正对应的玩家融为一体",
+  "message.precipitate_power.original_scent_merged": "%s 已经与 %s 融为一体了！",
+  "message.precipitate_power.datou_original_scent_player_drop": "你闻到了一些刺鼻的味道...."
 }

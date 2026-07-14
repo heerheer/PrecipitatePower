@@ -19,7 +19,7 @@ public class ZhaozhaoOriginalScentItem extends OriginalScentItem {
     private static final int COOLDOWN_TICKS = 20 * 120;
 
     public ZhaozhaoOriginalScentItem(Properties properties) {
-        super(properties, "tooltip.precipitate_power.zhaozhao_original_scent");
+        super(properties, "tooltip.precipitate_power.zhaozhao_original_scent", "Research_King");
     }
 
     @Override
