@@ -17,6 +17,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.slf4j.Logger;
 import top.realme.mc.precipitate_power.compat.curios.CuriosCompat;
+import top.realme.mc.precipitate_power.compat.kaleidoscopetavern.KaleidoscopeTavernCompat;
 import top.realme.mc.precipitate_power.event.ModEvents;
 import top.realme.mc.precipitate_power.registry.ModBlockEntities;
 import top.realme.mc.precipitate_power.registry.ModBlocks;
@@ -53,6 +54,10 @@ public class PrecipitatePower {
                         output.accept(ModItems.FUSHENG_ORIGINAL_SCENT.get());
                         output.accept(ModItems.DATOU_ORIGINAL_SCENT.get());
                         output.accept(ModItems.DIRTY_WHITE_SOCK.get());
+                        output.accept(ModItems.STIR_FRIED_SOCK.get());
+                        if (ModList.get().isLoaded(KaleidoscopeTavernCompat.MOD_ID)) {
+                            output.accept(KaleidoscopeTavernCompat.createMaxQualityStack());
+                        }
                         output.accept(ModBlocks.PRECIPITATE_GENERATOR_ITEM.get());
                         if (ModBlocks.REGISTER_ADVANCED_PRECIPITATE_GENERATOR) {
                             output.accept(ModBlocks.ADVANCED_PRECIPITATE_GENERATOR_ITEM.get());
@@ -69,6 +74,10 @@ public class PrecipitatePower {
         ModLootModifiers.REGISTER.register(modEventBus);
         ModEffects.REGISTER.register(modEventBus);
         CREATIVE_TABS.register(modEventBus);
+
+        if (ModList.get().isLoaded(KaleidoscopeTavernCompat.MOD_ID)) {
+            KaleidoscopeTavernCompat.register(modEventBus);
+        }
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::addCreative);
@@ -108,6 +117,11 @@ public class PrecipitatePower {
             event.accept(ModItems.STOCKINGS.get());
             event.accept(ModItems.ZHAOZHAO_ORIGINAL_SCENT.get());
             event.accept(ModItems.DIRTY_WHITE_SOCK.get());
+            event.accept(ModItems.STIR_FRIED_SOCK.get());
+        }
+        if (event.getTabKey() == CreativeModeTabs.FOOD_AND_DRINKS
+                && ModList.get().isLoaded(KaleidoscopeTavernCompat.MOD_ID)) {
+            event.accept(KaleidoscopeTavernCompat.createMaxQualityStack());
         }
     }
 

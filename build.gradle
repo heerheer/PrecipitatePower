@@ -160,6 +160,14 @@ dependencies {
     // ===== Farmer's Delight =====
     compileOnly "curse.maven:farmers-delight-398521:8083481"
     localRuntime "curse.maven:farmers-delight-398521:8083481"
+
+    // ===== Kaleidoscope Cookery =====
+    compileOnly "maven.modrinth:kaleidoscope-cookery:TqaHu4Ma"
+    localRuntime "maven.modrinth:kaleidoscope-cookery:TqaHu4Ma"
+
+    // ===== Kaleidoscope Tavern =====
+    compileOnly "maven.modrinth:kaleidoscopetavern:W9ILsQt7"
+    localRuntime "maven.modrinth:kaleidoscopetavern:W9ILsQt7"
     
 
     // ===== Iron's runtime dependencies =====

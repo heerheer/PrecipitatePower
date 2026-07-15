@@ -1,7 +1,11 @@
 package top.realme.mc.precipitate_power.registry;
 
+import java.util.List;
+import java.util.Optional;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import top.realme.mc.precipitate_power.PrecipitatePower;
@@ -81,6 +85,18 @@ public final class ModItems {
     public static final DeferredItem<Item> DATOU_ORIGINAL_SCENT = REGISTER.register(
             "datou_original_scent",
             () -> new DatouOriginalScentItem(new Item.Properties().stacksTo(1))
+    );
+
+    public static final DeferredItem<Item> STIR_FRIED_SOCK = REGISTER.register(
+            "stir_fried_sock",
+            () -> new Item(new Item.Properties().food(new FoodProperties(
+                    8,
+                    0.8F,
+                    true,
+                    1.6F,
+                    Optional.of(Items.BOWL.getDefaultInstance()),
+                    List.of()
+            )))
     );
 
     private ModItems() {

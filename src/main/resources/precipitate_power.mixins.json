@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "top.realme.mc.precipitate_power.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "BlockEntityTypeAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

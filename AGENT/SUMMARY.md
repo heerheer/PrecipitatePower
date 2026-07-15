@@ -321,6 +321,18 @@
   - 五个新款式袜子独立模型和贴图
   - 三个原味彩蛋袜独立模型与占位贴图
 
+### 11. Optional Food And Drink Integrations
+
+- 当前已加入以下可选联动依赖：
+  - Iron's Spells 'n Spellbooks
+  - Immortalers Delight / Farmer's Delight
+  - Kaleidoscope Cookery `1.4.1-neoforge+mc1.21.1`
+  - Kaleidoscope Tavern `1.2.0-neoforge+mc1.21.1`
+- 森罗厨房联动新增 `stir_fried_sock`：使用碗和 `precipitate_power:socks` 标签内任意袜子在炒锅中制作。
+- 森罗酒馆联动新增 `original_brew`：酒桶装满 4000 mB 水并放入 `#c:sock` 袜子后开始酿造，使用酒馆原生 1-6 级品质组件与空瓶提取流程。
+- `OriginalBrewItem` 继承酒馆的 `DrinkBlockItem`，因此品质会随酒桶时间推进写入成品并显示在 tooltip 中；品质越高，饮用后的微醺时间越短。
+- 两项联动配方均带 `neoforge:mod_loaded` 条件，对应模组未安装时不会加载其专用配方。
+
 ## Key Files By Responsibility
 
 ### Bootstrap
@@ -429,11 +441,14 @@
 - 为大头原味加入村民升级粒子效果，并对敌对生物掉落逻辑增加重试。 
 - 将腐生、大头原味加入 `沉淀电力` 创造物品栏标签。 
 - 新增 `LustMobEffect` 与多个 `impossible` 成就 JSON。 
+- 新增森罗厨房联动食物“爆炒袜子”，并建立统一 `precipitate_power:socks` 标签。
+- 新增森罗酒馆可选依赖与“原味精酿”：通过 `#c:sock`、水和酒馆酒桶进行六阶段陈酿。
 
 ## Verification Status
 
 - 最近已经反复执行并通过：
   - `./gradlew compileJava`
+  - `./gradlew build --no-configuration-cache`
 
 - 当前资源和 Java 结构在编译层面可用，但仍有若干玩法行为属于**代码已接通、运行时仍建议进游戏确认**：
   - 大头原味升级村民后是否需要立刻刷新交易池
@@ -441,6 +456,8 @@
   - 腐生原味地面催熟在多种作物上的手感与性能
   - 三只原味袜命中对应玩家 ID 后，“融为一体”的粒子密度、命中判定与系统消息体验
   - 原味袜彩蛋粒子与右键交互在服务器环境中的最终体验
+  - 森罗厨房炒锅能否正确匹配任意袜子标签并产出“爆炒袜子”
+  - 森罗酒馆酒桶在六个品质阶段提取“原味精酿”时的品质 tooltip、空瓶返还和饮用体验
 
 ## Open Risks And Next Work Suggestions
 
