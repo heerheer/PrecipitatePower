@@ -2,17 +2,18 @@ package top.realme.mc.precipitate_power.menu;
 
 import com.lowdragmc.lowdraglib2.gui.holder.IModularUIHolderMenu;
 import com.lowdragmc.lowdraglib2.gui.sync.bindings.impl.DataBindingBuilder;
-import com.lowdragmc.lowdraglib2.gui.texture.ColorRectTexture;
 import com.lowdragmc.lowdraglib2.gui.ui.ModularUI;
 import com.lowdragmc.lowdraglib2.gui.ui.UI;
 import com.lowdragmc.lowdraglib2.gui.ui.UIElement;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.ItemSlot;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.Label;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.ProgressBar;
+import com.lowdragmc.lowdraglib2.gui.ui.event.UIEvents;
 import com.lowdragmc.lowdraglib2.utils.XmlUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -136,14 +137,16 @@ public class PrecipitateGeneratorMenu extends AbstractContainerMenu {
         bindLabel(ui, "dirty-count-label",
                 () -> Component.translatable("gui.precipitate_power.dirty_count", dirtyCount.get()));
 
-        bindProgressBar(ui, "energy-bar", 0xFF46C266,
+        boolean hasWaterTank = maxWaterStored.get() > 0;
+        requireElement(ui, "water-label", Label.class).setVisible(hasWaterTank);
+        requireElement(ui, "water-meter", UIElement.class).setVisible(hasWaterTank);
+
+        bindProgressMeter(ui, "energy-meter", "energy-fill", "energy-bar",
                 () -> maxEnergyStored.get() <= 0 ? 0.0F : energyStored.get() / (float) maxEnergyStored.get(),
-                () -> Component.translatable("gui.precipitate_power.energy", energyStored.get(), maxEnergyStored.get()),
-                true);
-        bindProgressBar(ui, "water-bar", 0xFF3B82F6,
+                () -> Component.translatable("gui.precipitate_power.energy", energyStored.get(), maxEnergyStored.get()));
+        bindProgressMeter(ui, "water-meter", "water-fill", "water-bar",
                 () -> maxWaterStored.get() <= 0 ? 0.0F : waterStored.get() / (float) maxWaterStored.get(),
-                () -> Component.translatable("gui.precipitate_power.water", waterStored.get(), maxWaterStored.get()),
-                maxWaterStored.get() > 0);
+                () -> Component.translatable("gui.precipitate_power.water", waterStored.get(), maxWaterStored.get()));
 
         return ModularUI.of(ui, player);
     }
@@ -158,17 +161,22 @@ public class PrecipitateGeneratorMenu extends AbstractContainerMenu {
         label.bind(DataBindingBuilder.componentS2C(supplier).build());
     }
 
-    private static void bindProgressBar(UI ui, String id, int fillColor,
-                                        java.util.function.Supplier<Float> progressSupplier,
-                                        java.util.function.Supplier<Component> tooltipSupplier,
-                                        boolean visible) {
-        ProgressBar bar = requireElement(ui, id, ProgressBar.class);
-        bar.setVisible(visible);
-        bar.setMinValue(0.0F);
-        bar.setMaxValue(1.0F);
-        bar.bind(DataBindingBuilder.floatValS2C(progressSupplier).build());
-        bar.barContainer(container -> container.style(style -> style.background(new ColorRectTexture(0xFF16181D))));
-        bar.bar(inner -> inner.style(style -> style.background(new ColorRectTexture(fillColor)).tooltips(tooltipSupplier.get())));
+    private static void bindProgressMeter(UI ui, String meterId, String fillId, String dataBarId,
+                                          java.util.function.Supplier<Float> progressSupplier,
+                                          java.util.function.Supplier<Component> tooltipSupplier) {
+        UIElement meter = requireElement(ui, meterId, UIElement.class);
+        UIElement fill = requireElement(ui, fillId, UIElement.class);
+        ProgressBar dataBar = requireElement(ui, dataBarId, ProgressBar.class);
+        dataBar.setMinValue(0.0F);
+        dataBar.setMaxValue(1.0F);
+        dataBar.setVisible(false);
+        dataBar.bind(DataBindingBuilder.floatValS2C(progressSupplier).build());
+        dataBar.label(label -> label.bind(DataBindingBuilder.componentS2C(tooltipSupplier).build()));
+        meter.addEventListener(UIEvents.TICK, event -> {
+            fill.layout(layout ->
+                    layout.widthPercent(Mth.clamp(dataBar.getValue(), 0.0F, 1.0F) * 100.0F));
+            meter.style(style -> style.tooltips(dataBar.label.getValue()));
+        });
     }
 
     private static <T extends UIElement> T requireElement(UI ui, String id, Class<T> type) {

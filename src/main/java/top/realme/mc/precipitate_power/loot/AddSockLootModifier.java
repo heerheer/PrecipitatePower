@@ -19,6 +19,7 @@ import top.realme.mc.precipitate_power.registry.ModLootModifiers;
 import top.realme.mc.precipitate_power.util.SockDataUtil;
 
 public class AddSockLootModifier extends LootModifier {
+    private static final double ORIGINAL_SCENT_CHEST_CHANCE = 0.01D;
     private static final double BOAT_SOCK_DUNGEON_CHANCE = 0.025D;
     private static final double TRAVEL_SOCK_CHEST_CHANCE = 0.018D;
 
@@ -38,10 +39,18 @@ public class AddSockLootModifier extends LootModifier {
             return generatedLoot;
         }
 
-        if (path.equals("chests/end_city_treasure") && context.getRandom().nextDouble() < 0.01D) {
+        if (path.equals("chests/end_city_treasure") && context.getRandom().nextDouble() < ORIGINAL_SCENT_CHEST_CHANCE) {
             ItemStack scent = new ItemStack(ModItems.ZHAOZHAO_ORIGINAL_SCENT.get());
             enchantFixedPrideAndHumility(scent, context);
             generatedLoot.add(scent);
+        }
+
+        if (isVillageChest(path) && context.getRandom().nextDouble() < ORIGINAL_SCENT_CHEST_CHANCE) {
+            generatedLoot.add(new ItemStack(ModItems.FUSHENG_ORIGINAL_SCENT.get()));
+        }
+
+        if (path.equals("chests/nether_bridge") && context.getRandom().nextDouble() < ORIGINAL_SCENT_CHEST_CHANCE) {
+            generatedLoot.add(new ItemStack(ModItems.DATOU_ORIGINAL_SCENT.get()));
         }
 
         if (isDungeonChest(path) && context.getRandom().nextDouble() < BOAT_SOCK_DUNGEON_CHANCE) {
@@ -128,6 +137,10 @@ public class AddSockLootModifier extends LootModifier {
 
     private static boolean isDungeonChest(String path) {
         return path.equals("chests/simple_dungeon");
+    }
+
+    private static boolean isVillageChest(String path) {
+        return path.startsWith("chests/village/");
     }
 
     private static int rollBoatSockCapacityBoost(LootContext context) {
