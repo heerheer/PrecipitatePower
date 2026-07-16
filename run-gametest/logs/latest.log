@@ -1,0 +1,110 @@
+[167月2026 23:16:18.325] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgeserverdev, --gameDir, ., --fml.fmlVersion, 4.0.42, --fml.mcVersion, 1.21.1, --fml.neoForgeVersion, 21.1.233, --fml.neoFormVersion, 20240808.144430]
+[167月2026 23:16:18.331] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: JVM identified as Oracle Corporation OpenJDK 64-Bit Server VM 21.0.2+13-58
+[167月2026 23:16:18.335] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 11.0.5+main.901c6ea8 starting: java version 21.0.2 by Oracle Corporation; OS Windows 11 arch amd64 version 10.0
+[167月2026 23:16:18.609] [main/INFO] [net.neoforged.fml.loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgeserverdev
+[167月2026 23:16:18.738] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=union:/C:/Users/heerh/.gradle/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.15.2+mixin.0.8.7/2af2f021d8e02a0220dc27a7a72b4666d66d44ca/sponge-mixin-0.15.2+mixin.0.8.7.jar%2394!/ Service=ModLauncher Env=SERVER
+[167月2026 23:16:19.847] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select two dependency jars from JarJar which have the same identification: Nested Mod File  in Mod File: C:\Users\heerh\.gradle\caches\modules-2\files-2.1\com.simibubi.create\create-1.21.1\6.0.9-216\39d9899734fd780594cf4eb67306b14f125c7ff2\create-1.21.1-6.0.9-216.jar and Nested Mod File  in Mod File: S:\personal_repos\repos_mc\precipitatepower\libs\ponderer-1.21.1-neoforge-1.7.1.5.jar. Using Nested Mod File  in Mod File: C:\Users\heerh\.gradle\caches\modules-2\files-2.1\com.simibubi.create\create-1.21.1\6.0.9-216\39d9899734fd780594cf4eb67306b14f125c7ff2\create-1.21.1-6.0.9-216.jar
+[167月2026 23:16:19.850] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: flywheel. Using Mod File: C:\Users\heerh\.gradle\caches\modules-2\files-2.1\dev.engine-room.flywheel\flywheel-neoforge-1.21.1\1.0.4\47fe9da825b4479bbac55d6432d5932ee76f32f0\flywheel-neoforge-1.21.1-1.0.4.jar
+[167月2026 23:16:19.851] [main/WARN] [net.neoforged.jarjar.selection.JarSelector/]: Attempted to select a dependency jar for JarJar which was passed in as source: ponder. Using Mod File: C:\Users\heerh\.gradle\caches\modules-2\files-2.1\net.createmod.ponder\ponder-neoforge\1.0.81+mc1.21.1\33d5fda0be2726256eb4722f1da2dad5d073d08d\ponder-neoforge-1.0.81+mc1.21.1.jar
+[167月2026 23:16:19.851] [main/INFO] [net.neoforged.fml.loading.moddiscovery.locators.JarInJarDependencyLocator/]: Found 6 dependencies adding them to mods collection
+[167月2026 23:16:19.854] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/]: 
+     Mod List:
+		Name Version (Mod Id)
+
+		Building Gadgets 2 1.3.9 (buildinggadgets2)
+		Create 6.0.9 (create)
+		Curios API 9.5.0+1.21.1 (curios)
+		Farmer's Delight 1.3.2 (farmersdelight)
+		Flywheel 1.0.4 (flywheel)
+		GeckoLib 4 4.8.4 (geckolib)
+		ImmortalersDelight 1.21.1-neoforge-1.0.1 (immortalers_delight)
+		Iron's Patreon Library 1.21.1-1.0.1 (irons_patreon_lib)
+		Iron's Spells 'n Spellbooks 1.21.1-3.15.5 (irons_spellbooks)
+		Jade 15.10.0+neoforge (jade)
+		Just Enough Items 19.25.0.322 (jei)
+		Kaleidoscope Cookery 1.4.1-neoforge+mc1.21.1 (kaleidoscope_cookery)
+		Kaleidoscope Tavern 1.2.0-neoforge+mc1.21.1 (kaleidoscope_tavern)
+		LowDragLib2 2.2.1 (ldlib2)
+		Mekanism 10.7.18 (mekanism)
+		Minecraft 1.21.1 (minecraft)
+		NeoForge 21.1.233 (neoforge)
+		Player Animator 2.0.4+1.21.1 (playeranimator)
+		Ponder 1.0.81+mc1.21.1 (ponder)
+		Ponderer 1.7.1.5 (ponderer)
+		Precipitate Power 1.5.0 (precipitate_power)
+[167月2026 23:16:21.949] [main/INFO] [mixin/]: Compatibility level set to JAVA_21
+[167月2026 23:16:22.064] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgeserverdev' with arguments [--gameDir, .]
+[167月2026 23:16:22.273] [main/WARN] [mixin/]: Reference map 'irons_spellbooks.refmap.json' for irons_spellbooks.mixins.json could not be read. If this is a development environment you can ignore this message
+[167月2026 23:16:22.276] [main/WARN] [mixin/]: Reference map 'geckolib.refmap.json' for geckolib.mixins.json could not be read. If this is a development environment you can ignore this message
+[167月2026 23:16:22.286] [main/WARN] [mixin/]: Reference map 'kaleidoscope_cookery.refmap.json' for kaleidoscope_cookery.mixins.json could not be read. If this is a development environment you can ignore this message
+[167月2026 23:16:22.295] [main/WARN] [mixin/]: Reference map 'ponder.refmap.json' for ponder-common.mixins.json could not be read. If this is a development environment you can ignore this message
+[167月2026 23:16:22.296] [main/WARN] [mixin/]: Reference map 'curios.refmap.json' for curios.neoforge.mixins.json could not be read. If this is a development environment you can ignore this message
+[167月2026 23:16:22.296] [main/WARN] [mixin/]: Reference map 'curios.refmap.json' for curios.mixins.json could not be read. If this is a development environment you can ignore this message
+[167月2026 23:16:22.310] [main/WARN] [mixin/]: Reference map 'irons_patreon_lib.refmap.json' for irons_patreon_lib.mixins.json could not be read. If this is a development environment you can ignore this message
+[167月2026 23:16:22.311] [main/WARN] [mixin/]: Reference map 'kaleidoscope_tavern.refmap.json' for kaleidoscope_tavern.mixins.json could not be read. If this is a development environment you can ignore this message
+[167月2026 23:16:23.420] [main/WARN] [mixin/]: Error loading class: org/jetbrains/annotations/ApiStatus$ScheduledForRemoval (java.lang.ClassNotFoundException: org.jetbrains.annotations.ApiStatus$ScheduledForRemoval)
+[167月2026 23:16:23.701] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.3).
+[167月2026 23:16:36.612] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[167月2026 23:16:36.615] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
+[167月2026 23:16:36.621] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[167月2026 23:16:36.624] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[167月2026 23:16:36.626] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[167月2026 23:16:36.775] [modloading-worker-0/INFO] [LowDragLib2/]: LowDragLib2 is initializing on platform: NeoForge
+[167月2026 23:16:36.866] [modloading-worker-0/INFO] [com.simibubi.create.Create/]: Create 6.0.9 initializing! Commit hash: bedec48bb3ac00f6d9f280cddb6b9a692c09db7f
+[167月2026 23:16:36.981] [modloading-worker-0/INFO] [net.neoforged.neoforge.common.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 21.1.233, for MC 1.21.1
+[167月2026 23:16:44.003] [modloading-worker-0/INFO] [top.realme.mc.precipitate_power.PrecipitatePower/]: Precipitate Power common setup complete
+[167月2026 23:16:44.006] [modloading-worker-0/INFO] [mekanism.common.Mekanism/]: Version 10.7.18 initializing...
+[167月2026 23:16:44.040] [modloading-worker-0/INFO] [mekanism.common.Mekanism/]: Initialized HolidayManager.
+[167月2026 23:16:44.060] [modloading-worker-0/INFO] [mekanism.common.Mekanism/]: Fake player readout: UUID = 46e82cd0-d480-3d48-800a-77431ede078e, name = [Mekanism]
+[167月2026 23:16:44.061] [modloading-worker-0/INFO] [mekanism.common.Mekanism/]: Mod loaded.
+[167月2026 23:16:44.075] [modloading-sync-worker/INFO] [com.renyigesai.immortalers_delight.ImmortalersDelightMod/]: IMMORTALERS DELIGHT SETUP
+[167月2026 23:16:44.103] [modloading-sync-worker/INFO] [top.realme.mc.precipitate_power.PrecipitatePower/]: Enabled Curios compat for sock items
+[167月2026 23:16:44.433] [modloading-worker-0/INFO] [io.redspace.ironsspellbooks.IronsSpellbooks/]: Got IMC []
+[167月2026 23:16:44.506] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Start loading plugin from snownee.jade.addon.vanilla.VanillaPlugin
+[167月2026 23:16:44.542] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Loaded plugin from snownee.jade.addon.vanilla.VanillaPlugin in 32.70 ms
+[167月2026 23:16:44.543] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Start loading plugin from snownee.jade.addon.universal.UniversalPlugin
+[167月2026 23:16:44.550] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Loaded plugin from snownee.jade.addon.universal.UniversalPlugin in 6.701 ms
+[167月2026 23:16:44.551] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Start loading plugin from snownee.jade.addon.debug.DebugPlugin
+[167月2026 23:16:44.551] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Loaded plugin from snownee.jade.addon.debug.DebugPlugin in 15.20 μs
+[167月2026 23:16:44.551] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Start loading plugin from snownee.jade.addon.core.CorePlugin
+[167月2026 23:16:44.553] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Loaded plugin from snownee.jade.addon.core.CorePlugin in 77.10 μs
+[167月2026 23:16:44.553] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Start loading plugin from snownee.jade.addon.access.AccessibilityPlugin
+[167月2026 23:16:44.554] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Loaded plugin from snownee.jade.addon.access.AccessibilityPlugin in 20.80 μs
+[167月2026 23:16:44.554] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Start loading plugin from com.renyigesai.immortalers_delight.integration.jade.JadePlugin
+[167月2026 23:16:44.556] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Loaded plugin from com.renyigesai.immortalers_delight.integration.jade.JadePlugin in 958.6 μs
+[167月2026 23:16:44.556] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Start loading plugin from mekanism.common.integration.lookingat.jade.MekanismJadePlugin
+[167月2026 23:16:44.560] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Loaded plugin from mekanism.common.integration.lookingat.jade.MekanismJadePlugin in 1.469 ms
+[167月2026 23:16:44.560] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Start loading plugin from com.github.ysbbbbbb.kaleidoscopecookery.compat.jade.ModPlugin
+[167月2026 23:16:44.566] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Loaded plugin from com.github.ysbbbbbb.kaleidoscopecookery.compat.jade.ModPlugin in 5.567 ms
+[167月2026 23:16:44.566] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Start loading plugin from com.github.ysbbbbbb.kaleidoscopetavern.compat.jade.ModPlugin
+[167月2026 23:16:44.568] [modloading-worker-0/INFO] [snownee.jade.Jade/]: Loaded plugin from com.github.ysbbbbbb.kaleidoscopetavern.compat.jade.ModPlugin in 19.10 μs
+[167月2026 23:16:44.945] [main/INFO] [com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService/]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[167月2026 23:16:45.010] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/S:/personal_repos/repos_mc/precipitatepower/build/moddev/artifacts/neoforge-21.1.233.jar%23125!/assets/.mcassetsroot' uses unexpected schema
+[167月2026 23:16:45.010] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/S:/personal_repos/repos_mc/precipitatepower/build/moddev/artifacts/neoforge-21.1.233.jar%23125!/data/.mcassetsroot' uses unexpected schema
+[167月2026 23:16:45.157] [main/INFO] [com.simibubi.create.Create/]: Created 196 recipes which will be injected into the game
+[167月2026 23:16:45.171] [main/INFO] [com.simibubi.create.Create/]: Created 1 tags which will be injected into the game
+[167月2026 23:16:45.183] [main/INFO] [net.neoforged.neoforge.gametest.GameTestHooks/]: Enabled Gametest Namespaces: [precipitate_power]
+[167月2026 23:16:45.251] [main/ERROR] [net.minecraft.server.Main/FATAL]: Failed to start the minecraft server
+java.lang.IllegalArgumentException: No test functions were given!
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.gametest.framework.GameTestServer.create(GameTestServer.java:78) ~[neoforge-21.1.233.jar%23125!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.Main.lambda$main$0(Main.java:195) ~[neoforge-21.1.233.jar%23125!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.spin(MinecraftServer.java:273) ~[neoforge-21.1.233.jar%23125!/:?]
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.Main.main(Main.java:195) ~[neoforge-21.1.233.jar%23125!/:?]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at MC-BOOTSTRAP/fml_loader@4.0.42/net.neoforged.fml.loading.targets.CommonLaunchHandler.runTarget(CommonLaunchHandler.java:136) ~[loader-4.0.42.jar%23102!/:4.0]
+	at MC-BOOTSTRAP/fml_loader@4.0.42/net.neoforged.fml.loading.targets.CommonLaunchHandler.serverService(CommonLaunchHandler.java:128) ~[loader-4.0.42.jar%23102!/:4.0]
+	at MC-BOOTSTRAP/fml_loader@4.0.42/net.neoforged.fml.loading.targets.NeoForgeServerDevLaunchHandler.runService(NeoForgeServerDevLaunchHandler.java:23) ~[loader-4.0.42.jar%23102!/:4.0]
+	at MC-BOOTSTRAP/fml_loader@4.0.42/net.neoforged.fml.loading.targets.CommonLaunchHandler.lambda$launchService$4(CommonLaunchHandler.java:118) ~[loader-4.0.42.jar%23102!/:4.0]
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.LaunchServiceHandlerDecorator.launch(LaunchServiceHandlerDecorator.java:30) [modlauncher-11.0.5.jar%2382!/:?]
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:53) [modlauncher-11.0.5.jar%2382!/:?]
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:71) [modlauncher-11.0.5.jar%2382!/:?]
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.Launcher.run(Launcher.java:103) [modlauncher-11.0.5.jar%2382!/:?]
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.Launcher.main(Launcher.java:74) [modlauncher-11.0.5.jar%2382!/:?]
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.BootstrapLaunchConsumer.accept(BootstrapLaunchConsumer.java:26) [modlauncher-11.0.5.jar%2382!/:?]
+	at MC-BOOTSTRAP/cpw.mods.modlauncher@11.0.5/cpw.mods.modlauncher.BootstrapLaunchConsumer.accept(BootstrapLaunchConsumer.java:23) [modlauncher-11.0.5.jar%2382!/:?]
+	at cpw.mods.bootstraplauncher@2.0.2/cpw.mods.bootstraplauncher.BootstrapLauncher.run(BootstrapLauncher.java:210) [bootstraplauncher-2.0.2.jar:?]
+	at cpw.mods.bootstraplauncher@2.0.2/cpw.mods.bootstraplauncher.BootstrapLauncher.main(BootstrapLauncher.java:69) [bootstraplauncher-2.0.2.jar:?]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at net.neoforged.devlaunch.Main.main(Main.java:57) [DevLaunch-1.0.2.jar:?]

@@ -2,7 +2,7 @@
   <style>
     #generator-root {
       width: 176;
-      height: 220;
+      height: 246;
       background: #ff1e2026;
     }
 
@@ -11,13 +11,13 @@
       left: 6;
       top: 17;
       width: 164;
-      height: 104;
+      height: 138;
       background: #ff2a2d36;
     }
 
-    #input-slot-panel, #output-slot-panel {
+    #input-slot-panel, #output-slot-panel, #charge-slot-panel {
       position: absolute;
-      top: 98;
+      top: 124;
       width: 18;
       height: 18;
       background: #ff4b5160;
@@ -31,9 +31,13 @@
       left: 115;
     }
 
-    #machine-input-slot, #machine-output-slot {
+    #charge-slot-panel {
+      left: 79;
+    }
+
+    #machine-input-slot, #machine-output-slot, #machine-charge-slot {
       position: absolute;
-      top: 98;
+      top: 124;
       slot-overlay: #4421262d;
       hover-overlay: #66ffffff;
     }
@@ -44,6 +48,10 @@
 
     #machine-output-slot {
       left: 115;
+    }
+
+    #machine-charge-slot {
+      left: 79;
     }
 
     #water-meter, #energy-meter {
@@ -57,11 +65,11 @@
     }
 
     #water-meter {
-      top: 80;
+      top: 106;
     }
 
     #energy-meter {
-      top: 66;
+      top: 94;
     }
 
     #water-fill, #energy-fill {
@@ -81,7 +89,7 @@
       display: none;
     }
 
-    #energy-label, #max-extract-label, #water-label, #precipitation-label, #dirty-count-label {
+    #energy-label, #max-extract-label, #water-label, #precipitation-label, #dirty-count-label, #charge-rate-label, #charge-sediment-label {
       position: absolute;
       left: 8;
       text-color: #ffe8edf7;
@@ -97,21 +105,29 @@
     }
 
     #water-label {
-      top: 30;
+      top: 54;
     }
 
     #precipitation-label {
-      top: 42;
+      top: 66;
     }
 
     #dirty-count-label {
-      top: 54;
+      top: 78;
+    }
+
+    #charge-rate-label {
+      top: 30;
+    }
+
+    #charge-sediment-label {
+      top: 42;
     }
 
     #player-inventory {
       position: absolute;
       left: 7;
-      top: 136;
+      top: 162;
       gap-row: 0;
       gap-column: 0;
     }
@@ -129,14 +145,18 @@
     <element id="machine-panel"/>
     <element id="input-slot-panel"/>
     <element id="output-slot-panel"/>
+    <element id="charge-slot-panel"/>
     <item-slot id="machine-input-slot"/>
     <item-slot id="machine-output-slot"/>
+    <item-slot id="machine-charge-slot"/>
 
     <label id="energy-label">Energy</label>
     <label id="max-extract-label">Max Output</label>
     <label id="water-label">Water</label>
     <label id="precipitation-label">Precipitation</label>
     <label id="dirty-count-label">Stains</label>
+    <label id="charge-rate-label">Charge</label>
+    <label id="charge-sediment-label">Charge Sediment</label>
 
     <element id="water-meter">
       <element id="water-fill"/>

@@ -35,7 +35,7 @@ public class PrecipitateGeneratorMenu extends AbstractContainerMenu {
     private final ContainerData data;
 
     public PrecipitateGeneratorMenu(int containerId, Inventory inventory, FriendlyByteBuf buffer) {
-        this(containerId, inventory, new SimpleContainer(2), new SimpleContainerData(8));
+        this(containerId, inventory, new SimpleContainer(3), new SimpleContainerData(12));
     }
 
     public PrecipitateGeneratorMenu(int containerId, Inventory inventory, Container container, ContainerData data) {
@@ -55,6 +55,12 @@ public class PrecipitateGeneratorMenu extends AbstractContainerMenu {
                 return false;
             }
         });
+        addSlot(new Slot(container, 2, 80, 35) {
+            @Override
+            public boolean mayPlace(ItemStack stack) {
+                return !stack.isEmpty();
+            }
+        });
 
         addPlayerInventory(inventory);
         addPlayerHotbar(inventory);
@@ -70,6 +76,7 @@ public class PrecipitateGeneratorMenu extends AbstractContainerMenu {
                 player,
                 slots.get(0),
                 slots.get(1),
+                slots.get(2),
                 this::getEnergyStored,
                 this::getMaxEnergyStored,
                 this::getMaxExtract,
@@ -77,7 +84,11 @@ public class PrecipitateGeneratorMenu extends AbstractContainerMenu {
                 this::getWaterStored,
                 this::getMaxWaterStored,
                 this::getPrecipitationLevel,
-                this::getDirtyCount
+                this::getDirtyCount,
+                this::getTransferRate,
+                this::getCurrentChargeRate,
+                this::getChargeSedimentProgress,
+                this::getChargeSedimentTarget
         );
     }
 
@@ -94,10 +105,17 @@ public class PrecipitateGeneratorMenu extends AbstractContainerMenu {
                 return false;
             }
         };
+        Slot chargeSlot = new Slot(generator, 2, 80, 35) {
+            @Override
+            public boolean mayPlace(ItemStack stack) {
+                return generator.canPlaceItem(2, stack);
+            }
+        };
         return createUI(
                 player,
                 inputSlot,
                 outputSlot,
+                chargeSlot,
                 () -> generator.getData().get(0),
                 () -> generator.getData().get(1),
                 () -> generator.getData().get(6),
@@ -105,13 +123,18 @@ public class PrecipitateGeneratorMenu extends AbstractContainerMenu {
                 () -> generator.getData().get(4),
                 () -> generator.getData().get(5),
                 () -> generator.getData().get(2),
-                () -> generator.getData().get(3)
+                () -> generator.getData().get(3),
+                () -> generator.getData().get(8),
+                () -> generator.getData().get(9),
+                () -> generator.getData().get(10),
+                () -> generator.getData().get(11)
         );
     }
 
     private static ModularUI createUI(Player player,
                                       Slot inputSlot,
                                       Slot outputSlot,
+                                      Slot chargeSlot,
                                       java.util.function.Supplier<Integer> energyStored,
                                       java.util.function.Supplier<Integer> maxEnergyStored,
                                       java.util.function.Supplier<Integer> maxExtract,
@@ -119,11 +142,16 @@ public class PrecipitateGeneratorMenu extends AbstractContainerMenu {
                                       java.util.function.Supplier<Integer> waterStored,
                                       java.util.function.Supplier<Integer> maxWaterStored,
                                       java.util.function.Supplier<Integer> precipitationLevel,
-                                      java.util.function.Supplier<Integer> dirtyCount) {
+                                      java.util.function.Supplier<Integer> dirtyCount,
+                                      java.util.function.Supplier<Integer> transferRate,
+                                      java.util.function.Supplier<Integer> currentChargeRate,
+                                      java.util.function.Supplier<Integer> chargeSedimentProgress,
+                                      java.util.function.Supplier<Integer> chargeSedimentTarget) {
         UI ui = loadGeneratorUI();
 
         bindItemSlot(ui, "machine-input-slot", inputSlot);
         bindItemSlot(ui, "machine-output-slot", outputSlot);
+        bindItemSlot(ui, "machine-charge-slot", chargeSlot);
 
         bindLabel(ui, "energy-label",
                 () -> Component.translatable("gui.precipitate_power.energy", energyStored.get(), maxEnergyStored.get()));
@@ -137,6 +165,11 @@ public class PrecipitateGeneratorMenu extends AbstractContainerMenu {
                 () -> Component.translatable("gui.precipitate_power.precipitation", precipitationLevel.get()));
         bindLabel(ui, "dirty-count-label",
                 () -> Component.translatable("gui.precipitate_power.dirty_count", dirtyCount.get()));
+        bindLabel(ui, "charge-rate-label",
+                () -> Component.translatable("gui.precipitate_power.charge_rate", currentChargeRate.get(), transferRate.get()));
+        bindLabel(ui, "charge-sediment-label",
+                () -> Component.translatable("gui.precipitate_power.charge_sediment",
+                        chargeSedimentProgress.get(), chargeSedimentTarget.get()));
 
         boolean hasWaterTank = maxWaterStored.get() > 0;
         requireElement(ui, "water-label", Label.class).setVisible(hasWaterTank);
@@ -233,6 +266,22 @@ public class PrecipitateGeneratorMenu extends AbstractContainerMenu {
         return data.get(7);
     }
 
+    public int getTransferRate() {
+        return data.get(8);
+    }
+
+    public int getCurrentChargeRate() {
+        return data.get(9);
+    }
+
+    public int getChargeSedimentProgress() {
+        return data.get(10);
+    }
+
+    public int getChargeSedimentTarget() {
+        return data.get(11);
+    }
+
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
@@ -240,15 +289,15 @@ public class PrecipitateGeneratorMenu extends AbstractContainerMenu {
         if (slot.hasItem()) {
             ItemStack stack = slot.getItem();
             itemstack = stack.copy();
-            if (index < 2) {
-                if (!moveItemStackTo(stack, 2, slots.size(), true)) {
+            if (index < 3) {
+                if (!moveItemStackTo(stack, 3, slots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
             } else if (SockDataUtil.isGeneratorSock(stack)) {
                 if (!moveItemStackTo(stack, 0, 1, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!moveItemStackTo(stack, 1, 2, false)) {
+            } else if (!moveItemStackTo(stack, 2, 3, false)) {
                 return ItemStack.EMPTY;
             }
 

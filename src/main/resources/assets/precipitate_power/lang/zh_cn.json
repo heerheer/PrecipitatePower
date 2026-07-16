@@ -114,5 +114,22 @@
   "advancement.precipitate_power.sniffer_sock.description": "通过嗅探兽毛混纺袜获得一枚千古乐事种子",
   "message.precipitate_power.original_scent_merged": "%s 已经与 %s 融为一体了！",
   "message.precipitate_power.sniffer_fur_seed_found": "你的袜子嗅到了什么东西...",
-  "message.precipitate_power.datou_original_scent_player_drop": "你闻到了一些刺鼻的味道...."
+  "message.precipitate_power.datou_original_scent_player_drop": "你闻到了一些刺鼻的味道....",
+  "item.precipitate_power.small_electric_sock": "小容量电力袜",
+  "item.precipitate_power.medium_electric_sock": "中容量电力袜",
+  "item.precipitate_power.large_electric_sock": "大容量电力袜",
+  "gui.precipitate_power.charge_rate": "当前充电：%s / %s FE/t",
+  "gui.precipitate_power.charge_sediment": "充电沉淀：%s / %s FE",
+  "gui.precipitate_power.electric_sock.energy": "能量：%s / %s FE",
+  "gui.precipitate_power.electric_sock.output": "最大输出：%s FE/t",
+  "tooltip.precipitate_power.electric_sock.energy": "储能：%s / %s FE",
+  "tooltip.precipitate_power.electric_sock.transfer": "最大传输：%s FE/t",
+  "tooltip.precipitate_power.electric_sock.open": "右键打开内部容器，为其中的物品充电",
+  "precipitate_power.configuration.generatorTransferRate": "发电机充电槽传输上限",
+  "precipitate_power.configuration.small_capacity": "小容量电力袜容量",
+  "precipitate_power.configuration.small_transfer_rate": "小容量电力袜传输上限",
+  "precipitate_power.configuration.medium_capacity": "中容量电力袜容量",
+  "precipitate_power.configuration.medium_transfer_rate": "中容量电力袜传输上限",
+  "precipitate_power.configuration.large_capacity": "大容量电力袜容量",
+  "precipitate_power.configuration.large_transfer_rate": "大容量电力袜传输上限"
 }

@@ -31,24 +31,34 @@ import top.realme.mc.precipitate_power.item.GeneratorTickResult;
 import top.realme.mc.precipitate_power.menu.PrecipitateGeneratorMenu;
 import top.realme.mc.precipitate_power.registry.ModItems;
 import top.realme.mc.precipitate_power.util.SockDataUtil;
+import top.realme.mc.precipitate_power.util.EnergyTransferUtil;
 
 public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer {
     protected static final int INPUT_SLOT = 0;
     protected static final int OUTPUT_SLOT = 1;
+    protected static final int CHARGE_SLOT = 2;
     private static final String EXTRA_MAX_EXTRACT_TAG = "ExtraMaxExtract";
     private static final String EXTRA_CAPACITY_TAG = "ExtraCapacity";
+    private static final String CHARGE_SEDIMENT_ENERGY_TAG = "ChargeSedimentEnergy";
+    private static final int CHARGE_SEDIMENT_STEP_ENERGY = 10_000;
+    private static final int CHARGE_SEDIMENT_RATE_BONUS = 100;
+    private static final int MAX_CHARGE_TRANSFER_RATE = 1_000_000;
+    private static final long MAX_CHARGE_SEDIMENT_ENERGY =
+            (long) MAX_CHARGE_TRANSFER_RATE / CHARGE_SEDIMENT_RATE_BONUS * CHARGE_SEDIMENT_STEP_ENERGY;
 
     private static final int[] TOP_SLOTS = new int[]{INPUT_SLOT};
     private static final int[] BOTTOM_SLOTS = new int[]{OUTPUT_SLOT};
     private static final int[] NO_SLOTS = new int[0];
 
-    private final NonNullList<ItemStack> items = NonNullList.withSize(2, ItemStack.EMPTY);
+    private final NonNullList<ItemStack> items = NonNullList.withSize(3, ItemStack.EMPTY);
     private final GeneratorEnergyStorage energyStorage = new GeneratorEnergyStorage();
     private final InvWrapper internalItemHandler = new InvWrapper(this);
     private final SidedInvWrapper upwardItemHandler = new SidedInvWrapper(this, Direction.UP);
     private final SidedInvWrapper downwardItemHandler = new SidedInvWrapper(this, Direction.DOWN);
     private int extraMaxExtract;
     private int extraCapacity;
+    private int lastChargeRate;
+    private long chargeSedimentEnergy;
 
     private final ContainerData data = new ContainerData() {
         @Override
@@ -62,6 +72,10 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
                 case 5 -> getWaterCapacity();
                 case 6 -> getMaxExtract();
                 case 7 -> extraMaxExtract;
+                case 8 -> getChargeTransferRate();
+                case 9 -> lastChargeRate;
+                case 10 -> getChargeSedimentProgress();
+                case 11 -> CHARGE_SEDIMENT_STEP_ENERGY;
                 default -> 0;
             };
         }
@@ -75,7 +89,7 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
 
         @Override
         public int getCount() {
-            return 8;
+            return 12;
         }
     };
 
@@ -89,7 +103,46 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
             GeneratorTickResult result = sockItem.tickInGenerator(new GeneratorTickContext(serverLevel, this, stack));
             applyGeneratorTickResult(stack, result);
         }
+        chargeSlottedItem();
         pushEnergyToNeighbors();
+    }
+
+    private void chargeSlottedItem() {
+        lastChargeRate = 0;
+        ItemStack target = items.get(CHARGE_SLOT);
+        int available = Math.min(energyStorage.getEnergyStored(), getChargeTransferRate());
+        if (target.isEmpty() || available <= 0) {
+            return;
+        }
+
+        int accepted = EnergyTransferUtil.chargeItemStack(target, available);
+        if (accepted > 0) {
+            energyStorage.extractForCharging(accepted);
+            lastChargeRate = accepted;
+            addChargeSediment(accepted);
+            setChanged();
+        }
+    }
+
+    public int getChargeTransferRate() {
+        long sedimentLevels = chargeSedimentEnergy / CHARGE_SEDIMENT_STEP_ENERGY;
+        long transferRate = (long) Config.GENERATOR_TRANSFER_RATE.get()
+                + sedimentLevels * CHARGE_SEDIMENT_RATE_BONUS;
+        return (int) Math.min(MAX_CHARGE_TRANSFER_RATE, Math.max(0L, transferRate));
+    }
+
+    private int getChargeSedimentProgress() {
+        if (getChargeTransferRate() >= MAX_CHARGE_TRANSFER_RATE) {
+            return CHARGE_SEDIMENT_STEP_ENERGY;
+        }
+        return (int) (chargeSedimentEnergy % CHARGE_SEDIMENT_STEP_ENERGY);
+    }
+
+    private void addChargeSediment(int chargedEnergy) {
+        if (chargedEnergy <= 0 || getChargeTransferRate() >= MAX_CHARGE_TRANSFER_RATE) {
+            return;
+        }
+        chargeSedimentEnergy = Math.min(MAX_CHARGE_SEDIMENT_ENERGY, chargeSedimentEnergy + chargedEnergy);
     }
 
     private void applyGeneratorTickResult(ItemStack originalStack, GeneratorTickResult result) {
@@ -317,7 +370,13 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
 
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
-        return slot == INPUT_SLOT && SockDataUtil.isGeneratorSock(stack);
+        if (slot == INPUT_SLOT) {
+            return SockDataUtil.isGeneratorSock(stack);
+        }
+        if (slot == CHARGE_SLOT) {
+            return !stack.isEmpty();
+        }
+        return false;
     }
 
     @Override
@@ -331,6 +390,7 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
         ContainerHelper.loadAllItems(tag, items, registries);
         extraMaxExtract = Math.max(0, tag.getInt(EXTRA_MAX_EXTRACT_TAG));
         extraCapacity = Math.max(0, tag.getInt(EXTRA_CAPACITY_TAG));
+        chargeSedimentEnergy = Math.max(0L, Math.min(MAX_CHARGE_SEDIMENT_ENERGY, tag.getLong(CHARGE_SEDIMENT_ENERGY_TAG)));
         energyStorage.setEnergy(tag.getInt("Energy"));
         loadGeneratorData(tag, registries);
     }
@@ -342,6 +402,7 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
         tag.putInt("Energy", energyStorage.getEnergyStored());
         tag.putInt(EXTRA_MAX_EXTRACT_TAG, extraMaxExtract);
         tag.putInt(EXTRA_CAPACITY_TAG, extraCapacity);
+        tag.putLong(CHARGE_SEDIMENT_ENERGY_TAG, chargeSedimentEnergy);
         saveGeneratorData(tag, registries);
     }
 
@@ -415,6 +476,12 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
             int accepted = Math.min(getMaxEnergyStored() - this.energy, amount);
             this.energy += accepted;
             return accepted;
+        }
+
+        private int extractForCharging(int amount) {
+            int extracted = Math.min(this.energy, Math.max(0, amount));
+            this.energy -= extracted;
+            return extracted;
         }
     }
 }

@@ -114,5 +114,22 @@
   "advancement.precipitate_power.sniffer_sock.description": "Obtain an Immortalers Delight seed through a Sniffer Fur-blended sock",
   "message.precipitate_power.original_scent_merged": "%s has become one with %s!",
   "message.precipitate_power.sniffer_fur_seed_found": "Your socks sniffed out something...",
-  "message.precipitate_power.datou_original_scent_player_drop": "You smell something pungent..."
+  "message.precipitate_power.datou_original_scent_player_drop": "You smell something pungent...",
+  "item.precipitate_power.small_electric_sock": "Small Electric Sock",
+  "item.precipitate_power.medium_electric_sock": "Medium Electric Sock",
+  "item.precipitate_power.large_electric_sock": "Large Electric Sock",
+  "gui.precipitate_power.charge_rate": "Charging: %s / %s FE/t",
+  "gui.precipitate_power.charge_sediment": "Charge Sediment: %s / %s FE",
+  "gui.precipitate_power.electric_sock.energy": "Energy: %s / %s FE",
+  "gui.precipitate_power.electric_sock.output": "Max Output: %s FE/t",
+  "tooltip.precipitate_power.electric_sock.energy": "Stored: %s / %s FE",
+  "tooltip.precipitate_power.electric_sock.transfer": "Max Transfer: %s FE/t",
+  "tooltip.precipitate_power.electric_sock.open": "Right-click to open its two-slot charging container",
+  "precipitate_power.configuration.generatorTransferRate": "Generator Charging Slot Transfer Rate",
+  "precipitate_power.configuration.small_capacity": "Small Electric Sock Capacity",
+  "precipitate_power.configuration.small_transfer_rate": "Small Electric Sock Transfer Rate",
+  "precipitate_power.configuration.medium_capacity": "Medium Electric Sock Capacity",
+  "precipitate_power.configuration.medium_transfer_rate": "Medium Electric Sock Transfer Rate",
+  "precipitate_power.configuration.large_capacity": "Large Electric Sock Capacity",
+  "precipitate_power.configuration.large_transfer_rate": "Large Electric Sock Transfer Rate"
 }

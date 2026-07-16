@@ -8,6 +8,7 @@
 - 发电机本体只负责调度，袜子物品自己决定每 tick 做什么
 - 袜子实例可以带材质混纺数据，并影响穿戴属性与发电行为
 - 部分彩蛋袜不可穿戴、不发电，但可借由特殊交互触发独立玩法
+- 电力袜作为独立便携 FE 设备存在，不继承普通袜子基类，也不进入普通袜子标签、穿戴、沉淀或战利品链路
 
 当前项目已经具备完整的内容链路与资源结构：
 
@@ -17,12 +18,14 @@
 - 材质系统已接入常规袜子
 - Curios、战利品注入、成就、药水效果、中英文资源文件均已补齐
 - 腐生原味、昭昭原味、大头原味三条彩蛋支线已开始实现，其中昭昭/腐生/大头都已有独立物品和 tooltip 体系
+- 小/中/大三档电力袜已注册，均可保存 FE 与两个内部物品槽，并在右键打开的 LDLib2 界面中为槽内物品充电
 
 目前玩法上已经形成三条主线：
 
 1. **常规袜子发电线**：通过不同袜子和材质混纺投入发电机获取 FE，并经历沉淀、污渍、耐久等消耗过程。
 2. **穿戴属性线**：通过 Curios 的 `sock` 槽位装备袜子，获得材质与特殊袜子的属性收益或惩罚。
 3. **彩蛋袜交互线**：通过原味袜子与发电机、作物、生物、村民、玩家等交互，触发独立的特殊机制与成就。
+4. **便携充电线**：发电机通过独立充电槽向任意可接收 FE 的物品供能，电力袜再把储存的 FE 分配给两个内部物品。
 
 ## Current Project State
 
@@ -34,6 +37,7 @@
   - 袜子物品
   - 方块实体
   - 菜单与界面
+  - 自定义 Data Component 与升级配方序列化器
   - 全局战利品修改器序列化器
   - 创造标签页
   - 药水效果
@@ -65,9 +69,11 @@
   - `AdvancedPrecipitateGeneratorBlockEntity`
 
 - 发电机共用基类目前负责：
-  - 输入槽/输出槽管理
+  - 袜子输入槽、产物输出槽和独立充电槽管理
   - FE 存储
   - 向四周水平自动出能
+  - 按配置上限向充电槽物品传输 FE，并严格按目标实际接收量扣能
+  - 累计充电沉淀：每实际输出 10,000 FE，充电上限永久增加 100 FE/t，总上限为 1,000,000 FE/t
   - 通用机器状态持久化
   - 将输入物品识别为 `AbstractSockItem` 后，调用其 `tickInGenerator(...)`
 
@@ -81,6 +87,21 @@
   - 无需流体输入
   - 支持普通袜发电
   - 自动向四周水平输出 FE
+  - 充电槽通过 `Capabilities.EnergyStorage.ITEM` 判断兼容性，默认传输上限为 100 FE/t
+  - 充电沉淀进度与动态充电上限会持久化，并同步显示在 LDLib2 发电机界面
+
+### 3.1 Electric Socks
+
+- `small_electric_sock`、`medium_electric_sock`、`large_electric_sock` 是三种独立物品 ID，共享 `ElectricSockItem` 实现。
+- 三档默认容量/输出分别为 `10,000/100`、`50,000/250`、`200,000/500` FE/FE-t，全部可在通用配置中调整。
+- 能量保存在 `electric_sock_energy` Data Component，两个内部槽保存在 `electric_sock_inventory` Data Component。
+- 电力袜只注册 FE 物品能力，不注册对自动化开放的物品容器能力；内部槽只能通过持有物品 UI 操作。
+- UI 打开时才执行内部充电。两个可充电目标共享单 tick 输出预算，先公平分配，再把接收不了的剩余额度让给另一个目标。
+- 电力袜内部充电挂在 LDLib2 服务端 tick 监听器上；普通客户端 `UIEvents.TICK` 只用于视觉更新，不能修改能量数据。
+- 内部槽允许普通不可充电物品，但禁止嵌套电力袜；不可充电物品不会消耗能量。
+- 内部占用 0/1/2 格时通过 `CustomModelData` 使用瘪、鼓起、满载三种模型状态。
+- 小/中/大三档各自拥有独立的 16×16 像素材质；每档的瘪、鼓起、满载状态均引用对应专用贴图，不再复用普通袜子素材。
+- 中/大档升级使用自定义有序配方：仅内部为空时可升级，并通过 `ItemStack.transmuteCopy(...)` 保留原电量与组件数据。
 
 - 高级沉淀发电机当前特性：
   - 需要水作为额外资源
@@ -362,6 +383,23 @@
 
 - `src/main/java/top/realme/mc/precipitate_power/item/GeneratorTickResult.java`
   - 袜子发电机 tick 结果对象。 
+
+- `src/main/java/top/realme/mc/precipitate_power/util/EnergyTransferUtil.java`
+  - 发电机与电力袜共用的 FE 物品能力检测和实际传输工具。
+
+### Electric Socks
+
+- `src/main/java/top/realme/mc/precipitate_power/item/ElectricSockItem.java`
+  - 三档电力袜共用物品实现、持有物品 UI 入口、组件化内部容器与模型状态。
+
+- `src/main/java/top/realme/mc/precipitate_power/menu/ElectricSockMenu.java`
+  - LDLib2 双槽界面与共享功率充电调度。
+
+- `src/main/java/top/realme/mc/precipitate_power/registry/ModDataComponents.java`
+  - 电力袜能量和内部物品数据组件注册。
+
+- `src/main/java/top/realme/mc/precipitate_power/recipe/ElectricSockUpgradeRecipe.java`
+  - 保留能量、拒绝非空内部容器的中/大档升级配方。
 
 ### Sock Items And Data
 

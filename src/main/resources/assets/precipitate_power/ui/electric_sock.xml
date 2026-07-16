@@ -1,0 +1,98 @@
+<ldlib2-ui>
+  <style>
+    #electric-sock-root {
+      width: 176;
+      height: 190;
+      background: #ff1e2026;
+    }
+
+    #device-panel {
+      position: absolute;
+      left: 6;
+      top: 16;
+      width: 164;
+      height: 78;
+      background: #ff2a2d36;
+    }
+
+    #title-label, #energy-label, #output-label {
+      position: absolute;
+      left: 9;
+      text-color: #ffe8edf7;
+      text-shadow: true;
+    }
+
+    #title-label { top: 6; }
+    #energy-label { top: 21; }
+    #output-label { top: 33; }
+
+    #energy-meter {
+      position: absolute;
+      left: 8;
+      top: 48;
+      width: 160;
+      height: 9;
+      padding-all: 1;
+      overflow: hidden;
+      background: #ff16181d;
+    }
+
+    #energy-fill {
+      width: 0;
+      height: 100%;
+      background: #ff46a8e8;
+    }
+
+    #energy-bar { display: none; }
+
+    #slot-panel-1, #slot-panel-2 {
+      position: absolute;
+      top: 60;
+      width: 18;
+      height: 18;
+      background: #ff4b5160;
+    }
+
+    #slot-panel-1 { left: 61; }
+    #slot-panel-2 { left: 97; }
+
+    #internal-slot-1, #internal-slot-2 {
+      position: absolute;
+      top: 60;
+      slot-overlay: #4421262d;
+      hover-overlay: #66ffffff;
+    }
+
+    #internal-slot-1 { left: 61; }
+    #internal-slot-2 { left: 97; }
+
+    #player-inventory {
+      position: absolute;
+      left: 7;
+      top: 106;
+      gap-row: 0;
+      gap-column: 0;
+    }
+
+    #player-inventory .__inventory_hotbar__ { margin-top: 4; }
+    #player-inventory item-slot {
+      slot-overlay: #33181c22;
+      hover-overlay: #66ffffff;
+    }
+  </style>
+  <root id="electric-sock-root">
+    <element id="device-panel"/>
+    <label id="title-label">Electric Sock</label>
+    <label id="energy-label">Energy</label>
+    <label id="output-label">Output</label>
+    <element id="energy-meter">
+      <element id="energy-fill"/>
+      <progress-bar id="energy-bar" min-value="0" max-value="1" value="0" text=""/>
+    </element>
+    <element id="slot-panel-1"/>
+    <element id="slot-panel-2"/>
+    <item-slot id="internal-slot-1"/>
+    <item-slot id="internal-slot-2"/>
+    <inventory-slots id="player-inventory"/>
+  </root>
+</ldlib2-ui>

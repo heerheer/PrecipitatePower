@@ -12,12 +12,16 @@ import top.realme.mc.precipitate_power.PrecipitatePower;
 import top.realme.mc.precipitate_power.item.BasicStyledSockItem;
 import top.realme.mc.precipitate_power.item.BoatSockItem;
 import top.realme.mc.precipitate_power.item.DatouOriginalScentItem;
+import top.realme.mc.precipitate_power.item.ElectricSockItem;
 import top.realme.mc.precipitate_power.item.FushengOriginalScentItem;
 import top.realme.mc.precipitate_power.item.OriginalScentItem;
 import top.realme.mc.precipitate_power.item.RainbowWhiteSockItem;
 import top.realme.mc.precipitate_power.item.TravelDisposableSockItem;
 import top.realme.mc.precipitate_power.item.WhiteSockItem;
 import top.realme.mc.precipitate_power.item.ZhaozhaoOriginalScentItem;
+import top.realme.mc.precipitate_power.Config;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
 public final class ModItems {
     public static final DeferredRegister.Items REGISTER = DeferredRegister.createItems(PrecipitatePower.MODID);
@@ -98,6 +102,33 @@ public final class ModItems {
                     List.of()
             )))
     );
+
+    public static final DeferredItem<Item> SMALL_ELECTRIC_SOCK = REGISTER.register(
+            "small_electric_sock",
+            () -> new ElectricSockItem(new Item.Properties().stacksTo(1),
+                    Config.SMALL_ELECTRIC_SOCK_CAPACITY::get,
+                    Config.SMALL_ELECTRIC_SOCK_TRANSFER_RATE::get)
+    );
+
+    public static final DeferredItem<Item> MEDIUM_ELECTRIC_SOCK = REGISTER.register(
+            "medium_electric_sock",
+            () -> new ElectricSockItem(new Item.Properties().stacksTo(1),
+                    Config.MEDIUM_ELECTRIC_SOCK_CAPACITY::get,
+                    Config.MEDIUM_ELECTRIC_SOCK_TRANSFER_RATE::get)
+    );
+
+    public static final DeferredItem<Item> LARGE_ELECTRIC_SOCK = REGISTER.register(
+            "large_electric_sock",
+            () -> new ElectricSockItem(new Item.Properties().stacksTo(1),
+                    Config.LARGE_ELECTRIC_SOCK_CAPACITY::get,
+                    Config.LARGE_ELECTRIC_SOCK_TRANSFER_RATE::get)
+    );
+
+    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerItem(Capabilities.EnergyStorage.ITEM,
+                (stack, context) -> ((ElectricSockItem) stack.getItem()).createEnergyStorage(stack),
+                SMALL_ELECTRIC_SOCK.get(), MEDIUM_ELECTRIC_SOCK.get(), LARGE_ELECTRIC_SOCK.get());
+    }
 
     private ModItems() {
     }

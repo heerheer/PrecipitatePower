@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SWS",
+    "WCW",
+    "SWS"
+  ],
+  "key": {
+    "S": { "item": "minecraft:string" },
+    "W": { "tag": "minecraft:wool" },
+    "C": { "item": "minecraft:diamond_block" }
+  },
+  "result": {
+    "id": "precipitate_power:large_electric_sock",
+    "count": 1
+  }
+}

@@ -22,9 +22,11 @@ import top.realme.mc.precipitate_power.event.ModEvents;
 import top.realme.mc.precipitate_power.registry.ModBlockEntities;
 import top.realme.mc.precipitate_power.registry.ModBlocks;
 import top.realme.mc.precipitate_power.registry.ModEffects;
+import top.realme.mc.precipitate_power.registry.ModDataComponents;
 import top.realme.mc.precipitate_power.registry.ModItems;
 import top.realme.mc.precipitate_power.registry.ModLootModifiers;
 import top.realme.mc.precipitate_power.registry.ModMenus;
+import top.realme.mc.precipitate_power.registry.ModRecipes;
 
 @Mod(PrecipitatePower.MODID)
 public class PrecipitatePower {
@@ -55,6 +57,9 @@ public class PrecipitatePower {
                         output.accept(ModItems.DATOU_ORIGINAL_SCENT.get());
                         output.accept(ModItems.DIRTY_WHITE_SOCK.get());
                         output.accept(ModItems.STIR_FRIED_SOCK.get());
+                        output.accept(ModItems.SMALL_ELECTRIC_SOCK.get());
+                        output.accept(ModItems.MEDIUM_ELECTRIC_SOCK.get());
+                        output.accept(ModItems.LARGE_ELECTRIC_SOCK.get());
                         if (ModList.get().isLoaded(KaleidoscopeTavernCompat.MOD_ID)) {
                             output.accept(KaleidoscopeTavernCompat.createMaxQualityStack());
                         }
@@ -67,12 +72,14 @@ public class PrecipitatePower {
     );
 
     public PrecipitatePower(IEventBus modEventBus, ModContainer modContainer) {
+        ModDataComponents.REGISTER.register(modEventBus);
         ModBlocks.REGISTER.register(modEventBus);
         ModItems.REGISTER.register(modEventBus);
         ModBlockEntities.REGISTER.register(modEventBus);
         ModMenus.REGISTER.register(modEventBus);
         ModLootModifiers.REGISTER.register(modEventBus);
         ModEffects.REGISTER.register(modEventBus);
+        ModRecipes.REGISTER.register(modEventBus);
         CREATIVE_TABS.register(modEventBus);
 
         if (ModList.get().isLoaded(KaleidoscopeTavernCompat.MOD_ID)) {
@@ -82,6 +89,7 @@ public class PrecipitatePower {
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::addCreative);
         modEventBus.addListener(ModBlocks::registerCapabilities); // 只能在这边注册cap
+        modEventBus.addListener(ModItems::registerCapabilities);
 
         if (ModList.get().isLoaded("curios")) {
             modEventBus.addListener(CuriosCompat::onCommonSetup);
