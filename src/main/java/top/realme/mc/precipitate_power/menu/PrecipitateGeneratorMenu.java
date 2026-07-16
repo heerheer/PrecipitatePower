@@ -10,9 +10,10 @@ import com.lowdragmc.lowdraglib2.gui.ui.elements.Label;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.ProgressBar;
 import com.lowdragmc.lowdraglib2.gui.ui.event.UIEvents;
 import com.lowdragmc.lowdraglib2.utils.XmlUtils;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -28,7 +29,7 @@ import top.realme.mc.precipitate_power.registry.ModMenus;
 import top.realme.mc.precipitate_power.util.SockDataUtil;
 
 public class PrecipitateGeneratorMenu extends AbstractContainerMenu {
-    private static final ResourceLocation GENERATOR_UI_XML = ResourceLocation.fromNamespaceAndPath("ldlib2", "ui/precipitate_generator.xml");
+    private static final String GENERATOR_UI_RESOURCE = "/assets/precipitate_power/ui/precipitate_generator.xml";
 
     private final Container container;
     private final ContainerData data;
@@ -119,7 +120,7 @@ public class PrecipitateGeneratorMenu extends AbstractContainerMenu {
                                       java.util.function.Supplier<Integer> maxWaterStored,
                                       java.util.function.Supplier<Integer> precipitationLevel,
                                       java.util.function.Supplier<Integer> dirtyCount) {
-        UI ui = UI.of(XmlUtils.loadXml(GENERATOR_UI_XML));
+        UI ui = loadGeneratorUI();
 
         bindItemSlot(ui, "machine-input-slot", inputSlot);
         bindItemSlot(ui, "machine-output-slot", outputSlot);
@@ -149,6 +150,21 @@ public class PrecipitateGeneratorMenu extends AbstractContainerMenu {
                 () -> Component.translatable("gui.precipitate_power.water", waterStored.get(), maxWaterStored.get()));
 
         return ModularUI.of(ui, player);
+    }
+
+    private static UI loadGeneratorUI() {
+        try (var stream = PrecipitateGeneratorMenu.class.getResourceAsStream(GENERATOR_UI_RESOURCE)) {
+            if (stream == null) {
+                throw new IllegalStateException("Missing generator UI XML: " + GENERATOR_UI_RESOURCE);
+            }
+            var document = XmlUtils.loadXml(stream);
+            if (document == null) {
+                throw new IllegalStateException("Invalid generator UI XML: " + GENERATOR_UI_RESOURCE);
+            }
+            return UI.of(document);
+        } catch (IOException exception) {
+            throw new UncheckedIOException("Failed to load generator UI XML: " + GENERATOR_UI_RESOURCE, exception);
+        }
     }
 
     private static void bindItemSlot(UI ui, String id, Slot slot) {
