@@ -10,13 +10,16 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import top.realme.mc.precipitate_power.registry.ModAdvancements;
 import top.realme.mc.precipitate_power.registry.ModEffects;
 
 public class ZhaozhaoOriginalScentItem extends OriginalScentItem {
     private static final int COOLDOWN_TICKS = 20 * 120;
+    private static final int EAT_DURATION_TICKS = 32;
 
     public ZhaozhaoOriginalScentItem(Properties properties) {
         super(properties, "tooltip.precipitate_power.zhaozhao_original_scent", "Research_King");
@@ -55,6 +58,25 @@ public class ZhaozhaoOriginalScentItem extends OriginalScentItem {
             return InteractionResultHolder.fail(stack);
         }
 
+        return ItemUtils.startUsingInstantly(level, player, hand);
+    }
+
+    @Override
+    public int getUseDuration(ItemStack stack, LivingEntity entity) {
+        return EAT_DURATION_TICKS;
+    }
+
+    @Override
+    public UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.EAT;
+    }
+
+    @Override
+    public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity livingEntity) {
+        if (!(livingEntity instanceof Player player)) {
+            return stack;
+        }
+
         if (!level.isClientSide) {
             player.getCooldowns().addCooldown(this, COOLDOWN_TICKS);
             player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 8 * 20, 1));
@@ -62,13 +84,13 @@ public class ZhaozhaoOriginalScentItem extends OriginalScentItem {
             player.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 15 * 20, 0));
             player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 23 * 20, 4));
             player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 30 * 20, 1));
-            player.playSound(SoundEvents.GENERIC_DRINK, 1.0F, 0.8F);
+            player.playSound(SoundEvents.GENERIC_EAT, 1.0F, 0.8F);
             if (player instanceof ServerPlayer serverPlayer) {
                 ModAdvancements.grant(serverPlayer, ModAdvancements.THE_REAL_TASTE);
             }
         }
 
         player.awardStat(Stats.ITEM_USED.get(this));
-        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+        return stack;
     }
 }
