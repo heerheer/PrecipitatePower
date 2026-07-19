@@ -3,16 +3,25 @@ package top.realme.mc.precipitate_power.event;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.damagesource.DamageSource;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
@@ -25,6 +34,8 @@ import top.realme.mc.precipitate_power.PrecipitatePower;
 import top.realme.mc.precipitate_power.compat.curios.CuriosCompat;
 import top.realme.mc.precipitate_power.compat.immortalersdelight.ImmortalersDelightCompat;
 import top.realme.mc.precipitate_power.item.FushengOriginalScentItem;
+import top.realme.mc.precipitate_power.item.ChesedOriginalScentItem;
+import top.realme.mc.precipitate_power.item.ChesedSockData;
 import top.realme.mc.precipitate_power.item.OriginalScentItem;
 import top.realme.mc.precipitate_power.item.SockMaterial;
 import top.realme.mc.precipitate_power.registry.ModAdvancements;
@@ -34,12 +45,160 @@ import top.realme.mc.precipitate_power.util.SockDataUtil;
 
 @EventBusSubscriber(modid = PrecipitatePower.MODID)
 public final class ModEvents {
+    private static final ThreadLocal<Boolean> APPLYING_CHESED_ADDITIONAL_DAMAGE = ThreadLocal.withInitial(() -> false);
+    private static final double CHESED_STATE_SWITCH_CHANCE = 0.20D;
+    private static final double CHESED_CHEESE_GENERATION_CHANCE = 0.20D;
+    private static final ResourceLocation CHESED_ABSORPTION_CAPACITY_ID =
+            ResourceLocation.fromNamespaceAndPath(PrecipitatePower.MODID, "chesed_absorption_capacity");
     private static final String LEGACY_TAG_SNIFFER_FUR_DISTANCE = "PrecipitatePowerSnifferFurDistance";
     private static final String TAG_SNIFFER_FUR_LAST_X = "PrecipitatePowerSnifferFurLastX";
     private static final String TAG_SNIFFER_FUR_LAST_Z = "PrecipitatePowerSnifferFurLastZ";
     private static final double MAX_SNIFFER_FUR_DISTANCE_PER_TICK = 2.0D;
 
     private ModEvents() {
+    }
+
+    @SubscribeEvent
+    public static void onChesedCheeseUse(PlayerInteractEvent.RightClickItem event) {
+        Player player = event.getEntity();
+        ItemStack used = player.getItemInHand(event.getHand());
+        InteractionHand sockHand = event.getHand() == InteractionHand.MAIN_HAND
+                ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+        ItemStack sock = player.getItemInHand(sockHand);
+        if (!used.is(ChesedOriginalScentItem.CHEESE_TAG)
+                || !(sock.getItem() instanceof ChesedOriginalScentItem chesed)
+                || player.getCooldowns().isOnCooldown(chesed)
+                || !ChesedOriginalScentItem.getData(sock).canFeed()) {
+            return;
+        }
+        if (!chesed.tryStartFeeding(player, sockHand)) {
+            return;
+        }
+        event.setCancellationResult(InteractionResult.SUCCESS);
+        event.setCanceled(true);
+    }
+
+    @SubscribeEvent
+    public static void onChesedIncomingDamage(LivingIncomingDamageEvent event) {
+        LivingEntity target = event.getEntity();
+        if (target instanceof Player player) {
+            ItemStack held = findChesed(player, false);
+            if (!held.isEmpty() && ChesedOriginalScentItem.getData(held).state() == ChesedSockData.State.SIDE) {
+                player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 60, 0, false, true, true));
+            }
+        }
+
+        if (!(event.getSource().getEntity() instanceof Player attacker)
+                || event.getSource().getDirectEntity() != attacker) {
+            return;
+        }
+        ItemStack held = findChesed(attacker, true);
+        if (held.isEmpty()) {
+            return;
+        }
+        ChesedSockData data = ChesedOriginalScentItem.getData(held);
+        if (data.damagePercent() > 0) {
+            event.setAmount(event.getAmount() * (1.0F + data.damagePercent() / 100.0F));
+        }
+    }
+
+    @SubscribeEvent
+    public static void onChesedDamagePost(LivingDamageEvent.Post event) {
+        if (!APPLYING_CHESED_ADDITIONAL_DAMAGE.get()
+                && event.getNewDamage() > 0.0F
+                && event.getSource().getEntity() != null
+                && event.getEntity() instanceof Player damagedPlayer
+                && !damagedPlayer.level().isClientSide()) {
+            ItemStack damagedPlayerSock = findChesed(damagedPlayer, false);
+            if (!damagedPlayerSock.isEmpty()
+                    && ChesedOriginalScentItem.getData(damagedPlayerSock).state()
+                    == ChesedSockData.State.HALF_ONE_DO_ZERO
+                    && damagedPlayer.getRandom().nextDouble() < CHESED_CHEESE_GENERATION_CHANCE) {
+                grantChesedCheese(damagedPlayer);
+            }
+        }
+
+        if (!(event.getSource().getEntity() instanceof Player attacker)
+                || event.getSource().getDirectEntity() != attacker) {
+            return;
+        }
+        ItemStack held = findChesed(attacker, true);
+        if (held.isEmpty()) {
+            return;
+        }
+        ChesedSockData data = ChesedOriginalScentItem.getData(held);
+        if (data.state() == ChesedSockData.State.GATE) {
+            float absorptionBefore = attacker.getAbsorptionAmount();
+            float absorptionGained = event.getNewDamage() * 0.05F;
+            float targetAbsorption = absorptionBefore + absorptionGained;
+            ensureChesedAbsorptionCapacity(attacker, targetAbsorption);
+            attacker.setAbsorptionAmount(targetAbsorption);
+        }
+        if (APPLYING_CHESED_ADDITIONAL_DAMAGE.get()) {
+            return;
+        }
+
+        if (data.state() == ChesedSockData.State.HALF_ZERO_DO_ONE
+                && !attacker.level().isClientSide()
+                && attacker.getRandom().nextDouble() < CHESED_CHEESE_GENERATION_CHANCE) {
+            grantChesedCheese(attacker);
+        }
+
+        LivingEntity target = event.getEntity();
+        int extraHits = data.additionalHits();
+        if (data.state() == ChesedSockData.State.BEAR_HOTEL
+                && target.getHealth() + event.getNewDamage() > attacker.getHealth()) {
+            extraHits++;
+        }
+        if (data.additionalDamage() > 0) {
+            for (int i = 0; i < extraHits && target.isAlive(); i++) {
+                try {
+                    APPLYING_CHESED_ADDITIONAL_DAMAGE.set(true);
+                    target.invulnerableTime = 0;
+                    DamageSource source = attacker.damageSources().playerAttack(attacker);
+                    if (target.hurt(source, data.additionalDamage()) && target.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+                        EnchantmentHelper.doPostAttackEffects(serverLevel, target, source);
+                    }
+                } finally {
+                    APPLYING_CHESED_ADDITIONAL_DAMAGE.set(false);
+                }
+            }
+        }
+
+        if (attacker.getRandom().nextDouble() < CHESED_STATE_SWITCH_CHANCE) {
+            ChesedOriginalScentItem.setData(held, data.switchState(attacker.getRandom()));
+        }
+    }
+
+    private static void ensureChesedAbsorptionCapacity(Player player, float targetAbsorption) {
+        AttributeInstance maxAbsorption = player.getAttribute(Attributes.MAX_ABSORPTION);
+        if (maxAbsorption == null || maxAbsorption.getValue() >= targetAbsorption) {
+            return;
+        }
+
+        AttributeModifier existing = maxAbsorption.getModifier(CHESED_ABSORPTION_CAPACITY_ID);
+        double addedCapacity = targetAbsorption - maxAbsorption.getValue();
+        double modifierAmount = addedCapacity + (existing == null ? 0.0D : existing.amount());
+        maxAbsorption.addOrUpdateTransientModifier(new AttributeModifier(
+                CHESED_ABSORPTION_CAPACITY_ID, modifierAmount, AttributeModifier.Operation.ADD_VALUE));
+    }
+
+    private static void grantChesedCheese(Player player) {
+        ItemStack cheese = new ItemStack(ModItems.TEST_CHEESE.get());
+        if (!player.getInventory().add(cheese)) {
+            player.drop(cheese, false);
+        }
+    }
+
+    private static ItemStack findChesed(Player player, boolean mainHandOnly) {
+        ItemStack main = player.getMainHandItem();
+        if (main.getItem() instanceof ChesedOriginalScentItem) {
+            return main;
+        }
+        if (!mainHandOnly && player.getOffhandItem().getItem() instanceof ChesedOriginalScentItem) {
+            return player.getOffhandItem();
+        }
+        return ItemStack.EMPTY;
     }
 
     @SubscribeEvent

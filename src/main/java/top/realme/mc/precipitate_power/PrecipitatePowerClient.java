@@ -8,8 +8,15 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.createmod.ponder.foundation.PonderIndex;
+import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
+import top.realme.mc.precipitate_power.client.ChesedFeedingItemRenderer;
+import top.realme.mc.precipitate_power.client.ChesedUpgradeRenderer;
 import top.realme.mc.precipitate_power.ponder.PrecipitatePowerPonderPlugin;
+import top.realme.mc.precipitate_power.registry.ModEntities;
+import top.realme.mc.precipitate_power.registry.ModItems;
 
 @Mod(value = PrecipitatePower.MODID, dist = Dist.CLIENT)
 @EventBusSubscriber(modid = PrecipitatePower.MODID, value = Dist.CLIENT)
@@ -21,5 +28,18 @@ public class PrecipitatePowerClient {
     @SubscribeEvent
     static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> PonderIndex.addPlugin(new PrecipitatePowerPonderPlugin()));
+    }
+
+    @SubscribeEvent
+    static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(ModEntities.CHESED_UPGRADE.get(), ChesedUpgradeRenderer::new);
+    }
+
+    @SubscribeEvent
+    static void registerClientExtensions(RegisterClientExtensionsEvent event) {
+        event.registerItem(
+                SimpleCustomRenderer.create(ModItems.CHESED_ORIGINAL_SCENT.get(), new ChesedFeedingItemRenderer()),
+                ModItems.CHESED_ORIGINAL_SCENT.get()
+        );
     }
 }

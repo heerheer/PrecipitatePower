@@ -14,6 +14,7 @@ public final class ModAdvancements {
     public static final ResourceLocation PLAYERS_CAN_GENERATE_POWER = ResourceLocation.fromNamespaceAndPath(PrecipitatePower.MODID, "players_can_generate_power");
     public static final ResourceLocation SOCK_FINAL_HOME = ResourceLocation.fromNamespaceAndPath(PrecipitatePower.MODID, "sock_final_home");
     public static final ResourceLocation SNIFFER_SOCK = ResourceLocation.fromNamespaceAndPath(PrecipitatePower.MODID, "sniffer_sock");
+    public static final ResourceLocation CHEESE_DE_DE_DE_ER = ResourceLocation.fromNamespaceAndPath(PrecipitatePower.MODID, "cheese_de_de_de_er");
 
     private ModAdvancements() {
     }

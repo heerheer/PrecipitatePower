@@ -23,6 +23,7 @@ import top.realme.mc.precipitate_power.registry.ModBlockEntities;
 import top.realme.mc.precipitate_power.registry.ModBlocks;
 import top.realme.mc.precipitate_power.registry.ModEffects;
 import top.realme.mc.precipitate_power.registry.ModDataComponents;
+import top.realme.mc.precipitate_power.registry.ModEntities;
 import top.realme.mc.precipitate_power.registry.ModItems;
 import top.realme.mc.precipitate_power.registry.ModLootModifiers;
 import top.realme.mc.precipitate_power.registry.ModMenus;
@@ -55,6 +56,8 @@ public class PrecipitatePower {
                         output.accept(ModItems.ZHAOZHAO_ORIGINAL_SCENT.get());
                         output.accept(ModItems.FUSHENG_ORIGINAL_SCENT.get());
                         output.accept(ModItems.DATOU_ORIGINAL_SCENT.get());
+                        output.accept(ModItems.CHESED_ORIGINAL_SCENT.get());
+                        output.accept(ModItems.TEST_CHEESE.get());
                         output.accept(ModItems.DIRTY_WHITE_SOCK.get());
                         output.accept(ModItems.STIR_FRIED_SOCK.get());
                         output.accept(ModItems.SMALL_ELECTRIC_SOCK.get());
@@ -73,6 +76,7 @@ public class PrecipitatePower {
 
     public PrecipitatePower(IEventBus modEventBus, ModContainer modContainer) {
         ModDataComponents.REGISTER.register(modEventBus);
+        ModEntities.REGISTER.register(modEventBus);
         ModBlocks.REGISTER.register(modEventBus);
         ModItems.REGISTER.register(modEventBus);
         ModBlockEntities.REGISTER.register(modEventBus);
@@ -124,6 +128,8 @@ public class PrecipitatePower {
             event.accept(ModItems.SPLIT_TOE_SOCK.get());
             event.accept(ModItems.STOCKINGS.get());
             event.accept(ModItems.ZHAOZHAO_ORIGINAL_SCENT.get());
+            event.accept(ModItems.CHESED_ORIGINAL_SCENT.get());
+            event.accept(ModItems.TEST_CHEESE.get());
             event.accept(ModItems.DIRTY_WHITE_SOCK.get());
             event.accept(ModItems.STIR_FRIED_SOCK.get());
         }

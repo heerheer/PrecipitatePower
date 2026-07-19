@@ -8,6 +8,7 @@ import net.minecraft.world.item.component.ItemContainerContents;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import top.realme.mc.precipitate_power.PrecipitatePower;
+import top.realme.mc.precipitate_power.item.ChesedSockData;
 
 public final class ModDataComponents {
     public static final DeferredRegister.DataComponents REGISTER =
@@ -20,6 +21,16 @@ public final class ModDataComponents {
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemContainerContents>> ELECTRIC_SOCK_INVENTORY =
             REGISTER.registerComponentType("electric_sock_inventory", builder -> builder
+                    .persistent(ItemContainerContents.CODEC)
+                    .networkSynchronized(ItemContainerContents.STREAM_CODEC));
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ChesedSockData>> CHESED_SOCK_DATA =
+            REGISTER.registerComponentType("chesed_sock_data", builder -> builder
+                    .persistent(ChesedSockData.CODEC)
+                    .networkSynchronized(ByteBufCodecs.fromCodec(ChesedSockData.CODEC)));
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemContainerContents>> CHESED_FEEDING_CHEESE =
+            REGISTER.registerComponentType("chesed_feeding_cheese", builder -> builder
                     .persistent(ItemContainerContents.CODEC)
                     .networkSynchronized(ItemContainerContents.STREAM_CODEC));
 

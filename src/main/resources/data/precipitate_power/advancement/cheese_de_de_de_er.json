@@ -1,0 +1,13 @@
+{
+  "display": {
+    "icon": { "id": "precipitate_power:chesed_original_scent" },
+    "title": { "translate": "advancement.precipitate_power.cheese_de_de_de_er.title" },
+    "description": { "translate": "advancement.precipitate_power.cheese_de_de_de_er.description" },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "minecraft:adventure/root",
+  "criteria": { "unlock": { "trigger": "minecraft:impossible" } }
+}

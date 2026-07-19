@@ -17,10 +17,10 @@
 - 袜子发电逻辑已下沉到物品层
 - 材质系统已接入常规袜子
 - Curios、战利品注入、成就、药水效果、中英文资源文件均已补齐
-- 腐生原味、昭昭原味、大头原味三条彩蛋支线已开始实现，其中昭昭/腐生/大头都已有独立物品和 tooltip 体系
+- 腐生、昭昭、大头与 chesed 四条彩蛋支线均已有独立物品和 tooltip；其中 chesed 原味是一把通过奶酪成长的独立武器，不进入普通袜子发电/穿戴体系
 - 小/中/大三档电力袜已注册，均可保存 FE 与两个内部物品槽，并在右键打开的 LDLib2 界面中为槽内物品充电
 
-目前玩法上已经形成三条主线：
+目前玩法上已经形成四条主线：
 
 1. **常规袜子发电线**：通过不同袜子和材质混纺投入发电机获取 FE，并经历沉淀、污渍、耐久等消耗过程。
 2. **穿戴属性线**：通过 Curios 的 `sock` 槽位装备袜子，获得材质与特殊袜子的属性收益或惩罚。
@@ -41,6 +41,7 @@
   - 全局战利品修改器序列化器
   - 创造标签页
   - 药水效果
+  - 自定义实体与客户端渲染器
   - 成就授予辅助
   - 可选兼容逻辑
 
@@ -176,6 +177,8 @@
 - 共享“右键实体/玩家”通用交互入口
 - 各自携带一个对应玩家 ID，可触发“融为一体”彩蛋分支
 
+`chesed_original_scent` 是独立的武器型彩蛋袜，不继承 `OriginalScentItem`，也不参与普通袜子的穿戴、材质或发电链路。
+
 ### 5. Material System
 
 - 材质系统已经落地为**袜子实例数据**，而不是物品 ID 分裂。
@@ -285,6 +288,21 @@
 - 当前已知边界：
   - 村民当前会被提升等级，但**不保证立刻刷新出新层级交易池**。等级变化已经生效，但交易表刷新路径尚未完成额外适配。
 
+#### chesed的原味
+
+- 物品：`chesed_original_scent`
+- 这是一个默认属性为 0、上限 31 级的成长武器，成长数据保存在 `chesed_sock_data` Data Component。
+- 双手分别持有袜子与 `#c:cheese` 奶酪时，长按右键 32 tick 会按 Create 砂纸磨制方式播放摩擦动画、奶酪碎屑和磨制音效；无论奶酪或袜子在哪只手都可触发，成功后有 20 tick 喂食冷却。
+- 开始摩擦时会用单槽 `ItemContainerContents` Data Component 暂存另一只手的整组奶酪（不可直接以可变 `ItemStack` 作为组件值），中途松开原样归还；完整执行后整组一次性消耗并全部计入进度，允许一次跨越多个等级。
+- 从等级 X 升到 X+1 需要 `2^X` 份奶酪；30→31 精确需要 `1,073,741,824` 份。
+- 每次升级按 `0.30/0.30/0.15/0.20/0.05` 权重提升伤害、附加伤害、附加段数、百分比增伤或攻击距离；随机数值上限保持设计值，随等级提高随机下限。
+- 附加伤害按独立伤害段结算，每段享受百分比增伤、护甲/效果结算与攻击附魔后处理，并用递归保护避免附加段再次生成附加段。
+- 武器会在主攻击后以 20% 概率切换到另外一种状态：`0.5之门`、`小熊宾馆欢迎你`、`其实我是side`、`0.5偏0只做1`、`0.5偏1只做0`。
+- `0.5之门`按最终伤害的 5% 增加金色吸收生命；实现会通过 Chesed 专属的临时 `MAX_ABSORPTION` modifier 补足上限，再写入当前吸收值，避免 1.21.1 默认上限为 0 时被截断。
+- `0.5偏0只做1`在主攻击实际造成伤害时有 20% 概率获得 1 个 `test_cheese`；`0.5偏1只做0`在实际受到实体攻击时有 20% 概率获得 1 个 `test_cheese`。附加伤害段不会重复触发，背包已满时芝士掉在玩家脚下。
+- 升级时袜子暂时离开玩家物品栏，生成 `chesed_upgrade` 实体；实体持续锚定在玩家眼睛前方，客户端以相机平面和全亮方式渲染 5-10 个奶酪绕袜子旋转、缩小、融合，最后沿当前视线飞向玩家并将袜子放回背包。
+- 到达 31 级后 tooltip 显示 `Level: (??? / ???) 寰宇·无垠·既定终焉`，并授予成就 `cheese_de_de_de_er`（「起司德德德儿」）。
+
 ### 8. Loot System
 
 - 当前 loot 仍采用 NeoForge Global Loot Modifier。
@@ -312,6 +330,7 @@
   - `power_belongs_to_dt`
   - `players_can_generate_power`
   - `sock_final_home`
+  - `cheese_de_de_de_er`
 
 - 成就采用统一思路：
   - JSON 中使用 `minecraft:impossible`
@@ -323,6 +342,7 @@
   - 腐生原味掉落物持续催熟处理
   - 腐生原味 `ItemTossEvent` owner 绑定
   - 所有原味彩蛋袜的前置实体右键拦截与统一分发
+  - chesed 原味的双手奶酪喂食、百分比伤害、附加伤害段、金色伤害吸收、攻防产出芝士、受击反胃与状态切换
 
 ### 10. Resources And Assets
 
@@ -340,7 +360,7 @@
 - 袜子资源现已包含：
   - 基础白袜、彩虹袜、旅行袜、船袜
   - 五个新款式袜子独立模型和贴图
-  - 三个原味彩蛋袜独立模型与占位贴图
+  - 四个原味彩蛋袜独立模型与占位贴图；chesed 原味当前精确复制普通白袜贴图等待后续重绘
 
 ### 11. Optional Food And Drink Integrations
 
@@ -421,6 +441,18 @@
 - `src/main/java/top/realme/mc/precipitate_power/item/ZhaozhaoOriginalScentItem.java`
   - 昭昭原味实现。 
 
+- `src/main/java/top/realme/mc/precipitate_power/item/ChesedOriginalScentItem.java`
+  - chesed 武器属性、双手奶酪喂食、Shift tooltip 与动态攻击/触及距离属性。
+
+- `src/main/java/top/realme/mc/precipitate_power/item/ChesedSockData.java`
+  - 0-31 级成长曲线、五类加点权重、等级缩放随机数值与三状态数据。
+
+- `src/main/java/top/realme/mc/precipitate_power/entity/ChesedUpgradeEntity.java`
+  - 升级期间托管袜子、同步动画数据并在结束后返还玩家物品栏。
+
+- `src/main/java/top/realme/mc/precipitate_power/client/ChesedUpgradeRenderer.java`
+  - 奶酪旋转缩小、袜子融合与回收动画渲染。
+
 - `src/main/java/top/realme/mc/precipitate_power/item/SockMaterial.java`
   - 材质枚举定义。 
 
@@ -460,6 +492,7 @@
 - `src/main/java/top/realme/mc/precipitate_power/registry/ModBlocks.java`
 - `src/main/java/top/realme/mc/precipitate_power/registry/ModItems.java`
 - `src/main/java/top/realme/mc/precipitate_power/registry/ModBlockEntities.java`
+- `src/main/java/top/realme/mc/precipitate_power/registry/ModEntities.java`
 - `src/main/java/top/realme/mc/precipitate_power/registry/ModMenus.java`
 - `src/main/java/top/realme/mc/precipitate_power/registry/ModLootModifiers.java`
 - `src/main/java/top/realme/mc/precipitate_power/registry/ModEffects.java`
@@ -481,6 +514,8 @@
 - 新增 `LustMobEffect` 与多个 `impossible` 成就 JSON。 
 - 新增森罗厨房联动食物“爆炒袜子”，并建立统一 `precipitate_power:socks` 标签。
 - 新增森罗酒馆可选依赖与“原味精酿”：通过 `#c:sock`、水和酒馆酒桶进行六阶段陈酿。
+- 新增 `chesed_original_scent` 成长武器、奶酪喂食、31 级曲线、五类随机战斗属性、五种战斗状态、升级实体动画与「起司德德德儿」成就。
+- 新增创造测试物品 `test_cheese`，使用原版史莱姆球模型并加入 `#c:cheese`，用于直接测试 chesed 原味喂食。
 
 ## Verification Status
 
@@ -494,6 +529,8 @@
   - 腐生原味地面催熟在多种作物上的手感与性能
   - 三只原味袜命中对应玩家 ID 后，“融为一体”的粒子密度、命中判定与系统消息体验
   - 原味袜彩蛋粒子与右键交互在服务器环境中的最终体验
+  - chesed 原味升级动画的奶酪轨迹、闪光密度、背包回收与双手喂食手感
+  - chesed 原味多段附加伤害与其他模组伤害/附魔事件叠加时的实际平衡
   - 森罗厨房炒锅能否正确匹配任意袜子标签并产出“爆炒袜子”
   - 森罗酒馆酒桶在六个品质阶段提取“原味精酿”时的品质 tooltip、空瓶返还和饮用体验
 

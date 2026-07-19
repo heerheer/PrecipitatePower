@@ -180,16 +180,18 @@ dependencies {
     localRuntime "mezz.jei:jei-${minecraft_version}-common:${jei_version}"
     localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
 
-    // ===== Jade =====
-    localRuntime "curse.maven:jade-324717:6291517"
-
     // ===== Mekanism =====
     localRuntime "mekanism:Mekanism:1.21.1-10.7.18.84"
 
-    // ===== 引入Ponderer,仅作为运行时 =====
-    localRuntime files("libs/ponderer-1.21.1-neoforge-1.7.1.5.jar")
+    // ===== MmmMmmMmmMmm (Target Dummy) =====
+    localRuntime "maven.modrinth:mmmmmmmmmmmm:nnQq1ivl"
+    localRuntime "maven.modrinth:moonlight:RftyTwKR"
 
-    localRuntime files("libs/buildinggadgets2-1.3.9.jar")
+    // ===== AnkiNBT =====
+    localRuntime "maven.modrinth:ankinbt:PHq2G5dF"
+
+    // Load every local mod jar for development runtime, including future additions.
+    localRuntime fileTree(dir: "libs", include: ["*.jar"])
 
 
 

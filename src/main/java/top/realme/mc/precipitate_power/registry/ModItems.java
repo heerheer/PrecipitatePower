@@ -13,6 +13,7 @@ import top.realme.mc.precipitate_power.item.BasicStyledSockItem;
 import top.realme.mc.precipitate_power.item.BoatSockItem;
 import top.realme.mc.precipitate_power.item.DatouOriginalScentItem;
 import top.realme.mc.precipitate_power.item.ElectricSockItem;
+import top.realme.mc.precipitate_power.item.ChesedOriginalScentItem;
 import top.realme.mc.precipitate_power.item.FushengOriginalScentItem;
 import top.realme.mc.precipitate_power.item.OriginalScentItem;
 import top.realme.mc.precipitate_power.item.RainbowWhiteSockItem;
@@ -89,6 +90,16 @@ public final class ModItems {
     public static final DeferredItem<Item> DATOU_ORIGINAL_SCENT = REGISTER.register(
             "datou_original_scent",
             () -> new DatouOriginalScentItem(new Item.Properties().stacksTo(1))
+    );
+
+    public static final DeferredItem<Item> CHESED_ORIGINAL_SCENT = REGISTER.register(
+            "chesed_original_scent",
+            () -> new ChesedOriginalScentItem(new Item.Properties().stacksTo(1))
+    );
+
+    public static final DeferredItem<Item> TEST_CHEESE = REGISTER.register(
+            "test_cheese",
+            () -> new Item(new Item.Properties())
     );
 
     public static final DeferredItem<Item> STIR_FRIED_SOCK = REGISTER.register(
