@@ -8,9 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -35,6 +39,8 @@ import top.realme.mc.precipitate_power.registry.ModBlockEntities;
 public class AdvancedPrecipitateGeneratorBlock extends BaseEntityBlock implements BlockUIMenuType.BlockUI {
     public static final MapCodec<AdvancedPrecipitateGeneratorBlock> CODEC = simpleCodec(AdvancedPrecipitateGeneratorBlock::new);
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    private static final net.minecraft.tags.TagKey<net.minecraft.world.item.Item> WRENCHES =
+            ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "tools/wrench"));
 
     public AdvancedPrecipitateGeneratorBlock(Properties properties) {
         super(properties);
@@ -91,6 +97,19 @@ public class AdvancedPrecipitateGeneratorBlock extends BaseEntityBlock implement
             BlockUIMenuType.openUI(serverPlayer, pos);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
+                                              InteractionHand hand, BlockHitResult hitResult) {
+        if (!stack.is(WRENCHES)) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
+
+        if (!level.isClientSide) {
+            level.destroyBlock(pos, true, player);
+        }
+        return ItemInteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override
