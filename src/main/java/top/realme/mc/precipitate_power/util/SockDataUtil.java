@@ -19,6 +19,7 @@ import top.realme.mc.precipitate_power.item.AbstractSockItem;
 import top.realme.mc.precipitate_power.item.SockMaterial;
 import top.realme.mc.precipitate_power.Config;
 import top.realme.mc.precipitate_power.registry.ModItems;
+import top.realme.mc.precipitate_power.registry.ModTags;
 
 /**
  * 一个对Sock进行NBT解析的辅助类
@@ -170,6 +171,12 @@ public final class SockDataUtil {
         return stack.getItem() instanceof AbstractSockItem sockItem && sockItem.isWearableSock(stack);
     }
 
+    public static boolean isBlendableSock(ItemStack stack) {
+        return stack.is(ModTags.Items.SOCK)
+                && stack.getItem() instanceof AbstractSockItem sockItem
+                && sockItem.supportsMaterialBlending(stack);
+    }
+
     public static boolean isUnbreakable(ItemStack stack) {
         return stack.has(DataComponents.UNBREAKABLE);
     }
@@ -243,6 +250,29 @@ public final class SockDataUtil {
         updateData(stack, tag -> {
             tag.putInt(TAG_DIAMOND_BONUS_MAX, bonus);
             tag.putInt(TAG_DIAMOND_BONUS_REMAINING, bonus);
+        });
+    }
+
+    public static void recalculateDiamondDurability(ItemStack stack) {
+        if (stack.isEmpty() || stack.getMaxDamage() <= 0) {
+            return;
+        }
+        int oldMax = Math.max(0, getData(stack).getInt(TAG_DIAMOND_BONUS_MAX));
+        int oldRemaining = Math.max(0, getData(stack).getInt(TAG_DIAMOND_BONUS_REMAINING));
+        int newMax = (int) Math.round(stack.getMaxDamage() * getMaterials(stack).stream()
+                .mapToDouble(entry -> entry.material().diamondDurabilityMultiplier() * entry.share())
+                .sum());
+        int newRemaining = oldMax > 0
+                ? (int) Math.round(newMax * Math.min(1.0D, oldRemaining / (double) oldMax))
+                : newMax;
+        updateData(stack, tag -> {
+            if (newMax <= 0) {
+                tag.remove(TAG_DIAMOND_BONUS_MAX);
+                tag.remove(TAG_DIAMOND_BONUS_REMAINING);
+            } else {
+                tag.putInt(TAG_DIAMOND_BONUS_MAX, newMax);
+                tag.putInt(TAG_DIAMOND_BONUS_REMAINING, Math.max(0, Math.min(newMax, newRemaining)));
+            }
         });
     }
 

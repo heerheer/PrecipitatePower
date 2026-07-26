@@ -136,9 +136,9 @@ dependencies {
     implementation("com.lowdragmc.ldlib2:ldlib2-neoforge-${minecraft_version}:${ldlib2_version}:all")
 
 
-    // ===== JEI ===== 暂时不支持!
-//    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
-//    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    // ===== JEI API（运行时保持可选） =====
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
 
     // ===== Create =====
     implementation ("com.simibubi.create:create-1.21.1:6.0.9-216" ){transitive = false}

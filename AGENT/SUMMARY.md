@@ -195,6 +195,11 @@
   - `silk`
   - `flesh`
   - `gold`
+  - `mithril_weave`
+  - `arcane_cloth`
+  - `sniffer_fur`
+  - `golden_fabric`
+  - `ancient_fiber`
 
 - 当前相关数据字段包括：
   - `Materials`
@@ -207,6 +212,16 @@
   - 穿戴属性修正
   - 发电平面加成 / 倍率加成
   - 特殊耐久逻辑修正
+
+- 袜子混纺机 `sock_blender` 已接入这套实例数据：
+  - 左槽接受 `#c:sock`；只有 `AbstractSockItem.supportsMaterialBlending(...)` 返回 `true` 的袜子可以执行编辑
+  - 右槽材料通过 `precipitate_power:sock_blending/<material>` 物品标签映射到材质枚举
+  - 每次消耗 1 个材料物品，可选择 1%-50% 的新材质占比
+  - 原有每项占比统一乘以 `1 - 新占比`；无初始混纺时保留未显式记录的基础材质份额
+  - 已有同材质时拒绝重复添加；达到 5 种材质后拒绝继续添加
+  - 修改钻石占比时同步重算隐藏耐久，并保留其已消耗比例
+  - 机器 UI 使用 LDLib2 XML；XML 从模组 JAR classpath 加载，兼容服务端 UI 树构建
+  - JEI 使用 LDLib2 `ModularUIRecipeCategory` 提供专属“袜子混纺”页面，显示材质效果、描述及当前环境全部可用材料物品
 
 - `SockDataUtil` 当前是材质系统与袜子实例数据的核心工具类，负责：
   - `CustomData` 读写
@@ -459,8 +474,16 @@
 - `src/main/java/top/realme/mc/precipitate_power/item/SockMaterialRoller.java`
   - 材质 roll 逻辑。 
 
+- `src/main/java/top/realme/mc/precipitate_power/item/SockBlendingIngredients.java`
+  - 混纺材料标签与材质枚举的统一映射，机器和 JEI 共用。
+
 - `src/main/java/top/realme/mc/precipitate_power/util/SockDataUtil.java`
   - 袜子数据工具核心。 
+
+- `src/main/java/top/realme/mc/precipitate_power/block/SockBlenderBlock.java`
+- `src/main/java/top/realme/mc/precipitate_power/block/entity/SockBlenderBlockEntity.java`
+- `src/main/java/top/realme/mc/precipitate_power/menu/SockBlenderMenu.java`
+  - 袜子混纺机方块、两槽数据容器、混纺规则与 LDLib2 XML UI。
 
 ### Compat
 
@@ -472,6 +495,10 @@
 
 - `src/main/java/top/realme/mc/precipitate_power/compat/ironsspellbooks/IronsSpellbooksCompat.java`
   - 彩虹袜法术兼容。 
+
+- `src/main/java/top/realme/mc/precipitate_power/compat/jei/PrecipitatePowerJeiPlugin.java`
+- `src/main/java/top/realme/mc/precipitate_power/compat/jei/SockBlendingDisplayRecipe.java`
+  - 基于 LDLib2 Modular UI 的 JEI 袜子混纺专属分类与信息配方。
 
 ### Events / Effects / Advancements
 
@@ -516,12 +543,17 @@
 - 新增森罗酒馆可选依赖与“原味精酿”：通过 `#c:sock`、水和酒馆酒桶进行六阶段陈酿。
 - 新增 `chesed_original_scent` 成长武器、奶酪喂食、31 级曲线、五类随机战斗属性、五种战斗状态、升级实体动画与「起司德德德儿」成就。
 - 新增创造测试物品 `test_cheese`，使用原版史莱姆球模型并加入 `#c:cheese`，用于直接测试 chesed 原味喂食。
+- 新增 `sock_blender` 袜子混纺机、1%-50% 占比编辑、五材质与重复材质限制、数据标签驱动的混纺材料，以及 LDLib2 JEI 专属信息页。
 
 ## Verification Status
 
 - 最近已经反复执行并通过：
   - `./gradlew compileJava`
   - `./gradlew build --no-configuration-cache`
+  - 新增混纺机后再次执行 `./gradlew compileJava` 与 `./gradlew build`，均通过
+  - 新增 JSON 与 LDLib2 UI XML 已完成语法解析检查
+
+- `./gradlew runGameTestServer` 在加载本模组玩法前被开发环境中的 AnkiNBT 客户端类引用阻断：`Attempted to load class net/minecraft/client/gui/screens/Screen for invalid dist DEDICATED_SERVER`。这是现有可选运行模组的服务端兼容问题，不是混纺机注册或资源错误。
 
 - 当前资源和 Java 结构在编译层面可用，但仍有若干玩法行为属于**代码已接通、运行时仍建议进游戏确认**：
   - 大头原味升级村民后是否需要立刻刷新交易池
@@ -533,6 +565,7 @@
   - chesed 原味多段附加伤害与其他模组伤害/附魔事件叠加时的实际平衡
   - 森罗厨房炒锅能否正确匹配任意袜子标签并产出“爆炒袜子”
   - 森罗酒馆酒桶在六个品质阶段提取“原味精酿”时的品质 tooltip、空瓶返还和饮用体验
+  - 袜子混纺机按钮同步、槽位位置、动态状态文本和 JEI LDLib2 分类的最终渲染效果
 
 ## Open Risks And Next Work Suggestions
 

@@ -67,6 +67,7 @@ public class PrecipitatePower {
                             output.accept(KaleidoscopeTavernCompat.createMaxQualityStack());
                         }
                         output.accept(ModBlocks.PRECIPITATE_GENERATOR_ITEM.get());
+                        output.accept(ModBlocks.SOCK_BLENDER_ITEM.get());
                         if (ModBlocks.REGISTER_ADVANCED_PRECIPITATE_GENERATOR) {
                             output.accept(ModBlocks.ADVANCED_PRECIPITATE_GENERATOR_ITEM.get());
                         }
@@ -113,6 +114,7 @@ public class PrecipitatePower {
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
             event.accept(ModBlocks.PRECIPITATE_GENERATOR_ITEM.get());
+            event.accept(ModBlocks.SOCK_BLENDER_ITEM.get());
             if (ModBlocks.REGISTER_ADVANCED_PRECIPITATE_GENERATOR) {
                 event.accept(ModBlocks.ADVANCED_PRECIPITATE_GENERATOR_ITEM.get());
             }

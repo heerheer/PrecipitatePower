@@ -38,6 +38,10 @@ public abstract class AbstractSockItem extends Item {
         return true;
     }
 
+    public boolean supportsMaterialBlending(ItemStack stack) {
+        return rollMaterialsOnGeneration();
+    }
+
     public GeneratorTickResult tickInGenerator(GeneratorTickContext context) {
         return tickAsNormalSock(context);
     }

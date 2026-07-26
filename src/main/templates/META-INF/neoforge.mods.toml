@@ -149,3 +149,10 @@ config="${mod_id}.mixins.json"
     versionRange="[2.2.1,)"
     ordering="NONE"
     side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="jei"
+    type="optional"
+    versionRange="[19.25.0.322,)"
+    ordering="AFTER"
+    side="CLIENT"

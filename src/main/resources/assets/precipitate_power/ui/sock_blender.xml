@@ -1,0 +1,83 @@
+<ldlib2-ui>
+  <style>
+    #sock-blender-root {
+      width: 176;
+      height: 246;
+      background: #ff1e2026;
+    }
+
+    #machine-panel {
+      position: absolute;
+      left: 6;
+      top: 17;
+      width: 164;
+      height: 138;
+      background: #ff2a2d36;
+    }
+
+    #title-label, #percentage-label, #current-title-label, #ingredient-title-label,
+    #current-blend-label, #ingredient-label, #status-label {
+      position: absolute;
+      text-color: #ffe8edf7;
+      text-shadow: true;
+    }
+
+    #title-label { left: 8; top: 6; }
+    #percentage-label { left: 69; top: 23; width: 37; }
+    #current-title-label { left: 8; top: 66; }
+    #ingredient-title-label { left: 101; top: 66; }
+    #current-blend-label { left: 8; top: 78; width: 88; text-wrap: wrap; adaptive-height: true; }
+    #ingredient-label { left: 101; top: 78; width: 67; text-wrap: wrap; adaptive-height: true; }
+    #status-label { left: 8; top: 135; width: 158; text-wrap: wrap; adaptive-height: true; }
+
+    #sock-slot, #ingredient-slot {
+      position: absolute;
+      top: 44;
+      slot-overlay: #4421262d;
+      hover-overlay: #66ffffff;
+    }
+
+    #sock-slot { left: 34; }
+    #ingredient-slot { left: 122; }
+
+    #minus-ten-button, #minus-one-button, #plus-one-button, #plus-ten-button, #blend-button {
+      position: absolute;
+      height: 15;
+    }
+
+    #minus-ten-button { left: 22; top: 20; width: 25; }
+    #minus-one-button { left: 48; top: 20; width: 20; }
+    #plus-one-button { left: 107; top: 20; width: 20; }
+    #plus-ten-button { left: 128; top: 20; width: 25; }
+    #blend-button { left: 58; top: 44; width: 60; height: 18; }
+
+    #player-inventory {
+      position: absolute;
+      left: 7;
+      top: 162;
+      gap-row: 0;
+      gap-column: 0;
+    }
+
+    #player-inventory .__inventory_hotbar__ { margin-top: 4; }
+    #player-inventory item-slot { slot-overlay: #33181c22; hover-overlay: #66ffffff; }
+  </style>
+  <root id="sock-blender-root">
+    <element id="machine-panel"/>
+    <label id="title-label">gui.precipitate_power.sock_blender.title</label>
+    <label id="percentage-label">10%</label>
+    <label id="current-title-label">gui.precipitate_power.sock_blender.current</label>
+    <label id="ingredient-title-label">gui.precipitate_power.sock_blender.ingredient</label>
+    <label id="current-blend-label">-</label>
+    <label id="ingredient-label">-</label>
+    <label id="status-label">-</label>
+    <item-slot id="sock-slot"/>
+    <item-slot id="ingredient-slot"/>
+    <button id="minus-ten-button" text="-10"/>
+    <button id="minus-one-button" text="-1"/>
+    <button id="plus-one-button" text="+1"/>
+    <button id="plus-ten-button" text="+10"/>
+    <button id="blend-button" text="gui.precipitate_power.sock_blender.blend"/>
+    <inventory-slots id="player-inventory"/>
+  </root>
+</ldlib2-ui>

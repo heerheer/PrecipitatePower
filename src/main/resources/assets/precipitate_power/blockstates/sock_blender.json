@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "precipitate_power:block/sock_blender" },
+    "facing=south": { "model": "precipitate_power:block/sock_blender", "y": 180 },
+    "facing=west": { "model": "precipitate_power:block/sock_blender", "y": 270 },
+    "facing=east": { "model": "precipitate_power:block/sock_blender", "y": 90 }
+  }
+}

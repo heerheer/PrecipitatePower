@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ISI",
+    "RLR",
+    "ICI"
+  ],
+  "key": {
+    "I": { "item": "minecraft:iron_ingot" },
+    "S": { "item": "minecraft:string" },
+    "R": { "item": "minecraft:redstone" },
+    "L": { "item": "minecraft:loom" },
+    "C": { "item": "minecraft:copper_ingot" }
+  },
+  "result": {
+    "id": "precipitate_power:sock_blender",
+    "count": 1
+  }
+}
