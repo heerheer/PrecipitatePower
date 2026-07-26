@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "precipitate_power:precipitate_generator",
     "precipitate_power:sock_blender"
   ]
 }
