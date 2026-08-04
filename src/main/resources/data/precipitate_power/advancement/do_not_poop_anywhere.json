@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "id": "precipitate_power:banana_poop"
+    },
+    "title": {
+      "translate": "advancement.precipitate_power.do_not_poop_anywhere.title"
+    },
+    "description": {
+      "translate": "advancement.precipitate_power.do_not_poop_anywhere.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "unlock": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

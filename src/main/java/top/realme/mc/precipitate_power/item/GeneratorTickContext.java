@@ -85,6 +85,10 @@ public final class GeneratorTickContext {
         return generator.consumeStoredEnergy(amount);
     }
 
+    public boolean canInsertOutput(ItemStack stack) {
+        return generator.canInsertOutput(stack);
+    }
+
     public List<LivingEntity> findNearbyLivingEntities(double radius) {
         return level.getEntitiesOfClass(LivingEntity.class, new AABB(pos()).inflate(radius));
     }

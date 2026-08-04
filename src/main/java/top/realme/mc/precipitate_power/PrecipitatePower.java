@@ -22,6 +22,7 @@ import top.realme.mc.precipitate_power.event.ModEvents;
 import top.realme.mc.precipitate_power.registry.ModBlockEntities;
 import top.realme.mc.precipitate_power.registry.ModBlocks;
 import top.realme.mc.precipitate_power.registry.ModEffects;
+import top.realme.mc.precipitate_power.registry.ModFluids;
 import top.realme.mc.precipitate_power.registry.ModDataComponents;
 import top.realme.mc.precipitate_power.registry.ModEntities;
 import top.realme.mc.precipitate_power.registry.ModItems;
@@ -58,6 +59,13 @@ public class PrecipitatePower {
                         output.accept(ModItems.DATOU_ORIGINAL_SCENT.get());
                         output.accept(ModItems.CHESED_ORIGINAL_SCENT.get());
                         output.accept(ModItems.TEST_CHEESE.get());
+                        output.accept(ModItems.FRESH_PRESSED_CHEESE.get());
+                        output.accept(ModItems.CONCENTRATED_FRESH_PRESSED_CHEESE_BUCKET.get());
+                        output.accept(ModItems.DILUTED_FRESH_PRESSED_CHEESE_BUCKET.get());
+                        output.accept(ModItems.BURNING_BANANA.get());
+                        output.accept(ModItems.COLORFUL_BURNING_BANANA.get());
+                        output.accept(ModItems.COLORFUL_BANANA_SLICE.get());
+                        output.accept(ModBlocks.BANANA_POOP_ITEM.get());
                         output.accept(ModItems.DIRTY_WHITE_SOCK.get());
                         output.accept(ModItems.STIR_FRIED_SOCK.get());
                         output.accept(ModItems.SMALL_ELECTRIC_SOCK.get());
@@ -79,6 +87,9 @@ public class PrecipitatePower {
         ModDataComponents.REGISTER.register(modEventBus);
         ModEntities.REGISTER.register(modEventBus);
         ModBlocks.REGISTER.register(modEventBus);
+        ModFluids.FLUID_TYPES.register(modEventBus);
+        ModFluids.FLUIDS.register(modEventBus);
+        ModFluids.BLOCKS.register(modEventBus);
         ModItems.REGISTER.register(modEventBus);
         ModBlockEntities.REGISTER.register(modEventBus);
         ModMenus.REGISTER.register(modEventBus);
@@ -132,12 +143,25 @@ public class PrecipitatePower {
             event.accept(ModItems.ZHAOZHAO_ORIGINAL_SCENT.get());
             event.accept(ModItems.CHESED_ORIGINAL_SCENT.get());
             event.accept(ModItems.TEST_CHEESE.get());
+            event.accept(ModItems.FRESH_PRESSED_CHEESE.get());
+            event.accept(ModItems.CONCENTRATED_FRESH_PRESSED_CHEESE_BUCKET.get());
+            event.accept(ModItems.DILUTED_FRESH_PRESSED_CHEESE_BUCKET.get());
+            event.accept(ModItems.BURNING_BANANA.get());
+            event.accept(ModItems.COLORFUL_BURNING_BANANA.get());
+            event.accept(ModItems.COLORFUL_BANANA_SLICE.get());
             event.accept(ModItems.DIRTY_WHITE_SOCK.get());
             event.accept(ModItems.STIR_FRIED_SOCK.get());
         }
-        if (event.getTabKey() == CreativeModeTabs.FOOD_AND_DRINKS
-                && ModList.get().isLoaded(KaleidoscopeTavernCompat.MOD_ID)) {
-            event.accept(KaleidoscopeTavernCompat.createMaxQualityStack());
+        if (event.getTabKey() == CreativeModeTabs.FOOD_AND_DRINKS) {
+            event.accept(ModItems.BURNING_BANANA.get());
+            event.accept(ModItems.COLORFUL_BURNING_BANANA.get());
+            event.accept(ModItems.COLORFUL_BANANA_SLICE.get());
+            if (ModList.get().isLoaded(KaleidoscopeTavernCompat.MOD_ID)) {
+                event.accept(KaleidoscopeTavernCompat.createMaxQualityStack());
+            }
+        }
+        if (event.getTabKey() == CreativeModeTabs.NATURAL_BLOCKS) {
+            event.accept(ModBlocks.BANANA_POOP_ITEM.get());
         }
     }
 

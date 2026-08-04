@@ -17,6 +17,9 @@ import top.realme.mc.precipitate_power.client.ChesedUpgradeRenderer;
 import top.realme.mc.precipitate_power.ponder.PrecipitatePowerPonderPlugin;
 import top.realme.mc.precipitate_power.registry.ModEntities;
 import top.realme.mc.precipitate_power.registry.ModItems;
+import top.realme.mc.precipitate_power.registry.ModBlocks;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 
 @Mod(value = PrecipitatePower.MODID, dist = Dist.CLIENT)
 @EventBusSubscriber(modid = PrecipitatePower.MODID, value = Dist.CLIENT)
@@ -27,7 +30,10 @@ public class PrecipitatePowerClient {
 
     @SubscribeEvent
     static void onClientSetup(FMLClientSetupEvent event) {
-        event.enqueueWork(() -> PonderIndex.addPlugin(new PrecipitatePowerPonderPlugin()));
+        event.enqueueWork(() -> {
+            PonderIndex.addPlugin(new PrecipitatePowerPonderPlugin());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.BANANA_POOP.get(), RenderType.cutout());
+        });
     }
 
     @SubscribeEvent

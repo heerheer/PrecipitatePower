@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "precipitate_power:item/diluted_fresh_pressed_cheese_bucket"
+  }
+}

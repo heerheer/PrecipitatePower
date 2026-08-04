@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "precipitate_power:test_cheese"
+    "precipitate_power:test_cheese",
+    "precipitate_power:fresh_pressed_cheese"
   ]
 }

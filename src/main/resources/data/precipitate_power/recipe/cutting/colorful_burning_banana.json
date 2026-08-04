@@ -1,0 +1,25 @@
+{
+  "type": "farmersdelight:cutting",
+  "ingredients": [
+    {
+      "item": "precipitate_power:colorful_burning_banana"
+    }
+  ],
+  "result": [
+    {
+      "item": {
+        "count": 4,
+        "id": "precipitate_power:colorful_banana_slice"
+      }
+    }
+  ],
+  "tool": [
+    {
+      "type": "farmersdelight:item_ability",
+      "action": "knife_dig"
+    },
+    {
+      "tag": "c:tools/knife"
+    }
+  ]
+}

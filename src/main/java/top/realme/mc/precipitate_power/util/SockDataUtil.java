@@ -164,7 +164,7 @@ public final class SockDataUtil {
     }
 
     public static boolean isGeneratorSock(ItemStack stack) {
-        return stack.getItem() instanceof AbstractSockItem;
+        return stack.getItem() instanceof top.realme.mc.precipitate_power.item.GeneratorFuelItem;
     }
 
     public static boolean isWearableSock(ItemStack stack) {

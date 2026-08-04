@@ -22,6 +22,8 @@ public class AddSockLootModifier extends LootModifier {
     private static final double ORIGINAL_SCENT_CHEST_CHANCE = 0.01D;
     private static final double BOAT_SOCK_DUNGEON_CHANCE = 0.025D;
     private static final double TRAVEL_SOCK_CHEST_CHANCE = 0.018D;
+    private static final double BURNING_BANANA_CHEST_CHANCE = 0.09D;
+    private static final double COLORFUL_BURNING_BANANA_CHEST_CHANCE = 0.0009D;
 
     public static final MapCodec<AddSockLootModifier> CODEC = RecordCodecBuilder.mapCodec(
             inst -> codecStart(inst).apply(inst, AddSockLootModifier::new)
@@ -37,6 +39,13 @@ public class AddSockLootModifier extends LootModifier {
 
         if (!isChest(path)) {
             return generatedLoot;
+        }
+
+        double bananaRandom = context.getRandom().nextDouble();
+        if (isNetherOrEndChest(path) && bananaRandom < COLORFUL_BURNING_BANANA_CHEST_CHANCE) {
+            generatedLoot.add(new ItemStack(ModItems.COLORFUL_BURNING_BANANA.get()));
+        } else if (bananaRandom < BURNING_BANANA_CHEST_CHANCE) {
+            generatedLoot.add(new ItemStack(ModItems.BURNING_BANANA.get()));
         }
 
         if (path.equals("chests/end_city_treasure") && context.getRandom().nextDouble() < ORIGINAL_SCENT_CHEST_CHANCE) {

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "category": "food",
+  "ingredient": {
+    "tag": "precipitate_power:compat/fruitydelight_banana"
+  },
+  "result": {
+    "id": "precipitate_power:burning_banana"
+  },
+  "experience": 0.35,
+  "cookingtime": 600
+}

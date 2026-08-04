@@ -9,6 +9,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import top.realme.mc.precipitate_power.PrecipitatePower;
 import top.realme.mc.precipitate_power.item.ChesedSockData;
+import top.realme.mc.precipitate_power.item.BurningBananaData;
 
 public final class ModDataComponents {
     public static final DeferredRegister.DataComponents REGISTER =
@@ -33,6 +34,11 @@ public final class ModDataComponents {
             REGISTER.registerComponentType("chesed_feeding_cheese", builder -> builder
                     .persistent(ItemContainerContents.CODEC)
                     .networkSynchronized(ItemContainerContents.STREAM_CODEC));
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<BurningBananaData>> BURNING_BANANA_DATA =
+            REGISTER.registerComponentType("burning_banana_data", builder -> builder
+                    .persistent(BurningBananaData.CODEC)
+                    .networkSynchronized(ByteBufCodecs.fromCodec(BurningBananaData.CODEC)));
 
     private ModDataComponents() {
     }

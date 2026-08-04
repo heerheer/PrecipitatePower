@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "precipitate_power:block/banana_poop"
+  }
+}

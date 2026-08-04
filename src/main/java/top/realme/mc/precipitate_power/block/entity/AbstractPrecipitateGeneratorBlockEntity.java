@@ -25,7 +25,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 import top.realme.mc.precipitate_power.Config;
-import top.realme.mc.precipitate_power.item.AbstractSockItem;
+import top.realme.mc.precipitate_power.item.GeneratorFuelItem;
 import top.realme.mc.precipitate_power.item.GeneratorTickContext;
 import top.realme.mc.precipitate_power.item.GeneratorTickResult;
 import top.realme.mc.precipitate_power.menu.PrecipitateGeneratorMenu;
@@ -99,8 +99,8 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
 
     protected final void tickServer() {
         ItemStack stack = items.get(INPUT_SLOT);
-        if (level instanceof ServerLevel serverLevel && stack.getItem() instanceof AbstractSockItem sockItem) {
-            GeneratorTickResult result = sockItem.tickInGenerator(new GeneratorTickContext(serverLevel, this, stack));
+        if (level instanceof ServerLevel serverLevel && stack.getItem() instanceof GeneratorFuelItem fuelItem) {
+            GeneratorTickResult result = fuelItem.tickInGenerator(new GeneratorTickContext(serverLevel, this, stack));
             applyGeneratorTickResult(stack, result);
         }
         chargeSlottedItem();
@@ -185,6 +185,16 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
         }
     }
 
+    public boolean canInsertOutput(ItemStack stack) {
+        if (stack.isEmpty()) {
+            return true;
+        }
+        ItemStack output = items.get(OUTPUT_SLOT);
+        return output.isEmpty()
+                || ItemStack.isSameItemSameComponents(output, stack)
+                && output.getCount() <= output.getMaxStackSize() - stack.getCount();
+    }
+
     private void pushEnergyToNeighbors() {
         if (level == null || level.isClientSide || energyStorage.getEnergyStored() <= 0) {
             return;
@@ -249,6 +259,15 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
         energyStorage.extractEnergy(amount, false);
         setChanged();
         return true;
+    }
+
+    public int fillEnergyToCapacity() {
+        int filled = energyStorage.addGeneratedEnergy(
+                energyStorage.getMaxEnergyStored() - energyStorage.getEnergyStored());
+        if (filled > 0) {
+            setChanged();
+        }
+        return filled;
     }
 
     public void addExtraMaxExtract(int amount) {
@@ -354,9 +373,14 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
 
     @Override
     public void setItem(int slot, ItemStack stack) {
+        ItemStack previous = items.get(slot);
         items.set(slot, stack);
         if (stack.getCount() > getMaxStackSize()) {
             stack.setCount(getMaxStackSize());
+        }
+        if (slot == INPUT_SLOT && previous != stack && level instanceof ServerLevel
+                && stack.getItem() instanceof GeneratorFuelItem fuelItem) {
+            fuelItem.onInsertedIntoGenerator(this, stack);
         }
         setChanged();
     }

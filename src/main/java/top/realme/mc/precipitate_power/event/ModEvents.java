@@ -1,6 +1,7 @@
 package top.realme.mc.precipitate_power.event;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -13,6 +14,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -23,7 +25,10 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ItemUtils;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
@@ -35,12 +40,14 @@ import top.realme.mc.precipitate_power.compat.curios.CuriosCompat;
 import top.realme.mc.precipitate_power.compat.immortalersdelight.ImmortalersDelightCompat;
 import top.realme.mc.precipitate_power.item.FushengOriginalScentItem;
 import top.realme.mc.precipitate_power.item.ChesedOriginalScentItem;
+import top.realme.mc.precipitate_power.item.ColorfulBurningBananaItem;
 import top.realme.mc.precipitate_power.item.ChesedSockData;
 import top.realme.mc.precipitate_power.item.OriginalScentItem;
 import top.realme.mc.precipitate_power.item.SockMaterial;
 import top.realme.mc.precipitate_power.registry.ModAdvancements;
 import top.realme.mc.precipitate_power.registry.ModEffects;
 import top.realme.mc.precipitate_power.registry.ModItems;
+import top.realme.mc.precipitate_power.registry.ModBlocks;
 import top.realme.mc.precipitate_power.util.SockDataUtil;
 
 @EventBusSubscriber(modid = PrecipitatePower.MODID)
@@ -54,6 +61,14 @@ public final class ModEvents {
     private static final String TAG_SNIFFER_FUR_LAST_X = "PrecipitatePowerSnifferFurLastX";
     private static final String TAG_SNIFFER_FUR_LAST_Z = "PrecipitatePowerSnifferFurLastZ";
     private static final double MAX_SNIFFER_FUR_DISTANCE_PER_TICK = 2.0D;
+    private static final String TAG_CHEESE_MILKING_FIRST_TIME = "FreshPressedCheeseFirstMilking";
+    private static final String TAG_CHEESE_MILKING_COUNT = "FreshPressedCheeseMilkingCount";
+    private static final long CHEESE_MILKING_WINDOW_TICKS = 20L * 60L * 5L;
+    private static final String TAG_FRAGILE_STOMACH_WAS_SHIFTING = "FragileStomachWasShifting";
+    private static final String TAG_FRAGILE_STOMACH_SHIFT_COUNT = "FragileStomachShiftCount";
+    private static final String TAG_FRAGILE_STOMACH_LAST_PRESS = "FragileStomachLastPress";
+    private static final int FRAGILE_STOMACH_REQUIRED_PRESSES = 3;
+    private static final long FRAGILE_STOMACH_PRESS_WINDOW_TICKS = 20L * 3L;
 
     private ModEvents() {
     }
@@ -212,6 +227,12 @@ public final class ModEvents {
             return;
         }
 
+        if (player.tickCount % 20 == 0) {
+            ColorfulBurningBananaItem.applyHealthBonus(player);
+        }
+
+        tickFragileStomach(serverPlayer);
+
         if (player.tickCount % 20 == 0 && hasFiveMaterialSock(serverPlayer)) {
             ModAdvancements.grant(serverPlayer, ModAdvancements.ULTIMATE_BLENDER);
         }
@@ -246,8 +267,11 @@ public final class ModEvents {
         }
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
     public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
+        if (tryCollectFreshPressedCheese(event)) {
+            return;
+        }
         ItemStack stack = event.getEntity().getItemInHand(event.getHand());
         if (!(stack.getItem() instanceof OriginalScentItem originalScentItem)) {
             return;
@@ -261,6 +285,91 @@ public final class ModEvents {
             event.setCancellationResult(result);
             event.setCanceled(true);
         }
+    }
+
+    private static void tickFragileStomach(ServerPlayer player) {
+        CompoundTag data = player.getPersistentData();
+        boolean shifting = player.isShiftKeyDown();
+        boolean wasShifting = data.getBoolean(TAG_FRAGILE_STOMACH_WAS_SHIFTING);
+        data.putBoolean(TAG_FRAGILE_STOMACH_WAS_SHIFTING, shifting);
+
+        if (!player.hasEffect(ModEffects.FRAGILE_STOMACH)) {
+            data.remove(TAG_FRAGILE_STOMACH_SHIFT_COUNT);
+            data.remove(TAG_FRAGILE_STOMACH_LAST_PRESS);
+            return;
+        }
+        if (!shifting || wasShifting) {
+            return;
+        }
+
+        long now = player.serverLevel().getGameTime();
+        long lastPress = data.getLong(TAG_FRAGILE_STOMACH_LAST_PRESS);
+        int presses = now - lastPress <= FRAGILE_STOMACH_PRESS_WINDOW_TICKS
+                ? data.getInt(TAG_FRAGILE_STOMACH_SHIFT_COUNT) + 1
+                : 1;
+        data.putLong(TAG_FRAGILE_STOMACH_LAST_PRESS, now);
+        data.putInt(TAG_FRAGILE_STOMACH_SHIFT_COUNT, presses);
+        if (presses < FRAGILE_STOMACH_REQUIRED_PRESSES) {
+            return;
+        }
+
+        BlockPos poopPos = player.blockPosition();
+        var poopState = ModBlocks.BANANA_POOP.get().defaultBlockState();
+        if (!player.serverLevel().getBlockState(poopPos).canBeReplaced()
+                || !poopState.canSurvive(player.serverLevel(), poopPos)) {
+            return;
+        }
+
+        if (!player.serverLevel().setBlock(poopPos, poopState, 3)) {
+            return;
+        }
+        ModAdvancements.grant(player, ModAdvancements.DO_NOT_POOP_ANYWHERE);
+        player.removeEffect(ModEffects.FRAGILE_STOMACH);
+        data.remove(TAG_FRAGILE_STOMACH_SHIFT_COUNT);
+        data.remove(TAG_FRAGILE_STOMACH_LAST_PRESS);
+        player.serverLevel().playSound(null, poopPos, SoundEvents.SLIME_SQUISH, SoundSource.PLAYERS, 0.7F, 0.8F);
+    }
+
+    private static boolean tryCollectFreshPressedCheese(PlayerInteractEvent.EntityInteract event) {
+        if (!(event.getTarget() instanceof Cow cow)
+                || !cow.hasCustomName()
+                || !"chesed".equalsIgnoreCase(cow.getCustomName().getString())
+                || !event.getEntity().getItemInHand(event.getHand()).is(Items.BUCKET)) {
+            return false;
+        }
+
+        if (cow.level().isClientSide()) {
+            event.setCancellationResult(InteractionResult.sidedSuccess(true));
+            event.setCanceled(true);
+            return true;
+        }
+
+        long gameTime = cow.level().getGameTime();
+        CompoundTag data = cow.getPersistentData();
+        long firstTime = data.getLong(TAG_CHEESE_MILKING_FIRST_TIME);
+        int count = data.getInt(TAG_CHEESE_MILKING_COUNT);
+        boolean inWindow = count > 0 && gameTime - firstTime < CHEESE_MILKING_WINDOW_TICKS;
+        if (!inWindow) {
+            firstTime = gameTime;
+            count = 0;
+        }
+
+        count++;
+        data.putLong(TAG_CHEESE_MILKING_FIRST_TIME, firstTime);
+        data.putInt(TAG_CHEESE_MILKING_COUNT, count);
+        ItemStack result = new ItemStack(count <= 3
+                ? ModItems.CONCENTRATED_FRESH_PRESSED_CHEESE_BUCKET.get()
+                : ModItems.DILUTED_FRESH_PRESSED_CHEESE_BUCKET.get());
+        if (count > 3) {
+            cow.hurt(cow.damageSources().playerAttack(event.getEntity()), 1.0F);
+        }
+
+        event.getEntity().setItemInHand(event.getHand(), ItemUtils.createFilledResult(
+                event.getEntity().getItemInHand(event.getHand()), event.getEntity(), result));
+        cow.playSound(SoundEvents.COW_MILK, 1.0F, 1.0F);
+        event.setCancellationResult(InteractionResult.SUCCESS);
+        event.setCanceled(true);
+        return true;
     }
 
     @SubscribeEvent

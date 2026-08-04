@@ -22,7 +22,7 @@ import top.realme.mc.precipitate_power.registry.ModItems;
 import top.realme.mc.precipitate_power.util.FormulaParser;
 import top.realme.mc.precipitate_power.util.SockDataUtil;
 
-public abstract class AbstractSockItem extends Item {
+public abstract class AbstractSockItem extends Item implements GeneratorFuelItem {
     protected static final double ATHLETIC_COGNITION_LOSS_CHANCE = 0.5D;
     protected static final double ATHLETIC_COGNITION_LOSS_AMOUNT = 0.01D;
 
