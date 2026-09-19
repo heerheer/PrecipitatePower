@@ -7,6 +7,14 @@ import top.realme.mc.precipitate_power.block.entity.AbstractPrecipitateGenerator
 public interface GeneratorFuelItem {
     GeneratorTickResult tickInGenerator(GeneratorTickContext context);
 
+    default boolean canPrecipitateInGenerator(ItemStack stack) {
+        return false;
+    }
+
+    default int applyPrecipitationRolls(GeneratorTickContext context, long attempts) {
+        return 0;
+    }
+
     default void onInsertedIntoGenerator(AbstractPrecipitateGeneratorBlockEntity generator, ItemStack stack) {
     }
 }

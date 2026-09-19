@@ -1,12 +1,15 @@
 package top.realme.mc.precipitate_power.registry;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
 import net.neoforged.neoforge.common.SoundActions;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 import net.neoforged.neoforge.fluids.FluidType;
@@ -30,13 +33,13 @@ public final class ModFluids {
             FLUID_TYPES.register("diluted_fresh_pressed_cheese", () -> cheeseType(1_000, 1_100, 0xFFFCFCF9));
 
     public static final DeferredHolder<Fluid, FlowingFluid> CONCENTRATED_FRESH_PRESSED_CHEESE =
-            FLUIDS.register("concentrated_fresh_pressed_cheese", () -> new BaseFlowingFluid.Source(concentratedProperties()));
+            FLUIDS.register("concentrated_fresh_pressed_cheese", () -> new NonSpreadingSource(concentratedProperties()));
     public static final DeferredHolder<Fluid, FlowingFluid> FLOWING_CONCENTRATED_FRESH_PRESSED_CHEESE =
-            FLUIDS.register("flowing_concentrated_fresh_pressed_cheese", () -> new BaseFlowingFluid.Flowing(concentratedProperties()));
+            FLUIDS.register("flowing_concentrated_fresh_pressed_cheese", () -> new NonSpreadingFlowing(concentratedProperties()));
     public static final DeferredHolder<Fluid, FlowingFluid> DILUTED_FRESH_PRESSED_CHEESE =
-            FLUIDS.register("diluted_fresh_pressed_cheese", () -> new BaseFlowingFluid.Source(dilutedProperties()));
+            FLUIDS.register("diluted_fresh_pressed_cheese", () -> new NonSpreadingSource(dilutedProperties()));
     public static final DeferredHolder<Fluid, FlowingFluid> FLOWING_DILUTED_FRESH_PRESSED_CHEESE =
-            FLUIDS.register("flowing_diluted_fresh_pressed_cheese", () -> new BaseFlowingFluid.Flowing(dilutedProperties()));
+            FLUIDS.register("flowing_diluted_fresh_pressed_cheese", () -> new NonSpreadingFlowing(dilutedProperties()));
 
     public static final DeferredBlock<LiquidBlock> CONCENTRATED_FRESH_PRESSED_CHEESE_BLOCK = BLOCKS.register(
             "concentrated_fresh_pressed_cheese",
@@ -90,6 +93,28 @@ public final class ModFluids {
                 });
             }
         };
+    }
+
+    private static final class NonSpreadingSource extends BaseFlowingFluid.Source {
+        private NonSpreadingSource(Properties properties) {
+            super(properties);
+        }
+
+        @Override
+        protected void spread(Level level, BlockPos pos, FluidState fluidState) {
+            // Cheese fluid stays in the block where it was placed.
+        }
+    }
+
+    private static final class NonSpreadingFlowing extends BaseFlowingFluid.Flowing {
+        private NonSpreadingFlowing(Properties properties) {
+            super(properties);
+        }
+
+        @Override
+        protected void spread(Level level, BlockPos pos, FluidState fluidState) {
+            // Existing flowing states may decay, but cannot spread further.
+        }
     }
 
     private ModFluids() {

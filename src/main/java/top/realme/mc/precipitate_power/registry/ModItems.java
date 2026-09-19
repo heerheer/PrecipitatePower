@@ -11,9 +11,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import top.realme.mc.precipitate_power.PrecipitatePower;
 import top.realme.mc.precipitate_power.item.BasicStyledSockItem;
 import top.realme.mc.precipitate_power.item.BoatSockItem;
-import top.realme.mc.precipitate_power.item.BurningBananaItem;
-import top.realme.mc.precipitate_power.item.ColorfulBananaSliceItem;
-import top.realme.mc.precipitate_power.item.ColorfulBurningBananaItem;
 import top.realme.mc.precipitate_power.item.DatouOriginalScentItem;
 import top.realme.mc.precipitate_power.item.ElectricSockItem;
 import top.realme.mc.precipitate_power.item.FreshPressedCheeseBucketItem;
@@ -27,7 +24,6 @@ import top.realme.mc.precipitate_power.item.ZhaozhaoOriginalScentItem;
 import top.realme.mc.precipitate_power.Config;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.minecraft.world.item.Rarity;
 
 public final class ModItems {
     public static final DeferredRegister.Items REGISTER = DeferredRegister.createItems(PrecipitatePower.MODID);
@@ -122,24 +118,6 @@ public final class ModItems {
             "diluted_fresh_pressed_cheese_bucket",
             () -> new net.minecraft.world.item.BucketItem(ModFluids.DILUTED_FRESH_PRESSED_CHEESE.get(),
                     new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET))
-    );
-
-    public static final DeferredItem<BurningBananaItem> BURNING_BANANA = REGISTER.register(
-            "burning_banana",
-            () -> new BurningBananaItem(new Item.Properties().stacksTo(1).food(
-                    new FoodProperties.Builder().nutrition(1).saturationModifier(1.0F).alwaysEdible().build()))
-    );
-
-    public static final DeferredItem<ColorfulBurningBananaItem> COLORFUL_BURNING_BANANA = REGISTER.register(
-            "colorful_burning_banana",
-            () -> new ColorfulBurningBananaItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).food(
-                    new FoodProperties.Builder().nutrition(4).saturationModifier(1.0F).alwaysEdible().build()))
-    );
-
-    public static final DeferredItem<ColorfulBananaSliceItem> COLORFUL_BANANA_SLICE = REGISTER.register(
-            "colorful_banana_slice",
-            () -> new ColorfulBananaSliceItem(new Item.Properties().stacksTo(16).rarity(Rarity.EPIC).food(
-                    new FoodProperties.Builder().nutrition(20).saturationModifier(1.0F).alwaysEdible().build()))
     );
 
     public static final DeferredItem<Item> STIR_FRIED_SOCK = REGISTER.register(

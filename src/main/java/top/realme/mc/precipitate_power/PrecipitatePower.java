@@ -62,10 +62,6 @@ public class PrecipitatePower {
                         output.accept(ModItems.FRESH_PRESSED_CHEESE.get());
                         output.accept(ModItems.CONCENTRATED_FRESH_PRESSED_CHEESE_BUCKET.get());
                         output.accept(ModItems.DILUTED_FRESH_PRESSED_CHEESE_BUCKET.get());
-                        output.accept(ModItems.BURNING_BANANA.get());
-                        output.accept(ModItems.COLORFUL_BURNING_BANANA.get());
-                        output.accept(ModItems.COLORFUL_BANANA_SLICE.get());
-                        output.accept(ModBlocks.BANANA_POOP_ITEM.get());
                         output.accept(ModItems.DIRTY_WHITE_SOCK.get());
                         output.accept(ModItems.STIR_FRIED_SOCK.get());
                         output.accept(ModItems.SMALL_ELECTRIC_SOCK.get());
@@ -146,22 +142,13 @@ public class PrecipitatePower {
             event.accept(ModItems.FRESH_PRESSED_CHEESE.get());
             event.accept(ModItems.CONCENTRATED_FRESH_PRESSED_CHEESE_BUCKET.get());
             event.accept(ModItems.DILUTED_FRESH_PRESSED_CHEESE_BUCKET.get());
-            event.accept(ModItems.BURNING_BANANA.get());
-            event.accept(ModItems.COLORFUL_BURNING_BANANA.get());
-            event.accept(ModItems.COLORFUL_BANANA_SLICE.get());
             event.accept(ModItems.DIRTY_WHITE_SOCK.get());
             event.accept(ModItems.STIR_FRIED_SOCK.get());
         }
         if (event.getTabKey() == CreativeModeTabs.FOOD_AND_DRINKS) {
-            event.accept(ModItems.BURNING_BANANA.get());
-            event.accept(ModItems.COLORFUL_BURNING_BANANA.get());
-            event.accept(ModItems.COLORFUL_BANANA_SLICE.get());
             if (ModList.get().isLoaded(KaleidoscopeTavernCompat.MOD_ID)) {
                 event.accept(KaleidoscopeTavernCompat.createMaxQualityStack());
             }
-        }
-        if (event.getTabKey() == CreativeModeTabs.NATURAL_BLOCKS) {
-            event.accept(ModBlocks.BANANA_POOP_ITEM.get());
         }
     }
 

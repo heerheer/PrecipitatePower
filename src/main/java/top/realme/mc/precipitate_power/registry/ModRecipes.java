@@ -5,7 +5,9 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
 import top.realme.mc.precipitate_power.PrecipitatePower;
+import top.realme.mc.precipitate_power.recipe.ChesedFillingRecipe;
 import top.realme.mc.precipitate_power.recipe.ElectricSockUpgradeRecipe;
 
 public final class ModRecipes {
@@ -21,6 +23,10 @@ public final class ModRecipes {
             REGISTER.register("medium_to_large_electric_sock", () ->
                     new SimpleCraftingRecipeSerializer<>(category ->
                             new ElectricSockUpgradeRecipe(category, ElectricSockUpgradeRecipe.Upgrade.LARGE)));
+
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ChesedFillingRecipe>> CHESED_FILLING =
+            REGISTER.register("chesed_filling", () ->
+                    new StandardProcessingRecipe.Serializer<>(ChesedFillingRecipe::new));
 
     private ModRecipes() {
     }

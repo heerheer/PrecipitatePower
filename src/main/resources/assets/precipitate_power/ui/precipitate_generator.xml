@@ -2,7 +2,7 @@
   <style>
     #generator-root {
       width: 176;
-      height: 246;
+      height: 258;
       background: #ff1e2026;
     }
 
@@ -11,13 +11,13 @@
       left: 6;
       top: 17;
       width: 164;
-      height: 138;
+      height: 150;
       background: #ff2a2d36;
     }
 
     #input-slot-panel, #output-slot-panel, #charge-slot-panel {
       position: absolute;
-      top: 124;
+      top: 136;
       width: 18;
       height: 18;
       background: #ff4b5160;
@@ -37,7 +37,7 @@
 
     #machine-input-slot, #machine-output-slot, #machine-charge-slot {
       position: absolute;
-      top: 124;
+      top: 136;
       slot-overlay: #4421262d;
       hover-overlay: #66ffffff;
     }
@@ -65,11 +65,11 @@
     }
 
     #water-meter {
-      top: 106;
+      top: 118;
     }
 
     #energy-meter {
-      top: 94;
+      top: 106;
     }
 
     #water-fill, #energy-fill {
@@ -89,7 +89,7 @@
       display: none;
     }
 
-    #energy-label, #max-extract-label, #water-label, #precipitation-label, #dirty-count-label, #charge-rate-label, #charge-sediment-label {
+    #energy-label, #max-extract-label, #water-label, #precipitation-label, #dirty-count-label, #machine-precipitation-label, #charge-rate-label, #charge-sediment-label {
       position: absolute;
       left: 8;
       text-color: #ffe8edf7;
@@ -113,6 +113,10 @@
     }
 
     #dirty-count-label {
+      top: 90;
+    }
+
+    #machine-precipitation-label {
       top: 78;
     }
 
@@ -127,7 +131,7 @@
     #player-inventory {
       position: absolute;
       left: 7;
-      top: 162;
+      top: 174;
       gap-row: 0;
       gap-column: 0;
     }
@@ -154,6 +158,7 @@
     <label id="max-extract-label">Max Output</label>
     <label id="water-label">Water</label>
     <label id="precipitation-label">Precipitation</label>
+    <label id="machine-precipitation-label">Machine Precipitation</label>
     <label id="dirty-count-label">Stains</label>
     <label id="charge-rate-label">Charge</label>
     <label id="charge-sediment-label">Charge Sediment</label>

@@ -14,6 +14,11 @@ public class TravelDisposableSockItem extends WhiteSockItem {
     }
 
     @Override
+    public boolean canPrecipitateInGenerator(ItemStack stack) {
+        return false;
+    }
+
+    @Override
     public GeneratorTickResult tickInGenerator(GeneratorTickContext context) {
         ItemStack stack = context.inputStack();
         int precipitation = SockDataUtil.getPrecipitationLevel(stack);

@@ -13,6 +13,11 @@ public class BoatSockItem extends WhiteSockItem {
     }
 
     @Override
+    public boolean canPrecipitateInGenerator(ItemStack stack) {
+        return false;
+    }
+
+    @Override
     public ItemStack getDefaultInstance() {
         ItemStack stack = super.getDefaultInstance();
         SockDataUtil.initializeBoatSock(stack, 1);

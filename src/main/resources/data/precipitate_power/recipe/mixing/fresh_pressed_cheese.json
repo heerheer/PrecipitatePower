@@ -1,0 +1,20 @@
+{
+  "type": "create:mixing",
+  "heat_requirement": "heated",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "amount": 1000,
+      "fluid": "precipitate_power:concentrated_fresh_pressed_cheese"
+    },
+    {
+      "item": "minecraft:slime_ball"
+    }
+  ],
+  "results": [
+    {
+      "count": 4,
+      "id": "precipitate_power:fresh_pressed_cheese"
+    }
+  ]
+}

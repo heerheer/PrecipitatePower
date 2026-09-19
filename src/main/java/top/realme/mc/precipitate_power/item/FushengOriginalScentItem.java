@@ -30,6 +30,12 @@ public class FushengOriginalScentItem extends OriginalScentItem {
     }
 
     @Override
+    public boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
+        entity.setUnlimitedLifetime();
+        return false;
+    }
+
+    @Override
     public GeneratorTickResult tickInGenerator(GeneratorTickContext context) {
         if (context.level().getGameTime() % 20L == 0L) {
             context.level().levelEvent(1505, context.pos().above(), 15);

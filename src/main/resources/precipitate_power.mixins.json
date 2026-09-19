@@ -3,7 +3,8 @@
   "package": "top.realme.mc.precipitate_power.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "BlockEntityTypeAccessor"
+    "BlockEntityTypeAccessor",
+    "SpoutBlockEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

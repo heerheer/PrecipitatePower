@@ -40,6 +40,8 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
     private static final String EXTRA_MAX_EXTRACT_TAG = "ExtraMaxExtract";
     private static final String EXTRA_CAPACITY_TAG = "ExtraCapacity";
     private static final String CHARGE_SEDIMENT_ENERGY_TAG = "ChargeSedimentEnergy";
+    private static final String MACHINE_PRECIPITATION_LEVEL_TAG = "MachinePrecipitationLevel";
+    private static final String PRECIPITATION_INHERITANCE_PENDING_TAG = "PrecipitationInheritancePending";
     private static final int CHARGE_SEDIMENT_STEP_ENERGY = 10_000;
     private static final int CHARGE_SEDIMENT_RATE_BONUS = 100;
     private static final int MAX_CHARGE_TRANSFER_RATE = 1_000_000;
@@ -59,6 +61,8 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
     private int extraCapacity;
     private int lastChargeRate;
     private long chargeSedimentEnergy;
+    private long machinePrecipitationLevel;
+    private boolean precipitationInheritancePending;
 
     private final ContainerData data = new ContainerData() {
         @Override
@@ -76,6 +80,9 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
                 case 9 -> lastChargeRate;
                 case 10 -> getChargeSedimentProgress();
                 case 11 -> CHARGE_SEDIMENT_STEP_ENERGY;
+                case 12 -> (int) machinePrecipitationLevel;
+                case 13 -> (int) (machinePrecipitationLevel >>> 32);
+                case 14 -> precipitationInheritancePending ? 1 : 0;
                 default -> 0;
             };
         }
@@ -89,7 +96,7 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
 
         @Override
         public int getCount() {
-            return 12;
+            return 15;
         }
     };
 
@@ -100,7 +107,13 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
     protected final void tickServer() {
         ItemStack stack = items.get(INPUT_SLOT);
         if (level instanceof ServerLevel serverLevel && stack.getItem() instanceof GeneratorFuelItem fuelItem) {
-            GeneratorTickResult result = fuelItem.tickInGenerator(new GeneratorTickContext(serverLevel, this, stack));
+            GeneratorTickContext context = new GeneratorTickContext(serverLevel, this, stack);
+            if (precipitationInheritancePending && fuelItem.canPrecipitateInGenerator(stack)) {
+                fuelItem.applyPrecipitationRolls(context, machinePrecipitationLevel);
+                precipitationInheritancePending = false;
+                setChanged();
+            }
+            GeneratorTickResult result = fuelItem.tickInGenerator(context);
             applyGeneratorTickResult(stack, result);
         }
         chargeSlottedItem();
@@ -286,7 +299,16 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
         setChanged();
     }
 
+    public long getMachinePrecipitationLevel() {
+        return machinePrecipitationLevel;
+    }
+
+    public boolean isPrecipitationInheritancePending() {
+        return precipitationInheritancePending;
+    }
+
     public void replaceInputWithDirtySock() {
+        settleCompletedPrecipitableSock();
         ItemStack dirtyStack = new ItemStack(ModItems.DIRTY_WHITE_SOCK.get(), 1);
         ItemStack output = items.get(OUTPUT_SLOT);
         if (output.isEmpty()) {
@@ -299,6 +321,21 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
             items.set(INPUT_SLOT, dirtyStack);
         }
         setChanged();
+    }
+
+    private void settleCompletedPrecipitableSock() {
+        ItemStack completedStack = items.get(INPUT_SLOT);
+        if (!(completedStack.getItem() instanceof GeneratorFuelItem fuelItem)
+                || !fuelItem.canPrecipitateInGenerator(completedStack)) {
+            return;
+        }
+
+        int completedLevel = Math.max(0, SockDataUtil.getPrecipitationLevel(completedStack));
+        if (completedLevel > 0) {
+            long remainingCapacity = Long.MAX_VALUE - machinePrecipitationLevel;
+            machinePrecipitationLevel += Math.min(remainingCapacity, (long) completedLevel);
+        }
+        precipitationInheritancePending = true;
     }
 
     @Override
@@ -415,6 +452,8 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
         extraMaxExtract = Math.max(0, tag.getInt(EXTRA_MAX_EXTRACT_TAG));
         extraCapacity = Math.max(0, tag.getInt(EXTRA_CAPACITY_TAG));
         chargeSedimentEnergy = Math.max(0L, Math.min(MAX_CHARGE_SEDIMENT_ENERGY, tag.getLong(CHARGE_SEDIMENT_ENERGY_TAG)));
+        machinePrecipitationLevel = Math.max(0L, tag.getLong(MACHINE_PRECIPITATION_LEVEL_TAG));
+        precipitationInheritancePending = tag.getBoolean(PRECIPITATION_INHERITANCE_PENDING_TAG);
         energyStorage.setEnergy(tag.getInt("Energy"));
         loadGeneratorData(tag, registries);
     }
@@ -427,6 +466,8 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
         tag.putInt(EXTRA_MAX_EXTRACT_TAG, extraMaxExtract);
         tag.putInt(EXTRA_CAPACITY_TAG, extraCapacity);
         tag.putLong(CHARGE_SEDIMENT_ENERGY_TAG, chargeSedimentEnergy);
+        tag.putLong(MACHINE_PRECIPITATION_LEVEL_TAG, machinePrecipitationLevel);
+        tag.putBoolean(PRECIPITATION_INHERITANCE_PENDING_TAG, precipitationInheritancePending);
         saveGeneratorData(tag, registries);
     }
 

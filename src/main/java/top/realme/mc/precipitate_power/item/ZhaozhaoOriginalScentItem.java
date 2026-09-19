@@ -20,6 +20,7 @@ import top.realme.mc.precipitate_power.registry.ModEffects;
 public class ZhaozhaoOriginalScentItem extends OriginalScentItem {
     private static final int COOLDOWN_TICKS = 20 * 120;
     private static final int EAT_DURATION_TICKS = 32;
+    private static final int MAX_RANDOM_EFFECT_DURATION_TICKS = 5 * 60 * 20;
 
     public ZhaozhaoOriginalScentItem(Properties properties) {
         super(properties, "tooltip.precipitate_power.zhaozhao_original_scent", "Research_King");
@@ -82,8 +83,10 @@ public class ZhaozhaoOriginalScentItem extends OriginalScentItem {
             player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 8 * 20, 1));
             player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 15 * 20, 0));
             player.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 15 * 20, 0));
-            player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 23 * 20, 4));
-            player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 30 * 20, 1));
+            player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,
+                    randomEffectDuration(level), 4));
+            player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS,
+                    randomEffectDuration(level), 1));
             player.playSound(SoundEvents.GENERIC_EAT, 1.0F, 0.8F);
             if (player instanceof ServerPlayer serverPlayer) {
                 ModAdvancements.grant(serverPlayer, ModAdvancements.THE_REAL_TASTE);
@@ -92,5 +95,9 @@ public class ZhaozhaoOriginalScentItem extends OriginalScentItem {
 
         player.awardStat(Stats.ITEM_USED.get(this));
         return stack;
+    }
+
+    private static int randomEffectDuration(Level level) {
+        return level.random.nextInt(MAX_RANDOM_EFFECT_DURATION_TICKS) + 1;
     }
 }

@@ -35,7 +35,7 @@ public class PrecipitateGeneratorMenu extends AbstractContainerMenu {
     private final ContainerData data;
 
     public PrecipitateGeneratorMenu(int containerId, Inventory inventory, FriendlyByteBuf buffer) {
-        this(containerId, inventory, new SimpleContainer(3), new SimpleContainerData(12));
+        this(containerId, inventory, new SimpleContainer(3), new SimpleContainerData(15));
     }
 
     public PrecipitateGeneratorMenu(int containerId, Inventory inventory, Container container, ContainerData data) {
@@ -88,7 +88,9 @@ public class PrecipitateGeneratorMenu extends AbstractContainerMenu {
                 this::getTransferRate,
                 this::getCurrentChargeRate,
                 this::getChargeSedimentProgress,
-                this::getChargeSedimentTarget
+                this::getChargeSedimentTarget,
+                this::getMachinePrecipitationLevel,
+                this::isPrecipitationInheritancePending
         );
     }
 
@@ -127,7 +129,9 @@ public class PrecipitateGeneratorMenu extends AbstractContainerMenu {
                 () -> generator.getData().get(8),
                 () -> generator.getData().get(9),
                 () -> generator.getData().get(10),
-                () -> generator.getData().get(11)
+                () -> generator.getData().get(11),
+                generator::getMachinePrecipitationLevel,
+                generator::isPrecipitationInheritancePending
         );
     }
 
@@ -146,7 +150,9 @@ public class PrecipitateGeneratorMenu extends AbstractContainerMenu {
                                       java.util.function.Supplier<Integer> transferRate,
                                       java.util.function.Supplier<Integer> currentChargeRate,
                                       java.util.function.Supplier<Integer> chargeSedimentProgress,
-                                      java.util.function.Supplier<Integer> chargeSedimentTarget) {
+                                      java.util.function.Supplier<Integer> chargeSedimentTarget,
+                                      java.util.function.Supplier<Long> machinePrecipitationLevel,
+                                      java.util.function.Supplier<Boolean> precipitationInheritancePending) {
         UI ui = loadGeneratorUI();
 
         bindItemSlot(ui, "machine-input-slot", inputSlot);
@@ -165,6 +171,12 @@ public class PrecipitateGeneratorMenu extends AbstractContainerMenu {
                 () -> Component.translatable("gui.precipitate_power.precipitation", precipitationLevel.get()));
         bindLabel(ui, "dirty-count-label",
                 () -> Component.translatable("gui.precipitate_power.dirty_count", dirtyCount.get()));
+        bindLabel(ui, "machine-precipitation-label",
+                () -> Component.translatable(
+                        precipitationInheritancePending.get()
+                                ? "gui.precipitate_power.machine_precipitation.ready"
+                                : "gui.precipitate_power.machine_precipitation.waiting",
+                        machinePrecipitationLevel.get()));
         bindLabel(ui, "charge-rate-label",
                 () -> Component.translatable("gui.precipitate_power.charge_rate", currentChargeRate.get(), transferRate.get()));
         bindLabel(ui, "charge-sediment-label",
@@ -280,6 +292,14 @@ public class PrecipitateGeneratorMenu extends AbstractContainerMenu {
 
     public int getChargeSedimentTarget() {
         return data.get(11);
+    }
+
+    public long getMachinePrecipitationLevel() {
+        return ((long) data.get(13) << 32) | (data.get(12) & 0xFFFFFFFFL);
+    }
+
+    public boolean isPrecipitationInheritancePending() {
+        return data.get(14) != 0;
     }
 
     @Override

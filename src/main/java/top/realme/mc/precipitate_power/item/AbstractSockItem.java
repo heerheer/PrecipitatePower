@@ -6,6 +6,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -42,6 +43,29 @@ public abstract class AbstractSockItem extends Item implements GeneratorFuelItem
         return rollMaterialsOnGeneration();
     }
 
+    @Override
+    public boolean canPrecipitateInGenerator(ItemStack stack) {
+        return true;
+    }
+
+    @Override
+    public int applyPrecipitationRolls(GeneratorTickContext context, long attempts) {
+        ItemStack stack = context.inputStack();
+        int currentLevel = SockDataUtil.getPrecipitationLevel(stack);
+        long availableLevels = (long) Integer.MAX_VALUE - currentLevel;
+        if (attempts <= 0L || availableLevels <= 0L) {
+            return 0;
+        }
+
+        long successes = rollIndependentPrecipitationAttempts(
+                context.random(), attempts, Config.PRECIPITATE_CHANCE.get(), availableLevels);
+        int addedLevels = (int) Math.min(availableLevels, successes);
+        if (addedLevels > 0) {
+            SockDataUtil.addPrecipitation(stack, addedLevels);
+        }
+        return addedLevels;
+    }
+
     public GeneratorTickResult tickInGenerator(GeneratorTickContext context) {
         return tickAsNormalSock(context);
     }
@@ -61,9 +85,8 @@ public abstract class AbstractSockItem extends Item implements GeneratorFuelItem
             generated = 0;
         }
 
-        if (context.level().getGameTime() % 20L == 0L && context.random().nextDouble() < Config.PRECIPITATE_CHANCE.get()) {
-            SockDataUtil.addPrecipitation(stack, 1);
-            changed = true;
+        if (context.level().getGameTime() % 20L == 0L) {
+            changed |= applyPrecipitationRolls(context, 1L) > 0;
         }
 
         if (applyDirtyLogic(context, precipitation)) {
@@ -71,6 +94,32 @@ public abstract class AbstractSockItem extends Item implements GeneratorFuelItem
         }
 
         return GeneratorTickResult.handled(generated, 0, changed, stack, ItemStack.EMPTY);
+    }
+
+    private static long rollIndependentPrecipitationAttempts(
+            RandomSource random, long attempts, double chance, long maximumSuccesses) {
+        if (attempts <= 0L || maximumSuccesses <= 0L || chance <= 0.0D) {
+            return 0L;
+        }
+        if (chance >= 1.0D) {
+            return Math.min(attempts, maximumSuccesses);
+        }
+
+        double logFailureChance = Math.log1p(-chance);
+        long remainingAttempts = attempts;
+        long successes = 0L;
+        while (remainingAttempts > 0L && successes < maximumSuccesses) {
+            double roll = random.nextDouble();
+            double sampledFailures = Math.floor(Math.log1p(-roll) / logFailureChance);
+            if (sampledFailures >= remainingAttempts || sampledFailures >= Long.MAX_VALUE) {
+                break;
+            }
+
+            long failuresBeforeSuccess = (long) sampledFailures;
+            successes++;
+            remainingAttempts -= failuresBeforeSuccess + 1L;
+        }
+        return successes;
     }
 
     protected int calculateBaseGeneration(GeneratorTickContext context, int precipitation) {

@@ -72,6 +72,19 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
+        client2 {
+            client()
+
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+
+            programArguments.addAll(
+                '--username',
+                'Research_King'
+            )
+
+            gameDirectory = project.file('run-client2')
+        }
+
         server {
             server()
             programArgument '--nogui'
@@ -168,7 +181,7 @@ dependencies {
     // ===== Kaleidoscope Tavern =====
     compileOnly "maven.modrinth:kaleidoscopetavern:W9ILsQt7"
     localRuntime "maven.modrinth:kaleidoscopetavern:W9ILsQt7"
-    
+
 
     // ===== Iron's runtime dependencies =====
     localRuntime "maven.modrinth:geckolib:gFmrC8Ru"
@@ -179,6 +192,10 @@ dependencies {
     // ===== JEI Runtime =====
     localRuntime "mezz.jei:jei-${minecraft_version}-common:${jei_version}"
     localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+
+    // ===== Client quality-of-life runtime mods =====
+    localRuntime "maven.modrinth:WMDesFsZ:5YsmwHra" // IMBlocker 5.4.2
+    localRuntime "maven.modrinth:I7k4B65h:TdUA8TeZ" // JustEnoughCharacters 4.5.23
 
     // ===== Mekanism =====
     localRuntime "mekanism:Mekanism:1.21.1-10.7.18.84"
@@ -267,4 +284,3 @@ idea {
         downloadJavadoc = true
     }
 }
-

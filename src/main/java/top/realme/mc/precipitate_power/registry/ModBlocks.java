@@ -1,7 +1,13 @@
 package top.realme.mc.precipitate_power.registry;
 
+import java.util.List;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -15,8 +21,6 @@ import top.realme.mc.precipitate_power.block.AdvancedPrecipitateGeneratorBlock;
 import top.realme.mc.precipitate_power.PrecipitatePower;
 import top.realme.mc.precipitate_power.block.PrecipitateGeneratorBlock;
 import top.realme.mc.precipitate_power.block.SockBlenderBlock;
-import top.realme.mc.precipitate_power.block.BananaPoopBlock;
-import net.minecraft.world.level.material.PushReaction;
 
 public final class ModBlocks {
     public static final DeferredRegister.Blocks REGISTER = DeferredRegister.createBlocks(PrecipitatePower.MODID);
@@ -44,22 +48,17 @@ public final class ModBlocks {
                     .requiresCorrectToolForDrops())
     );
 
-    public static final DeferredItem<BlockItem> SOCK_BLENDER_ITEM =
-            ModItems.REGISTER.registerSimpleBlockItem("sock_blender", SOCK_BLENDER);
-
-    public static final DeferredBlock<BananaPoopBlock> BANANA_POOP = REGISTER.register(
-            "banana_poop",
-            () -> new BananaPoopBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_BROWN)
-                    .noCollission()
-                    .instabreak()
-                    .sound(SoundType.MUD)
-                    .offsetType(BlockBehaviour.OffsetType.XZ)
-                    .pushReaction(PushReaction.DESTROY))
+    public static final DeferredItem<BlockItem> SOCK_BLENDER_ITEM = ModItems.REGISTER.register(
+            "sock_blender",
+            () -> new BlockItem(SOCK_BLENDER.get(), new Item.Properties()) {
+                @Override
+                public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+                    super.appendHoverText(stack, context, tooltip, flag);
+                    tooltip.add(Component.translatable("tooltip.precipitate_power.sock_blender.wip")
+                            .withStyle(ChatFormatting.YELLOW));
+                }
+            }
     );
-
-    public static final DeferredItem<BlockItem> BANANA_POOP_ITEM =
-            ModItems.REGISTER.registerSimpleBlockItem("banana_poop", BANANA_POOP);
 
     // Temporarily disabled until the advanced generator gameplay/art is ready to ship.
     public static final DeferredBlock<Block> ADVANCED_PRECIPITATE_GENERATOR = REGISTER_ADVANCED_PRECIPITATE_GENERATOR ? REGISTER.register(

@@ -1,0 +1,18 @@
+{
+  "type": "precipitate_power:chesed_filling",
+  "ingredients": [
+    {
+      "item": "precipitate_power:chesed_original_scent"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 250,
+      "fluid": "precipitate_power:concentrated_fresh_pressed_cheese"
+    }
+  ],
+  "results": [
+    {
+      "id": "precipitate_power:chesed_original_scent"
+    }
+  ]
+}

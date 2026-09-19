@@ -1,6 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "precipitate_power:block/banana_poop"
-  }
-}
