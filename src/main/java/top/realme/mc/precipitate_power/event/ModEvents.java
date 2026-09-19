@@ -1,5 +1,7 @@
 package top.realme.mc.precipitate_power.event;
 
+import io.redspace.ironsspellbooks.api.events.SpellCooldownAddedEvent;
+import io.redspace.ironsspellbooks.api.magic.MagicData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -14,6 +16,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -42,10 +45,14 @@ import top.realme.mc.precipitate_power.item.ChesedOriginalScentItem;
 import top.realme.mc.precipitate_power.item.ChesedSockData;
 import top.realme.mc.precipitate_power.item.OriginalScentItem;
 import top.realme.mc.precipitate_power.item.SockMaterial;
+import top.realme.mc.precipitate_power.entity.SockOfferingAltarEntity;
 import top.realme.mc.precipitate_power.registry.ModAdvancements;
 import top.realme.mc.precipitate_power.registry.ModEffects;
 import top.realme.mc.precipitate_power.registry.ModItems;
+import top.realme.mc.precipitate_power.registry.ModSpells;
 import top.realme.mc.precipitate_power.util.SockDataUtil;
+import top.realme.mc.precipitate_power.spell.BloodiPowerSpell;
+import top.realme.mc.precipitate_power.spell.SockWardSpell;
 
 @EventBusSubscriber(modid = PrecipitatePower.MODID)
 public final class ModEvents {
@@ -105,6 +112,91 @@ public final class ModEvents {
         ChesedSockData data = ChesedOriginalScentItem.getData(held);
         if (data.damagePercent() > 0) {
             event.setAmount(event.getAmount() * (1.0F + data.damagePercent() / 100.0F));
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onSockWardIncomingDamage(LivingIncomingDamageEvent event) {
+        applySockWard(event.getEntity(), event);
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onSpellCooldownAdded(SpellCooldownAddedEvent.Pre event) {
+        int spellLevel = MagicData.getPlayerMagicData(event.getEntity()).getCastingSpellLevel();
+        int desiredCooldownSeconds;
+        int levelOneCooldownSeconds;
+        if (event.getSpell() == ModSpells.BLOODI_POWER.get()) {
+            desiredCooldownSeconds = BloodiPowerSpell.getBaseCooldownSeconds(spellLevel);
+            levelOneCooldownSeconds = BloodiPowerSpell.getBaseCooldownSeconds(1);
+        } else if (event.getSpell() == ModSpells.SOCK_WARD.get()) {
+            desiredCooldownSeconds = SockWardSpell.getBaseCooldownSeconds(spellLevel);
+            levelOneCooldownSeconds = SockWardSpell.getBaseCooldownSeconds(1);
+        } else {
+            return;
+        }
+
+        if (levelOneCooldownSeconds > 0) {
+            float levelMultiplier = desiredCooldownSeconds / (float) levelOneCooldownSeconds;
+            event.setEffectiveCooldown(Math.max(0,
+                    Math.round(event.getEffectiveCooldown() * levelMultiplier)));
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onBloodiPowerIncomingDamage(LivingIncomingDamageEvent event) {
+        if (event.getAmount() <= BloodiPowerSpell.DAMAGE_IMMUNITY_THRESHOLD
+                && event.getEntity().hasEffect(ModEffects.BLOODI_POWER)) {
+            event.setCanceled(true);
+        }
+    }
+
+    private static void applySockWard(LivingEntity target, LivingIncomingDamageEvent event) {
+        if (target.level().isClientSide() || event.getAmount() <= 0.0F) {
+            return;
+        }
+        MobEffectInstance ward = target.getEffect(ModEffects.SOCK_WARD);
+        if (ward == null) {
+            return;
+        }
+
+        int spellLevel = SockWardSpell.getEffectSpellLevel(ward.getAmplifier());
+        int remainingSocks = SockWardSpell.getRemainingSockCount(ward.getAmplifier());
+        float damageReduction = SockWardSpell.getDamageReductionPercent(spellLevel) / 100.0F;
+        event.setAmount(event.getAmount() * (1.0F - damageReduction));
+        int remainingDuration = ward.getDuration();
+        target.removeEffect(ModEffects.SOCK_WARD);
+        if (spellLevel >= 5) {
+            target.addEffect(new MobEffectInstance(
+                    MobEffects.HEAL, 1, spellLevel - 5, false, true, true));
+        }
+        if (remainingSocks > 1) {
+            target.addEffect(new MobEffectInstance(
+                    ModEffects.SOCK_WARD,
+                    remainingDuration,
+                    SockWardSpell.encodeEffectAmplifier(spellLevel, remainingSocks - 1),
+                    false,
+                    true,
+                    true));
+        } else if (spellLevel >= 5) {
+            target.addEffect(new MobEffectInstance(
+                    MobEffects.DAMAGE_RESISTANCE, 100, spellLevel - 5, false, true, true));
+        }
+        target.playSound(SoundEvents.WOOL_BREAK, 1.0F, 1.2F);
+    }
+
+    @SubscribeEvent
+    public static void onSockOfferingDamagePost(LivingDamageEvent.Post event) {
+        LivingEntity target = event.getEntity();
+        if (target.level().isClientSide()
+                || event.getNewDamage() <= 0.0F
+                || !(target instanceof Enemy)
+                || !(event.getSource().getEntity() instanceof Player)) {
+            return;
+        }
+        for (SockOfferingAltarEntity altar : target.level().getEntitiesOfClass(
+                SockOfferingAltarEntity.class,
+                target.getBoundingBox().inflate(SockOfferingAltarEntity.ATTACK_RADIUS))) {
+            altar.tryReactiveShot(target);
         }
     }
 

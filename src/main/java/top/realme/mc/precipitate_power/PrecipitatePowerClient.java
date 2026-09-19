@@ -14,6 +14,10 @@ import net.createmod.ponder.foundation.PonderIndex;
 import com.simibubi.create.foundation.item.render.SimpleCustomRenderer;
 import top.realme.mc.precipitate_power.client.ChesedFeedingItemRenderer;
 import top.realme.mc.precipitate_power.client.ChesedUpgradeRenderer;
+import top.realme.mc.precipitate_power.client.BloodiPowerAreaRenderer;
+import top.realme.mc.precipitate_power.client.BloodiProjectileRenderer;
+import top.realme.mc.precipitate_power.client.SockProjectileRenderer;
+import top.realme.mc.precipitate_power.client.SockOfferingAltarRenderer;
 import top.realme.mc.precipitate_power.ponder.PrecipitatePowerPonderPlugin;
 import top.realme.mc.precipitate_power.registry.ModEntities;
 import top.realme.mc.precipitate_power.registry.ModItems;
@@ -35,6 +39,14 @@ public class PrecipitatePowerClient {
     @SubscribeEvent
     static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.CHESED_UPGRADE.get(), ChesedUpgradeRenderer::new);
+        event.registerEntityRenderer(ModEntities.GIANT_SOCK_PROJECTILE.get(),
+                context -> new SockProjectileRenderer<>(context, 3.0F, 24.0F));
+        event.registerEntityRenderer(ModEntities.HOMING_SOCK_PROJECTILE.get(),
+                context -> new SockProjectileRenderer<>(context, 0.75F, 38.0F));
+        event.registerEntityRenderer(ModEntities.BLOODI_PROJECTILE.get(), BloodiProjectileRenderer::new);
+        event.registerEntityRenderer(ModEntities.SOCK_OFFERING_PROJECTILE.get(), BloodiProjectileRenderer::new);
+        event.registerEntityRenderer(ModEntities.BLOODI_POWER_AREA.get(), BloodiPowerAreaRenderer::new);
+        event.registerEntityRenderer(ModEntities.SOCK_OFFERING_ALTAR.get(), SockOfferingAltarRenderer::new);
     }
 
     @SubscribeEvent

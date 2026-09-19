@@ -1,10 +1,15 @@
 package top.realme.mc.precipitate_power;
 
 import com.mojang.logging.LogUtils;
+import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
+import io.redspace.ironsspellbooks.api.spells.ISpellContainer;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
@@ -29,11 +34,15 @@ import top.realme.mc.precipitate_power.registry.ModItems;
 import top.realme.mc.precipitate_power.registry.ModLootModifiers;
 import top.realme.mc.precipitate_power.registry.ModMenus;
 import top.realme.mc.precipitate_power.registry.ModRecipes;
+import top.realme.mc.precipitate_power.registry.ModSpells;
+import top.realme.mc.precipitate_power.registry.ModSounds;
 
 @Mod(PrecipitatePower.MODID)
 public class PrecipitatePower {
     public static final String MODID = "precipitate_power";
     public static final Logger LOGGER = LogUtils.getLogger();
+    private static final ResourceLocation IRONS_SPELLBOOKS_SCROLL =
+            ResourceLocation.fromNamespaceAndPath("irons_spellbooks", "scroll");
 
     public static final DeferredRegister<CreativeModeTab> CREATIVE_TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
@@ -67,6 +76,11 @@ public class PrecipitatePower {
                         output.accept(ModItems.SMALL_ELECTRIC_SOCK.get());
                         output.accept(ModItems.MEDIUM_ELECTRIC_SOCK.get());
                         output.accept(ModItems.LARGE_ELECTRIC_SOCK.get());
+                        addSpellScrolls(output, ModSpells.GIANT_SOCK.get());
+                        addSpellScrolls(output, ModSpells.SOCK_BARRAGE.get());
+                        addSpellScrolls(output, ModSpells.SOCK_WARD.get());
+                        addSpellScrolls(output, ModSpells.BLOODI_POWER.get());
+                        addSpellScrolls(output, ModSpells.SOCK_OFFERING.get());
                         if (ModList.get().isLoaded(KaleidoscopeTavernCompat.MOD_ID)) {
                             output.accept(KaleidoscopeTavernCompat.createMaxQualityStack());
                         }
@@ -78,6 +92,14 @@ public class PrecipitatePower {
                     })
                     .build()
     );
+
+    private static void addSpellScrolls(CreativeModeTab.Output output, AbstractSpell spell) {
+        for (int level = spell.getMinLevel(); level <= spell.getMaxLevel(); level++) {
+            ItemStack scroll = new ItemStack(BuiltInRegistries.ITEM.get(IRONS_SPELLBOOKS_SCROLL));
+            ISpellContainer.createScrollContainer(spell, level, scroll);
+            output.accept(scroll);
+        }
+    }
 
     public PrecipitatePower(IEventBus modEventBus, ModContainer modContainer) {
         ModDataComponents.REGISTER.register(modEventBus);
@@ -92,6 +114,8 @@ public class PrecipitatePower {
         ModLootModifiers.REGISTER.register(modEventBus);
         ModEffects.REGISTER.register(modEventBus);
         ModRecipes.REGISTER.register(modEventBus);
+        ModSpells.REGISTER.register(modEventBus);
+        ModSounds.REGISTER.register(modEventBus);
         CREATIVE_TABS.register(modEventBus);
 
         if (ModList.get().isLoaded(KaleidoscopeTavernCompat.MOD_ID)) {
