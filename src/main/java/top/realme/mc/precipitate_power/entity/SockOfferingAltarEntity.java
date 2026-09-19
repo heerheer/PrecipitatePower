@@ -44,13 +44,17 @@ public class SockOfferingAltarEntity extends Entity {
     private static final int MAX_MILESTONE_TARGETS = 10;
     private static final int UPGRADE_MILESTONE_LEVELS = 10;
     private static final int MAX_UTILITY_MILESTONES = 3;
+    private static final int MAX_ORBITING_SOCKS = 10;
     private static final int DURATION_BONUS_PER_MILESTONE_TICKS = 100;
+    private static final int ORBITING_SOCK_EXTENSION_TICKS = 100;
     private static final float RADIUS_BONUS_PER_MILESTONE = 1.0F;
     private static final int IMPACT_SOUND_DURATION_TICKS = 16;
 
     private static final EntityDataAccessor<Integer> DATA_OFFERING_LEVEL =
             SynchedEntityData.defineId(SockOfferingAltarEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_REMAINING_TICKS =
+            SynchedEntityData.defineId(SockOfferingAltarEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_ORBITING_SOCKS =
             SynchedEntityData.defineId(SockOfferingAltarEntity.class, EntityDataSerializers.INT);
 
     private UUID ownerUuid;
@@ -82,6 +86,7 @@ public class SockOfferingAltarEntity extends Entity {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(DATA_OFFERING_LEVEL, 1);
         builder.define(DATA_REMAINING_TICKS, BASE_DURATION_TICKS);
+        builder.define(DATA_ORBITING_SOCKS, 0);
     }
 
     @Override
@@ -93,8 +98,14 @@ public class SockOfferingAltarEntity extends Entity {
 
         setRemainingTicks(getRemainingTicks() - 1);
         if (getRemainingTicks() <= 0) {
-            discard();
-            return;
+            if (getOrbitingSockCount() > 0) {
+                setOrbitingSockCount(getOrbitingSockCount() - 1);
+                setRemainingTicks(ORBITING_SOCK_EXTENSION_TICKS);
+                level().broadcastEntityEvent(this, (byte) 8);
+            } else {
+                discard();
+                return;
+            }
         }
         if (!(level() instanceof ServerLevel serverLevel)) {
             return;
@@ -135,7 +146,12 @@ public class SockOfferingAltarEntity extends Entity {
         level().broadcastEntityEvent(this, (byte) 7);
 
         if (level() instanceof ServerLevel serverLevel) {
-            for (int milestone = oldLevel / 10 + 1; milestone <= newLevel / 10; milestone++) {
+            int oldMilestone = oldLevel / UPGRADE_MILESTONE_LEVELS;
+            int newMilestone = newLevel / UPGRADE_MILESTONE_LEVELS;
+            if (newMilestone > oldMilestone) {
+                setOrbitingSockCount(getOrbitingSockCount() + newMilestone - oldMilestone);
+            }
+            for (int milestone = oldMilestone + 1; milestone <= newMilestone; milestone++) {
                 queueMilestoneVolley(serverLevel);
             }
         }
@@ -261,7 +277,12 @@ public class SockOfferingAltarEntity extends Entity {
     }
 
     public int getOrbitingSockCount() {
-        return getOfferingLevel() / UPGRADE_MILESTONE_LEVELS;
+        return entityData.get(DATA_ORBITING_SOCKS);
+    }
+
+    public void setOrbitingSockCount(int count) {
+        entityData.set(DATA_ORBITING_SOCKS,
+                Math.max(0, Math.min(MAX_ORBITING_SOCKS, count)));
     }
 
     public static float getBasicProjectileDamage(int quality, float spellPowerMultiplier) {
@@ -314,6 +335,16 @@ public class SockOfferingAltarEntity extends Entity {
                         getX(), getY() + 1.35D, getZ(),
                         Math.cos(angle) * 0.08D, 0.035D, Math.sin(angle) * 0.08D);
             }
+        } else if (id == 8) {
+            for (int i = 0; i < 40; i++) {
+                double angle = level().random.nextDouble() * Math.PI * 2.0D;
+                double speed = 0.08D + level().random.nextDouble() * 0.14D;
+                level().addParticle(ParticleTypes.TOTEM_OF_UNDYING,
+                        getX(), getY() + 0.9D + level().random.nextDouble() * 0.8D, getZ(),
+                        Math.cos(angle) * speed,
+                        0.05D + level().random.nextDouble() * 0.16D,
+                        Math.sin(angle) * speed);
+            }
         }
     }
 
@@ -343,6 +374,7 @@ public class SockOfferingAltarEntity extends Entity {
         }
         tag.putInt("OfferingLevel", getOfferingLevel());
         tag.putInt("RemainingTicks", getRemainingTicks());
+        tag.putInt("OrbitingSockCount", getOrbitingSockCount());
         tag.putFloat("SpellPowerMultiplier", spellPowerMultiplier);
         tag.putInt("BasicAttackCooldown", basicAttackCooldown);
         tag.putInt("ReactiveAttackCooldown", reactiveAttackCooldown);
@@ -360,6 +392,9 @@ public class SockOfferingAltarEntity extends Entity {
         ownerUuid = tag.hasUUID("Owner") ? tag.getUUID("Owner") : null;
         setOfferingLevel(tag.getInt("OfferingLevel"));
         setRemainingTicks(tag.getInt("RemainingTicks"));
+        setOrbitingSockCount(tag.contains("OrbitingSockCount")
+                ? tag.getInt("OrbitingSockCount")
+                : getOfferingLevel() / UPGRADE_MILESTONE_LEVELS);
         spellPowerMultiplier = tag.contains("SpellPowerMultiplier")
                 ? Math.max(0.0F, tag.getFloat("SpellPowerMultiplier")) : 1.0F;
         basicAttackCooldown = Math.max(0, tag.getInt("BasicAttackCooldown"));
