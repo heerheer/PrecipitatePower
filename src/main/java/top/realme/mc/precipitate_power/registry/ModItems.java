@@ -33,6 +33,11 @@ public final class ModItems {
             () -> new WhiteSockItem(new Item.Properties().stacksTo(1).durability(64))
     );
 
+    public static final DeferredItem<Item> BLACK_SOCK = REGISTER.register(
+            "black_sock",
+            () -> new WhiteSockItem(new Item.Properties().stacksTo(1).durability(64))
+    );
+
     public static final DeferredItem<Item> DIRTY_WHITE_SOCK = REGISTER.register(
             "dirty_white_sock",
             () -> new Item(new Item.Properties().stacksTo(1))

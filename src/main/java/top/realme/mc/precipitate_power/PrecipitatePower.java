@@ -55,6 +55,7 @@ public class PrecipitatePower {
                     .icon(() -> ModItems.WHITE_SOCK.get().getDefaultInstance())
                     .displayItems((parameters, output) -> {
                         output.accept(ModItems.WHITE_SOCK.get());
+                        output.accept(ModItems.BLACK_SOCK.get());
                         output.accept(ModItems.RAINBOW_WHITE_SOCK.get().getDefaultInstance());
                         output.accept(ModItems.TRAVEL_DISPOSABLE_SOCK.get());
                         output.accept(ModItems.BOAT_SOCK.get().getDefaultInstance());
@@ -152,6 +153,7 @@ public class PrecipitatePower {
         }
         if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
             event.accept(ModItems.WHITE_SOCK.get());
+            event.accept(ModItems.BLACK_SOCK.get());
             event.accept(ModItems.RAINBOW_WHITE_SOCK.get());
             event.accept(ModItems.TRAVEL_DISPOSABLE_SOCK.get());
             event.accept(ModItems.BOAT_SOCK.get().getDefaultInstance());

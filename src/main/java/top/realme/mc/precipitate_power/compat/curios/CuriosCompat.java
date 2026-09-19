@@ -18,6 +18,7 @@ public final class CuriosCompat {
     public static void onCommonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             CuriosApi.registerCurio(ModItems.WHITE_SOCK.get(), SockCurio.INSTANCE);
+            CuriosApi.registerCurio(ModItems.BLACK_SOCK.get(), SockCurio.INSTANCE);
             CuriosApi.registerCurio(ModItems.RAINBOW_WHITE_SOCK.get(), SockCurio.INSTANCE);
             CuriosApi.registerCurio(ModItems.TRAVEL_DISPOSABLE_SOCK.get(), SockCurio.INSTANCE);
             CuriosApi.registerCurio(ModItems.BOAT_SOCK.get(), SockCurio.INSTANCE);
