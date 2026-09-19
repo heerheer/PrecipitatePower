@@ -195,7 +195,7 @@ public final class ModEvents {
         }
         for (SockOfferingAltarEntity altar : target.level().getEntitiesOfClass(
                 SockOfferingAltarEntity.class,
-                target.getBoundingBox().inflate(SockOfferingAltarEntity.ATTACK_RADIUS))) {
+                target.getBoundingBox().inflate(SockOfferingAltarEntity.MAX_ATTACK_RADIUS))) {
             altar.tryReactiveShot(target);
         }
     }

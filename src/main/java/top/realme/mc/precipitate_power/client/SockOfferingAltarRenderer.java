@@ -48,6 +48,25 @@ public class SockOfferingAltarRenderer extends EntityRenderer<SockOfferingAltarE
                 OverlayTexture.NO_OVERLAY, poseStack, buffer, entity.level(), entity.getId() + 1);
         poseStack.popPose();
 
+        int orbitingSockCount = entity.getOrbitingSockCount();
+        float orbitRadius = 0.82F + orbitingSockCount * 0.035F;
+        for (int i = 0; i < orbitingSockCount; i++) {
+            double angle = age * 0.055D + Math.PI * 2.0D * i / orbitingSockCount;
+            double orbitY = 1.12D + Math.sin(age * 0.11D + i * 0.9D) * 0.12D;
+            poseStack.pushPose();
+            poseStack.translate(
+                    Math.cos(angle) * orbitRadius,
+                    orbitY,
+                    Math.sin(angle) * orbitRadius);
+            poseStack.mulPose(entityRenderDispatcher.cameraOrientation());
+            poseStack.mulPose(Axis.ZP.rotationDegrees(age * 3.0F + i * 36.0F));
+            poseStack.scale(0.36F, 0.36F, 0.36F);
+            itemRenderer.renderStatic(sock, ItemDisplayContext.FIXED, LightTexture.FULL_BRIGHT,
+                    OverlayTexture.NO_OVERLAY, poseStack, buffer,
+                    entity.level(), entity.getId() + i + 2);
+            poseStack.popPose();
+        }
+
         super.render(entity, entityYaw, partialTick, poseStack, buffer, packedLight);
     }
 

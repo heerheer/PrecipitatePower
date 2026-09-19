@@ -30,7 +30,8 @@ public final class ModEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<GiantSockProjectileEntity>> GIANT_SOCK_PROJECTILE = REGISTER.register(
             "giant_sock_projectile",
             () -> EntityType.Builder.<GiantSockProjectileEntity>of(GiantSockProjectileEntity::new, MobCategory.MISC)
-                    .sized(3.0F, 3.0F)
+                    .sized(GiantSockProjectileEntity.BASE_COLLISION_SIZE,
+                            GiantSockProjectileEntity.BASE_COLLISION_SIZE)
                     .clientTrackingRange(12)
                     .updateInterval(1)
                     .build("giant_sock_projectile")

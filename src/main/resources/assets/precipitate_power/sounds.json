@@ -4,5 +4,11 @@
     "sounds": [
       "precipitate_power:sock_offering"
     ]
+  },
+  "sock_offering_impact": {
+    "subtitle": "subtitles.precipitate_power.sock_offering_impact",
+    "sounds": [
+      "precipitate_power:sock_offering_impact"
+    ]
   }
 }

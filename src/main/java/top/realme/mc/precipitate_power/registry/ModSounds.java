@@ -15,6 +15,10 @@ public final class ModSounds {
             "sock_offering",
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(
                     PrecipitatePower.MODID, "sock_offering")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> SOCK_OFFERING_IMPACT = REGISTER.register(
+            "sock_offering_impact",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(
+                    PrecipitatePower.MODID, "sock_offering_impact")));
 
     private ModSounds() {
     }

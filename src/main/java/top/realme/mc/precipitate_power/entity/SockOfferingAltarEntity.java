@@ -10,7 +10,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -21,6 +21,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import top.realme.mc.precipitate_power.registry.ModEntities;
+import top.realme.mc.precipitate_power.registry.ModSounds;
 
 import java.util.ArrayDeque;
 import java.util.Comparator;
@@ -29,16 +30,23 @@ import java.util.Queue;
 import java.util.UUID;
 
 public class SockOfferingAltarEntity extends Entity {
-    public static final int MAX_DURATION_TICKS = 200;
-    public static final float ATTACK_RADIUS = 5.0F;
+    public static final int MAX_OFFERING_LEVEL = 100;
+    public static final int BASE_DURATION_TICKS = 300;
+    public static final float MAX_ATTACK_RADIUS = 12.0F;
 
     private static final float BASE_PROJECTILE_DAMAGE = 2.5F;
     private static final float[] QUALITY_DAMAGE_BONUS = {0.5F, 0.75F, 1.0F, 1.5F, 2.0F};
     private static final float[] REACTIVE_DAMAGE = {4.0F, 5.0F, 6.0F, 7.0F, 8.0F};
     private static final int[] BASIC_ATTACK_INTERVAL = {60, 60, 60, 40, 40};
+    private static final float[] ATTACK_RADIUS = {5.0F, 6.0F, 7.0F, 8.0F, 9.0F};
     private static final int REACTIVE_COOLDOWN_TICKS = 20;
     private static final int MILESTONE_SHOT_INTERVAL_TICKS = 4;
     private static final int MAX_MILESTONE_TARGETS = 10;
+    private static final int UPGRADE_MILESTONE_LEVELS = 10;
+    private static final int MAX_UTILITY_MILESTONES = 3;
+    private static final int DURATION_BONUS_PER_MILESTONE_TICKS = 100;
+    private static final float RADIUS_BONUS_PER_MILESTONE = 1.0F;
+    private static final int IMPACT_SOUND_DURATION_TICKS = 16;
 
     private static final EntityDataAccessor<Integer> DATA_OFFERING_LEVEL =
             SynchedEntityData.defineId(SockOfferingAltarEntity.class, EntityDataSerializers.INT);
@@ -50,6 +58,7 @@ public class SockOfferingAltarEntity extends Entity {
     private int basicAttackCooldown;
     private int reactiveAttackCooldown;
     private int milestoneShotCooldown;
+    private long nextImpactSoundGameTime;
     private final Queue<UUID> milestoneTargets = new ArrayDeque<>();
 
     public SockOfferingAltarEntity(EntityType<? extends SockOfferingAltarEntity> entityType, Level level) {
@@ -64,7 +73,7 @@ public class SockOfferingAltarEntity extends Entity {
         ownerUuid = owner.getUUID();
         this.spellPowerMultiplier = Math.max(0.0F, spellPowerMultiplier);
         setOfferingLevel(initialLevel);
-        setRemainingTicks(MAX_DURATION_TICKS);
+        setRemainingTicks(getMaxDurationTicks());
         basicAttackCooldown = getBasicAttackInterval();
         setPos(position.x, position.y, position.z);
     }
@@ -72,7 +81,7 @@ public class SockOfferingAltarEntity extends Entity {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(DATA_OFFERING_LEVEL, 1);
-        builder.define(DATA_REMAINING_TICKS, MAX_DURATION_TICKS);
+        builder.define(DATA_REMAINING_TICKS, BASE_DURATION_TICKS);
     }
 
     @Override
@@ -118,12 +127,11 @@ public class SockOfferingAltarEntity extends Entity {
             return;
         }
         int oldLevel = getOfferingLevel();
-        int newLevel = Math.min(1_000_000, oldLevel + levels);
+        int newLevel = Math.min(MAX_OFFERING_LEVEL, oldLevel + levels);
         setOfferingLevel(newLevel);
-        setRemainingTicks(MAX_DURATION_TICKS);
+        setRemainingTicks(getMaxDurationTicks());
         basicAttackCooldown = Math.min(basicAttackCooldown, getBasicAttackInterval());
-        playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 0.9F,
-                0.95F + Math.min(0.5F, getQuality() * 0.08F));
+        tryPlayImpactSound();
         level().broadcastEntityEvent(this, (byte) 7);
 
         if (level() instanceof ServerLevel serverLevel) {
@@ -192,15 +200,16 @@ public class SockOfferingAltarEntity extends Entity {
     }
 
     private List<LivingEntity> findEnemies(ServerLevel level) {
-        AABB area = getBoundingBox().inflate(ATTACK_RADIUS);
+        AABB area = getBoundingBox().inflate(getAttackRadius());
         return level.getEntitiesOfClass(LivingEntity.class, area, this::isEnemyInRange);
     }
 
     private boolean isEnemyInRange(LivingEntity entity) {
+        float attackRadius = getAttackRadius();
         return entity instanceof Enemy
                 && entity.isAlive()
                 && !entity.isSpectator()
-                && distanceToSqr(entity) <= ATTACK_RADIUS * ATTACK_RADIUS;
+                && distanceToSqr(entity) <= attackRadius * attackRadius;
     }
 
     private LivingEntity getOwner(ServerLevel level) {
@@ -213,7 +222,8 @@ public class SockOfferingAltarEntity extends Entity {
     }
 
     public void setOfferingLevel(int level) {
-        entityData.set(DATA_OFFERING_LEVEL, Math.max(1, level));
+        entityData.set(DATA_OFFERING_LEVEL,
+                Math.max(1, Math.min(MAX_OFFERING_LEVEL, level)));
     }
 
     public int getRemainingTicks() {
@@ -240,6 +250,20 @@ public class SockOfferingAltarEntity extends Entity {
         return getBasicAttackInterval(getQuality());
     }
 
+    public float getAttackRadius() {
+        return getAttackRadius(getQuality())
+                + getUtilityMilestoneCount() * RADIUS_BONUS_PER_MILESTONE;
+    }
+
+    public int getMaxDurationTicks() {
+        return BASE_DURATION_TICKS
+                + getUtilityMilestoneCount() * DURATION_BONUS_PER_MILESTONE_TICKS;
+    }
+
+    public int getOrbitingSockCount() {
+        return getOfferingLevel() / UPGRADE_MILESTONE_LEVELS;
+    }
+
     public static float getBasicProjectileDamage(int quality, float spellPowerMultiplier) {
         int index = qualityIndex(quality);
         return (BASE_PROJECTILE_DAMAGE + QUALITY_DAMAGE_BONUS[index])
@@ -254,8 +278,30 @@ public class SockOfferingAltarEntity extends Entity {
         return BASIC_ATTACK_INTERVAL[qualityIndex(quality)];
     }
 
+    public static float getAttackRadius(int quality) {
+        return ATTACK_RADIUS[qualityIndex(quality)];
+    }
+
+    private int getUtilityMilestoneCount() {
+        return Math.min(MAX_UTILITY_MILESTONES,
+                getOfferingLevel() / UPGRADE_MILESTONE_LEVELS);
+    }
+
     private static int qualityIndex(int quality) {
         return Math.max(0, Math.min(QUALITY_DAMAGE_BONUS.length - 1, quality - 1));
+    }
+
+    private void tryPlayImpactSound() {
+        if (!(level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        long gameTime = serverLevel.getGameTime();
+        if (gameTime < nextImpactSoundGameTime) {
+            return;
+        }
+        serverLevel.playSound(null, getX(), getY() + 1.0D, getZ(),
+                ModSounds.SOCK_OFFERING_IMPACT.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+        nextImpactSoundGameTime = gameTime + IMPACT_SOUND_DURATION_TICKS;
     }
 
     @Override
@@ -273,7 +319,11 @@ public class SockOfferingAltarEntity extends Entity {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        return source.getEntity() instanceof Player;
+        if (!(source.getEntity() instanceof Player)) {
+            return false;
+        }
+        tryPlayImpactSound();
+        return true;
     }
 
     @Override
@@ -297,6 +347,7 @@ public class SockOfferingAltarEntity extends Entity {
         tag.putInt("BasicAttackCooldown", basicAttackCooldown);
         tag.putInt("ReactiveAttackCooldown", reactiveAttackCooldown);
         tag.putInt("MilestoneShotCooldown", milestoneShotCooldown);
+        tag.putLong("NextImpactSoundGameTime", nextImpactSoundGameTime);
         int index = 0;
         for (UUID target : milestoneTargets) {
             tag.putUUID("MilestoneTarget" + index++, target);
@@ -314,6 +365,7 @@ public class SockOfferingAltarEntity extends Entity {
         basicAttackCooldown = Math.max(0, tag.getInt("BasicAttackCooldown"));
         reactiveAttackCooldown = Math.max(0, tag.getInt("ReactiveAttackCooldown"));
         milestoneShotCooldown = Math.max(0, tag.getInt("MilestoneShotCooldown"));
+        nextImpactSoundGameTime = Math.max(0L, tag.getLong("NextImpactSoundGameTime"));
         milestoneTargets.clear();
         int targetCount = Math.min(100, Math.max(0, tag.getInt("MilestoneTargetCount")));
         for (int i = 0; i < targetCount; i++) {

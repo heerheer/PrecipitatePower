@@ -34,11 +34,11 @@ public class SockOfferingSpell extends AbstractSpell {
             .setMinRarity(SpellRarity.EPIC)
             .setSchoolResource(SchoolRegistry.EVOCATION_RESOURCE)
             .setMaxLevel(5)
-            .setCooldownSeconds(45.0D)
+            .setCooldownSeconds(180.0D)
             .build();
 
     public SockOfferingSpell() {
-        baseManaCost = 100;
+        baseManaCost = 120;
         manaCostPerLevel = 0;
         baseSpellPower = 5;
         spellPowerPerLevel = 1;
@@ -104,9 +104,12 @@ public class SockOfferingSpell extends AbstractSpell {
     public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         int quality = Math.max(1, Math.min(5, spellLevel));
         return List.of(
-                Component.translatable("ui.precipitate_power.offering_duration", 10),
+                Component.translatable("ui.precipitate_power.offering_duration", 15),
                 Component.translatable("ui.precipitate_power.offering_radius",
-                        String.format("%.1f", SockOfferingAltarEntity.ATTACK_RADIUS)),
+                        String.format("%.1f", SockOfferingAltarEntity.getAttackRadius(quality))),
+                Component.translatable("ui.precipitate_power.offering_milestone_bonus"),
+                Component.translatable("ui.precipitate_power.offering_level_cap",
+                        SockOfferingAltarEntity.MAX_OFFERING_LEVEL),
                 Component.translatable("ui.precipitate_power.offering_initial_level", spellLevel),
                 Component.translatable("ui.precipitate_power.offering_attack_interval",
                         String.format("%.1f", SockOfferingAltarEntity.getBasicAttackInterval(quality) / 20.0F)),

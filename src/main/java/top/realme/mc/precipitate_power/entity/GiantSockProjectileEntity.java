@@ -17,6 +17,8 @@ import top.realme.mc.precipitate_power.registry.ModEntities;
 import java.util.Optional;
 
 public class GiantSockProjectileEntity extends AbstractSockProjectileEntity {
+    public static final float BASE_COLLISION_SIZE = 1.75F;
+    private static final double COLLISION_HALF_DEPTH = 0.10D;
     private float collisionScale = 1.0F;
 
     public GiantSockProjectileEntity(EntityType<? extends GiantSockProjectileEntity> entityType, Level level) {
@@ -51,14 +53,20 @@ public class GiantSockProjectileEntity extends AbstractSockProjectileEntity {
                 ? start.distanceToSqr(end)
                 : start.distanceToSqr(blockHit.getLocation());
 
-        double halfSize = getBbWidth() * 0.5D;
-        AABB sweptVolume = centeredCollisionBox(start, halfSize)
-                .minmax(centeredCollisionBox(end, halfSize));
+        Vec3 movement = getDeltaMovement();
+        Vec3 forward = movement.lengthSqr() < 1.0E-8D
+                ? new Vec3(0.0D, 0.0D, 1.0D)
+                : movement.normalize();
+        double halfWidth = getBbWidth() * 0.5D;
+        Vec3 halfExtents = getThinPlaneHalfExtents(forward, halfWidth);
+        AABB sweptVolume = centeredCollisionBox(start, halfExtents)
+                .minmax(centeredCollisionBox(end, halfExtents));
         EntityHitResult nearestEntityHit = null;
 
         for (net.minecraft.world.entity.Entity entity
                 : level().getEntities(this, sweptVolume, this::canHitEntity)) {
-            AABB expandedTarget = entity.getBoundingBox().inflate(halfSize);
+            AABB expandedTarget = entity.getBoundingBox().inflate(
+                    halfExtents.x, halfExtents.y, halfExtents.z);
             Optional<Vec3> clipped = expandedTarget.clip(start, end);
             Vec3 hitLocation = expandedTarget.contains(start) ? start : clipped.orElse(null);
             if (hitLocation == null) {
@@ -73,10 +81,24 @@ public class GiantSockProjectileEntity extends AbstractSockProjectileEntity {
         return nearestEntityHit != null ? nearestEntityHit : blockHit;
     }
 
-    private static AABB centeredCollisionBox(Vec3 center, double halfSize) {
+    private static Vec3 getThinPlaneHalfExtents(Vec3 forward, double halfWidth) {
+        return new Vec3(
+                transverseExtent(forward.x, halfWidth),
+                transverseExtent(forward.y, halfWidth),
+                transverseExtent(forward.z, halfWidth));
+    }
+
+    private static double transverseExtent(double forwardComponent, double halfWidth) {
+        double transverseComponent = Math.sqrt(Math.max(
+                0.0D, 1.0D - forwardComponent * forwardComponent));
+        return halfWidth * transverseComponent
+                + COLLISION_HALF_DEPTH * Math.abs(forwardComponent);
+    }
+
+    private static AABB centeredCollisionBox(Vec3 center, Vec3 halfExtents) {
         return new AABB(
-                center.x - halfSize, center.y - halfSize, center.z - halfSize,
-                center.x + halfSize, center.y + halfSize, center.z + halfSize);
+                center.x - halfExtents.x, center.y - halfExtents.y, center.z - halfExtents.z,
+                center.x + halfExtents.x, center.y + halfExtents.y, center.z + halfExtents.z);
     }
 
     @Override
