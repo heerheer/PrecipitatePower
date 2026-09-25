@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -25,33 +24,45 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
-import org.joml.Math;
 import top.realme.mc.precipitate_power.Config;
+import top.realme.mc.precipitate_power.item.GeneratorFuelItem;
+import top.realme.mc.precipitate_power.item.GeneratorTickContext;
+import top.realme.mc.precipitate_power.item.GeneratorTickResult;
 import top.realme.mc.precipitate_power.menu.PrecipitateGeneratorMenu;
-import top.realme.mc.precipitate_power.registry.ModEnchantments;
 import top.realme.mc.precipitate_power.registry.ModItems;
-import top.realme.mc.precipitate_power.util.FormulaParser;
 import top.realme.mc.precipitate_power.util.SockDataUtil;
+import top.realme.mc.precipitate_power.util.EnergyTransferUtil;
 
 public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer {
     protected static final int INPUT_SLOT = 0;
     protected static final int OUTPUT_SLOT = 1;
+    protected static final int CHARGE_SLOT = 2;
     private static final String EXTRA_MAX_EXTRACT_TAG = "ExtraMaxExtract";
     private static final String EXTRA_CAPACITY_TAG = "ExtraCapacity";
-    private static final double ATHLETIC_COGNITION_LOSS_CHANCE = 0.5D;
-    private static final double ATHLETIC_COGNITION_LOSS_AMOUNT = 0.01D;
+    private static final String CHARGE_SEDIMENT_ENERGY_TAG = "ChargeSedimentEnergy";
+    private static final String MACHINE_PRECIPITATION_LEVEL_TAG = "MachinePrecipitationLevel";
+    private static final String PRECIPITATION_INHERITANCE_PENDING_TAG = "PrecipitationInheritancePending";
+    private static final int CHARGE_SEDIMENT_STEP_ENERGY = 10_000;
+    private static final int CHARGE_SEDIMENT_RATE_BONUS = 100;
+    private static final int MAX_CHARGE_TRANSFER_RATE = 1_000_000;
+    private static final long MAX_CHARGE_SEDIMENT_ENERGY =
+            (long) MAX_CHARGE_TRANSFER_RATE / CHARGE_SEDIMENT_RATE_BONUS * CHARGE_SEDIMENT_STEP_ENERGY;
 
     private static final int[] TOP_SLOTS = new int[]{INPUT_SLOT};
     private static final int[] BOTTOM_SLOTS = new int[]{OUTPUT_SLOT};
     private static final int[] NO_SLOTS = new int[0];
 
-    private final NonNullList<ItemStack> items = NonNullList.withSize(2, ItemStack.EMPTY);
+    private final NonNullList<ItemStack> items = NonNullList.withSize(3, ItemStack.EMPTY);
     private final GeneratorEnergyStorage energyStorage = new GeneratorEnergyStorage();
     private final InvWrapper internalItemHandler = new InvWrapper(this);
     private final SidedInvWrapper upwardItemHandler = new SidedInvWrapper(this, Direction.UP);
     private final SidedInvWrapper downwardItemHandler = new SidedInvWrapper(this, Direction.DOWN);
     private int extraMaxExtract;
     private int extraCapacity;
+    private int lastChargeRate;
+    private long chargeSedimentEnergy;
+    private long machinePrecipitationLevel;
+    private boolean precipitationInheritancePending;
 
     private final ContainerData data = new ContainerData() {
         @Override
@@ -65,6 +76,13 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
                 case 5 -> getWaterCapacity();
                 case 6 -> getMaxExtract();
                 case 7 -> extraMaxExtract;
+                case 8 -> getChargeTransferRate();
+                case 9 -> lastChargeRate;
+                case 10 -> getChargeSedimentProgress();
+                case 11 -> CHARGE_SEDIMENT_STEP_ENERGY;
+                case 12 -> (int) machinePrecipitationLevel;
+                case 13 -> (int) (machinePrecipitationLevel >>> 32);
+                case 14 -> precipitationInheritancePending ? 1 : 0;
                 default -> 0;
             };
         }
@@ -78,7 +96,7 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
 
         @Override
         public int getCount() {
-            return 8;
+            return 15;
         }
     };
 
@@ -88,153 +106,106 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
 
     protected final void tickServer() {
         ItemStack stack = items.get(INPUT_SLOT);
-        if (!SockDataUtil.isGeneratorSock(stack)) {
-            pushEnergyToNeighbors();
+        if (level instanceof ServerLevel serverLevel && stack.getItem() instanceof GeneratorFuelItem fuelItem) {
+            GeneratorTickContext context = new GeneratorTickContext(serverLevel, this, stack);
+            if (precipitationInheritancePending && fuelItem.canPrecipitateInGenerator(stack)) {
+                fuelItem.applyPrecipitationRolls(context, machinePrecipitationLevel);
+                precipitationInheritancePending = false;
+                setChanged();
+            }
+            GeneratorTickResult result = fuelItem.tickInGenerator(context);
+            applyGeneratorTickResult(stack, result);
+        }
+        chargeSlottedItem();
+        pushEnergyToNeighbors();
+    }
+
+    private void chargeSlottedItem() {
+        lastChargeRate = 0;
+        ItemStack target = items.get(CHARGE_SLOT);
+        int available = Math.min(energyStorage.getEnergyStored(), getChargeTransferRate());
+        if (target.isEmpty() || available <= 0) {
             return;
         }
 
-        int precipitation = SockDataUtil.getPrecipitationLevel(stack);
-        int generated = calculateGeneration(stack, precipitation);
-        if (generated > 0 && canConsumeGenerationResource(precipitation)) {
-            int accepted = energyStorage.addGeneratedEnergy(generated);
+        int accepted = EnergyTransferUtil.chargeItemStack(target, available);
+        if (accepted > 0) {
+            energyStorage.extractForCharging(accepted);
+            lastChargeRate = accepted;
+            addChargeSediment(accepted);
+            setChanged();
+        }
+    }
+
+    public int getChargeTransferRate() {
+        long sedimentLevels = chargeSedimentEnergy / CHARGE_SEDIMENT_STEP_ENERGY;
+        long transferRate = (long) Config.GENERATOR_TRANSFER_RATE.get()
+                + sedimentLevels * CHARGE_SEDIMENT_RATE_BONUS;
+        return (int) Math.min(MAX_CHARGE_TRANSFER_RATE, Math.max(0L, transferRate));
+    }
+
+    private int getChargeSedimentProgress() {
+        if (getChargeTransferRate() >= MAX_CHARGE_TRANSFER_RATE) {
+            return CHARGE_SEDIMENT_STEP_ENERGY;
+        }
+        return (int) (chargeSedimentEnergy % CHARGE_SEDIMENT_STEP_ENERGY);
+    }
+
+    private void addChargeSediment(int chargedEnergy) {
+        if (chargedEnergy <= 0 || getChargeTransferRate() >= MAX_CHARGE_TRANSFER_RATE) {
+            return;
+        }
+        chargeSedimentEnergy = Math.min(MAX_CHARGE_SEDIMENT_ENERGY, chargeSedimentEnergy + chargedEnergy);
+    }
+
+    private void applyGeneratorTickResult(ItemStack originalStack, GeneratorTickResult result) {
+        if (!result.handledCompletely()) {
+            return;
+        }
+
+        if (result.generatedEnergy() > 0) {
+            int accepted = energyStorage.addGeneratedEnergy(result.generatedEnergy());
             if (accepted > 0) {
-                consumeGenerationResource(precipitation);
                 setChanged();
             }
         }
 
-        pushEnergyToNeighbors();
-
-        if (level != null && level.getGameTime() % 20L == 0L && stack.is(ModItems.BOAT_SOCK.get())) {
-            growCapacityWithBoatSock(stack);
+        if (result.energyToConsume() > 0) {
+            consumeStoredEnergy(result.energyToConsume());
         }
 
-        if (level != null && level.getGameTime() % 20L == 0L && level.random.nextDouble() < Config.PRECIPITATE_CHANCE.get()) {
-            SockDataUtil.addPrecipitation(stack, 1);
+        if (result.inputReplacement() != originalStack) {
+            items.set(INPUT_SLOT, result.inputReplacement().isEmpty() ? ItemStack.EMPTY : result.inputReplacement());
+        }
+
+        if (!result.outputToInsert().isEmpty()) {
+            insertOutput(result.outputToInsert());
+        }
+
+        if (result.changed()) {
             setChanged();
         }
-
-        applyDirtyLogic(stack, precipitation);
     }
 
-    private int calculateGeneration(ItemStack stack, int precipitation) {
-        double coefficient = SockDataUtil.getPowerCoefficient(stack);
-        double baseGeneration = FormulaParser.evaluate(Config.GENERATION_FORMULA.get(), precipitation);
-        double multiplier = getGenerationMultiplier();
-        if (stack.is(ModItems.TRAVEL_DISPOSABLE_SOCK.get())) {
-            multiplier *= Config.TRAVEL_SOCK_GENERATION_MULTIPLIER.get();
-        }
-        return (int) Math.max(0, Math.floor(baseGeneration * coefficient * multiplier));
-    }
-
-    private void applyDirtyLogic(ItemStack stack, int precipitation) {
-        if (level == null || SockDataUtil.isUnbreakable(stack)) {
-            return;
-        }
-
-        if (stack.is(ModItems.BOAT_SOCK.get())) {
-            return;
-        }
-
-        double dirtyChance = Config.DIRTY_BASE_CHANCE.get() + precipitation * Config.DIRTY_CHANCE_PER_PRECIPITATION.get();
-        dirtyChance *= getDirtyChanceMultiplier();
-        if (level.random.nextDouble() >= dirtyChance) {
-            return;
-        }
-
-        if (stack.is(ModItems.TRAVEL_DISPOSABLE_SOCK.get())) {
-            damageTravelSock(stack);
-            setChanged();
-            return;
-        }
-
-        if (SockDataUtil.getAthleticCognition(stack) > 0.0D && level.random.nextDouble() < ATHLETIC_COGNITION_LOSS_CHANCE) {
-            SockDataUtil.setAthleticCognition(stack, SockDataUtil.getAthleticCognition(stack) - ATHLETIC_COGNITION_LOSS_AMOUNT);
-            setChanged();
-            return;
-        }
-
-        SockDataUtil.addDirtyCount(stack, 1);
-        if (SockDataUtil.shouldBecomeDirty(stack)) {
-            transformSockToDirty(stack);
-        }
-        setChanged();
-    }
-
-    private void damageTravelSock(ItemStack stack) {
-        if (!(level instanceof ServerLevel serverLevel)) {
-            return;
-        }
-
-        int multiplier = consumeDurabilityWithSockEnchantments(stack, serverLevel);
-        if (multiplier <= 0) {
-            return;
-        }
-
-        if (stack.isEmpty()) {
-            extraMaxExtract = Math.max(0, extraMaxExtract + Config.TRAVEL_SOCK_MAX_EXTRACT_BOOST.get() * multiplier);
-            items.set(INPUT_SLOT, ItemStack.EMPTY);
-        }
-    }
-
-    private void growCapacityWithBoatSock(ItemStack stack) {
-        if (!(level instanceof ServerLevel serverLevel) || SockDataUtil.isUnbreakable(stack)) {
-            return;
-        }
-
-        int multiplier = consumeDurabilityWithSockEnchantments(stack, serverLevel);
-        if (multiplier <= 0) {
-            setChanged();
-            return;
-        }
-
-        extraCapacity = Math.max(0, extraCapacity + SockDataUtil.getBoatSockCapacityBoost(stack) * multiplier);
-        if (stack.isEmpty()) {
-            items.set(INPUT_SLOT, ItemStack.EMPTY);
-        }
-        setChanged();
-    }
-
-    private int consumeDurabilityWithSockEnchantments(ItemStack stack, ServerLevel serverLevel) {
-        int humility = getSockEnchantmentLevel(stack, ModEnchantments.HUMILITY);
-        if (humility > 0 && serverLevel.random.nextDouble() < Math.min(0.99D, 0.33D * Math.min(3, humility))) {
-            return 0;
-        }
-
-        int multiplier = getPrideDurabilityMultiplier(stack);
-        stack.hurtAndBreak(1, serverLevel, null, item -> {
-        });
-        return multiplier;
-    }
-
-    private int getPrideDurabilityMultiplier(ItemStack stack) {
-        int pride = Math.min(3, getSockEnchantmentLevel(stack, ModEnchantments.PRIDE));
-        int multiplier = 1;
-        for (int i = 0; i < pride; i++) {
-            multiplier *= 6;
-        }
-        return multiplier;
-    }
-
-    private int getSockEnchantmentLevel(ItemStack stack, net.minecraft.resources.ResourceKey<net.minecraft.world.item.enchantment.Enchantment> enchantment) {
-        if (level == null) {
-            return 0;
-        }
-        return stack.getEnchantmentLevel(level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(enchantment));
-    }
-
-    private void transformSockToDirty(ItemStack originalStack) {
-        ItemStack dirtyStack = new ItemStack(ModItems.DIRTY_WHITE_SOCK.get(), 1);
+    private void insertOutput(ItemStack stack) {
         ItemStack output = items.get(OUTPUT_SLOT);
         if (output.isEmpty()) {
-            items.set(OUTPUT_SLOT, dirtyStack);
-            items.set(INPUT_SLOT, ItemStack.EMPTY);
-        } else if (ItemStack.isSameItemSameComponents(output, dirtyStack) && output.getCount() < output.getMaxStackSize()) {
-            output.grow(1);
-            items.set(INPUT_SLOT, ItemStack.EMPTY);
-        } else {
-            items.set(INPUT_SLOT, dirtyStack);
+            items.set(OUTPUT_SLOT, stack.copy());
+            return;
         }
+        if (ItemStack.isSameItemSameComponents(output, stack) && output.getCount() < output.getMaxStackSize()) {
+            output.grow(Math.min(stack.getCount(), output.getMaxStackSize() - output.getCount()));
+        }
+    }
+
+    public boolean canInsertOutput(ItemStack stack) {
+        if (stack.isEmpty()) {
+            return true;
+        }
+        ItemStack output = items.get(OUTPUT_SLOT);
+        return output.isEmpty()
+                || ItemStack.isSameItemSameComponents(output, stack)
+                && output.getCount() <= output.getMaxStackSize() - stack.getCount();
     }
 
     private void pushEnergyToNeighbors() {
@@ -292,6 +263,79 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
 
     public int getMaxEnergyCapacity() {
         return Math.max(0, Config.GENERATOR_CAPACITY.get() + extraCapacity);
+    }
+
+    public boolean consumeStoredEnergy(int amount) {
+        if (amount <= 0 || energyStorage.getEnergyStored() < amount) {
+            return false;
+        }
+        energyStorage.extractEnergy(amount, false);
+        setChanged();
+        return true;
+    }
+
+    public int fillEnergyToCapacity() {
+        int filled = energyStorage.addGeneratedEnergy(
+                energyStorage.getMaxEnergyStored() - energyStorage.getEnergyStored());
+        if (filled > 0) {
+            setChanged();
+        }
+        return filled;
+    }
+
+    public void addExtraMaxExtract(int amount) {
+        if (amount <= 0) {
+            return;
+        }
+        extraMaxExtract = Math.max(0, extraMaxExtract + amount);
+        setChanged();
+    }
+
+    public void addExtraCapacity(int amount) {
+        if (amount <= 0) {
+            return;
+        }
+        extraCapacity = Math.max(0, extraCapacity + amount);
+        setChanged();
+    }
+
+    public long getMachinePrecipitationLevel() {
+        return machinePrecipitationLevel;
+    }
+
+    public boolean isPrecipitationInheritancePending() {
+        return precipitationInheritancePending;
+    }
+
+    public void replaceInputWithDirtySock() {
+        settleCompletedPrecipitableSock();
+        ItemStack dirtyStack = new ItemStack(ModItems.DIRTY_WHITE_SOCK.get(), 1);
+        ItemStack output = items.get(OUTPUT_SLOT);
+        if (output.isEmpty()) {
+            items.set(OUTPUT_SLOT, dirtyStack);
+            items.set(INPUT_SLOT, ItemStack.EMPTY);
+        } else if (ItemStack.isSameItemSameComponents(output, dirtyStack) && output.getCount() < output.getMaxStackSize()) {
+            output.grow(1);
+            items.set(INPUT_SLOT, ItemStack.EMPTY);
+        } else {
+            items.set(INPUT_SLOT, dirtyStack);
+        }
+        setChanged();
+    }
+
+    private void settleCompletedPrecipitableSock() {
+        ItemStack completedStack = items.get(INPUT_SLOT);
+        if (!(completedStack.getItem() instanceof GeneratorFuelItem fuelItem)
+                || !fuelItem.canPrecipitateInGenerator(completedStack)) {
+            return;
+        }
+
+        int completedLevel = Math.max(0, SockDataUtil.getPrecipitationLevel(completedStack));
+        if (completedLevel > 0) {
+            long remainingCapacity = Long.MAX_VALUE - machinePrecipitationLevel;
+            machinePrecipitationLevel += Math.min(remainingCapacity, (long) completedLevel);
+        }
+        precipitationInheritancePending = true;
     }
 
     @Override
@@ -366,9 +410,14 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
 
     @Override
     public void setItem(int slot, ItemStack stack) {
+        ItemStack previous = items.get(slot);
         items.set(slot, stack);
         if (stack.getCount() > getMaxStackSize()) {
             stack.setCount(getMaxStackSize());
+        }
+        if (slot == INPUT_SLOT && previous != stack && level instanceof ServerLevel
+                && stack.getItem() instanceof GeneratorFuelItem fuelItem) {
+            fuelItem.onInsertedIntoGenerator(this, stack);
         }
         setChanged();
     }
@@ -382,7 +431,13 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
 
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
-        return slot == INPUT_SLOT && SockDataUtil.isGeneratorSock(stack);
+        if (slot == INPUT_SLOT) {
+            return SockDataUtil.isGeneratorSock(stack);
+        }
+        if (slot == CHARGE_SLOT) {
+            return !stack.isEmpty();
+        }
+        return false;
     }
 
     @Override
@@ -396,6 +451,9 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
         ContainerHelper.loadAllItems(tag, items, registries);
         extraMaxExtract = Math.max(0, tag.getInt(EXTRA_MAX_EXTRACT_TAG));
         extraCapacity = Math.max(0, tag.getInt(EXTRA_CAPACITY_TAG));
+        chargeSedimentEnergy = Math.max(0L, Math.min(MAX_CHARGE_SEDIMENT_ENERGY, tag.getLong(CHARGE_SEDIMENT_ENERGY_TAG)));
+        machinePrecipitationLevel = Math.max(0L, tag.getLong(MACHINE_PRECIPITATION_LEVEL_TAG));
+        precipitationInheritancePending = tag.getBoolean(PRECIPITATION_INHERITANCE_PENDING_TAG);
         energyStorage.setEnergy(tag.getInt("Energy"));
         loadGeneratorData(tag, registries);
     }
@@ -407,22 +465,25 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
         tag.putInt("Energy", energyStorage.getEnergyStored());
         tag.putInt(EXTRA_MAX_EXTRACT_TAG, extraMaxExtract);
         tag.putInt(EXTRA_CAPACITY_TAG, extraCapacity);
+        tag.putLong(CHARGE_SEDIMENT_ENERGY_TAG, chargeSedimentEnergy);
+        tag.putLong(MACHINE_PRECIPITATION_LEVEL_TAG, machinePrecipitationLevel);
+        tag.putBoolean(PRECIPITATION_INHERITANCE_PENDING_TAG, precipitationInheritancePending);
         saveGeneratorData(tag, registries);
     }
 
-    protected double getGenerationMultiplier() {
+    public double getGenerationMultiplierForItems() {
         return 1.0D;
     }
 
-    protected double getDirtyChanceMultiplier() {
+    public double getDirtyChanceMultiplierForItems() {
         return 1.0D;
     }
 
-    protected boolean canConsumeGenerationResource(int precipitation) {
+    public boolean canConsumeGenerationResourceForItems(int precipitation) {
         return true;
     }
 
-    protected void consumeGenerationResource(int precipitation) {
+    public void consumeGenerationResourceForItems(int precipitation) {
     }
 
     protected int getWaterStored() {
@@ -480,6 +541,12 @@ public abstract class AbstractPrecipitateGeneratorBlockEntity extends BaseContai
             int accepted = Math.min(getMaxEnergyStored() - this.energy, amount);
             this.energy += accepted;
             return accepted;
+        }
+
+        private int extractForCharging(int amount) {
+            int extracted = Math.min(this.energy, Math.max(0, amount));
+            this.energy -= extracted;
+            return extracted;
         }
     }
 }

@@ -1,0 +1,176 @@
+<ldlib2-ui>
+  <style>
+    #generator-root {
+      width: 176;
+      height: 258;
+      background: #ff1e2026;
+    }
+
+    #machine-panel {
+      position: absolute;
+      left: 6;
+      top: 17;
+      width: 164;
+      height: 150;
+      background: #ff2a2d36;
+    }
+
+    #input-slot-panel, #output-slot-panel, #charge-slot-panel {
+      position: absolute;
+      top: 136;
+      width: 18;
+      height: 18;
+      background: #ff4b5160;
+    }
+
+    #input-slot-panel {
+      left: 43;
+    }
+
+    #output-slot-panel {
+      left: 115;
+    }
+
+    #charge-slot-panel {
+      left: 79;
+    }
+
+    #machine-input-slot, #machine-output-slot, #machine-charge-slot {
+      position: absolute;
+      top: 136;
+      slot-overlay: #4421262d;
+      hover-overlay: #66ffffff;
+    }
+
+    #machine-input-slot {
+      left: 43;
+    }
+
+    #machine-output-slot {
+      left: 115;
+    }
+
+    #machine-charge-slot {
+      left: 79;
+    }
+
+    #water-meter, #energy-meter {
+      position: absolute;
+      left: 8;
+      width: 160;
+      height: 10;
+      padding-all: 1;
+      overflow: hidden;
+      background: #ff16181d;
+    }
+
+    #water-meter {
+      top: 118;
+    }
+
+    #energy-meter {
+      top: 106;
+    }
+
+    #water-fill, #energy-fill {
+      width: 0;
+      height: 100%;
+    }
+
+    #water-fill {
+      background: #ff3b82f6;
+    }
+
+    #energy-fill {
+      background: #ff46c266;
+    }
+
+    #water-bar, #energy-bar {
+      display: none;
+    }
+
+    #energy-label, #max-extract-label, #water-label, #precipitation-label, #dirty-count-label, #machine-precipitation-label, #charge-rate-label, #charge-sediment-label {
+      position: absolute;
+      left: 8;
+      text-color: #ffe8edf7;
+      text-shadow: true;
+    }
+
+    #energy-label {
+      top: 6;
+    }
+
+    #max-extract-label {
+      top: 18;
+    }
+
+    #water-label {
+      top: 54;
+    }
+
+    #precipitation-label {
+      top: 66;
+    }
+
+    #dirty-count-label {
+      top: 90;
+    }
+
+    #machine-precipitation-label {
+      top: 78;
+    }
+
+    #charge-rate-label {
+      top: 30;
+    }
+
+    #charge-sediment-label {
+      top: 42;
+    }
+
+    #player-inventory {
+      position: absolute;
+      left: 7;
+      top: 174;
+      gap-row: 0;
+      gap-column: 0;
+    }
+
+    #player-inventory .__inventory_hotbar__ {
+      margin-top: 4;
+    }
+
+    #player-inventory item-slot {
+      slot-overlay: #33181c22;
+      hover-overlay: #66ffffff;
+    }
+  </style>
+  <root id="generator-root">
+    <element id="machine-panel"/>
+    <element id="input-slot-panel"/>
+    <element id="output-slot-panel"/>
+    <element id="charge-slot-panel"/>
+    <item-slot id="machine-input-slot"/>
+    <item-slot id="machine-output-slot"/>
+    <item-slot id="machine-charge-slot"/>
+
+    <label id="energy-label">Energy</label>
+    <label id="max-extract-label">Max Output</label>
+    <label id="water-label">Water</label>
+    <label id="precipitation-label">Precipitation</label>
+    <label id="machine-precipitation-label">Machine Precipitation</label>
+    <label id="dirty-count-label">Stains</label>
+    <label id="charge-rate-label">Charge</label>
+    <label id="charge-sediment-label">Charge Sediment</label>
+
+    <element id="water-meter">
+      <element id="water-fill"/>
+      <progress-bar id="water-bar" min-value="0" max-value="1" value="0" text=""/>
+    </element>
+    <element id="energy-meter">
+      <element id="energy-fill"/>
+      <progress-bar id="energy-bar" min-value="0" max-value="1" value="0" text=""/>
+    </element>
+    <inventory-slots id="player-inventory"/>
+  </root>
+</ldlib2-ui>

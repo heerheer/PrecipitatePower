@@ -1,0 +1,90 @@
+#Internal FE capacity of the precipitate generator.
+# Default: 100000
+# Range: > 1000
+generatorCapacity = 100000
+#Maximum FE extracted per tick from each horizontal side.
+# Default: 20000
+# Range: > 1
+generatorMaxExtract = 20000
+#Maximum FE transferred per tick into the generator charging slot.
+# Default: 100
+# Range: > 1
+generatorTransferRate = 100
+#FE capacity of the small electric sock.
+# Default: 10000
+# Range: > 1
+small_capacity = 10000
+#Maximum FE received or output per tick by the small electric sock.
+# Default: 100
+# Range: > 1
+small_transfer_rate = 100
+#FE capacity of the medium electric sock.
+# Default: 50000
+# Range: > 1
+medium_capacity = 50000
+#Maximum FE received or output per tick by the medium electric sock.
+# Default: 250
+# Range: > 1
+medium_transfer_rate = 250
+#FE capacity of the large electric sock.
+# Default: 200000
+# Range: > 1
+large_capacity = 200000
+#Maximum FE received or output per tick by the large electric sock.
+# Default: 500
+# Range: > 1
+large_transfer_rate = 500
+#Permanent FE/t max output boost added to a generator when a travel disposable sock breaks inside it.
+# Default: 100
+# Range: > 0
+travelSockMaxExtractBoost = 100
+#Generation multiplier used while a travel disposable sock is generating.
+# Default: 2.0
+# Range: 0.0 ~ 1000.0
+travelSockGenerationMultiplier = 2.0
+#Internal water tank capacity of the advanced precipitate generator in mB.
+# Default: 8000
+# Range: > 100
+advancedGeneratorWaterCapacity = 8000
+#Base water consumption per generation tick for the advanced precipitate generator in mB.
+# Default: 10
+# Range: > 0
+advancedGeneratorBaseWaterUse = 10
+#Additional water consumed per precipitation level for the advanced precipitate generator in mB.
+# Default: 5
+# Range: > 0
+advancedGeneratorWaterUsePerPrecipitation = 5
+#Chance checked every 20 ticks for a white sock to precipitate.
+# Default: 0.015
+# Range: 0.0 ~ 1.0
+precipitateChance = 0.015
+#Base per-tick chance for a sock to gain one dirt stain.
+# Default: 0.0012
+# Range: 0.0 ~ 1.0
+dirtyBaseChance = 0.0012
+#Additional per-tick dirty chance for each precipitation level.
+# Default: 4.5E-4
+# Range: 0.0 ~ 1.0
+dirtyChancePerPrecipitation = 4.5E-4
+#How many stains a white sock can accumulate before becoming a dirty white sock.
+# Default: 10
+# Range: 1 ~ 999
+sockStainLimit = 10
+#Chance for chest loot generation to add a white sock.
+# Default: 0.09
+# Range: 0.0 ~ 1.0
+lootSockChance = 0.09
+#Chance for generated loot socks to receive a power coefficient bonus.
+# Default: 0.35
+# Range: 0.0 ~ 1.0
+lootBonusChance = 0.35
+#Minimum random power coefficient applied to loot socks.
+# Default: 1.1
+# Range: 1.0 ~ 1000.0
+lootMinCoefficient = 1.1
+#Maximum random power coefficient applied to loot socks.
+# Default: 2.4
+# Range: 1.0 ~ 1000.0
+lootMaxCoefficient = 2.4
+#Formula for generator FE/t before coefficient multiplier. Variable x = precipitation level. Supports + - * / ^ and parentheses.
+generationFormula = "12 + 2.5 * x + 0.35 * x ^ 2"

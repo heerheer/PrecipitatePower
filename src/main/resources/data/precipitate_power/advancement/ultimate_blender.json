@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "id": "precipitate_power:white_sock"
+    },
+    "title": {
+      "translate": "advancement.precipitate_power.ultimate_blender.title"
+    },
+    "description": {
+      "translate": "advancement.precipitate_power.ultimate_blender.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "unlock": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

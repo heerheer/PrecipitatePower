@@ -1,0 +1,6 @@
+{
+  "replace": false,
+  "values": [
+    { "id": "mekanism:hdpe_sheet", "required": false }
+  ]
+}

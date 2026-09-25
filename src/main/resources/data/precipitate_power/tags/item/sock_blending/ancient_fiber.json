@@ -1,0 +1,6 @@
+{
+  "replace": false,
+  "values": [
+    { "id": "immortalers_delight:ancient_fiber", "required": false }
+  ]
+}

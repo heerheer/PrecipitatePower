@@ -1,7 +1,13 @@
 package top.realme.mc.precipitate_power.registry;
 
+import java.util.List;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -14,6 +20,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import top.realme.mc.precipitate_power.block.AdvancedPrecipitateGeneratorBlock;
 import top.realme.mc.precipitate_power.PrecipitatePower;
 import top.realme.mc.precipitate_power.block.PrecipitateGeneratorBlock;
+import top.realme.mc.precipitate_power.block.SockBlenderBlock;
 
 public final class ModBlocks {
     public static final DeferredRegister.Blocks REGISTER = DeferredRegister.createBlocks(PrecipitatePower.MODID);
@@ -31,6 +38,27 @@ public final class ModBlocks {
 
     public static final DeferredItem<BlockItem> PRECIPITATE_GENERATOR_ITEM =
             ModItems.REGISTER.registerSimpleBlockItem("precipitate_generator", PRECIPITATE_GENERATOR);
+
+    public static final DeferredBlock<Block> SOCK_BLENDER = REGISTER.register(
+            "sock_blender",
+            () -> new SockBlenderBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.0F)
+                    .sound(SoundType.METAL)
+                    .requiresCorrectToolForDrops())
+    );
+
+    public static final DeferredItem<BlockItem> SOCK_BLENDER_ITEM = ModItems.REGISTER.register(
+            "sock_blender",
+            () -> new BlockItem(SOCK_BLENDER.get(), new Item.Properties()) {
+                @Override
+                public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+                    super.appendHoverText(stack, context, tooltip, flag);
+                    tooltip.add(Component.translatable("tooltip.precipitate_power.sock_blender.wip")
+                            .withStyle(ChatFormatting.YELLOW));
+                }
+            }
+    );
 
     // Temporarily disabled until the advanced generator gameplay/art is ready to ship.
     public static final DeferredBlock<Block> ADVANCED_PRECIPITATE_GENERATOR = REGISTER_ADVANCED_PRECIPITATE_GENERATOR ? REGISTER.register(
@@ -54,6 +82,8 @@ public final class ModBlocks {
                 (blockEntity, context) -> context == Direction.UP || context == Direction.DOWN ? null : blockEntity.getEnergyStorage());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntities.PRECIPITATE_GENERATOR.get(),
                 (blockEntity, context) -> context == null ? blockEntity.getInternalItemHandler() : blockEntity.getSidedItemHandler(context));
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntities.SOCK_BLENDER.get(),
+                (blockEntity, context) -> blockEntity.getItemHandler());
         if (REGISTER_ADVANCED_PRECIPITATE_GENERATOR) {
             event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, ModBlockEntities.ADVANCED_PRECIPITATE_GENERATOR.get(),
                     (blockEntity, context) -> context == Direction.UP || context == Direction.DOWN ? null : blockEntity.getEnergyStorage());

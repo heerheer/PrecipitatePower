@@ -1,0 +1,10 @@
+sock_offering.ogg
+Source: Magic Spell SFX - magical_1.ogg
+Author: artisticdude
+License: CC0 1.0 Universal
+Page: https://lpc.opengameart.org/content/magic-spell-sfx
+Modification: trimmed to the first 1.0 second and re-encoded as Ogg Vorbis.
+
+sock_offering_impact.ogg
+Source: 娜艺娜＊啊.mp3, supplied by the project owner.
+Modification: re-encoded as Ogg Vorbis without changing its duration.

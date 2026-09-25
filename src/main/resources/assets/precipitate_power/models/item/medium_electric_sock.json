@@ -1,0 +1,8 @@
+{
+  "parent": "item/generated",
+  "textures": { "layer0": "precipitate_power:item/medium_electric_sock" },
+  "overrides": [
+    { "predicate": { "custom_model_data": 1 }, "model": "precipitate_power:item/medium_electric_sock_bulging" },
+    { "predicate": { "custom_model_data": 2 }, "model": "precipitate_power:item/medium_electric_sock_full" }
+  ]
+}

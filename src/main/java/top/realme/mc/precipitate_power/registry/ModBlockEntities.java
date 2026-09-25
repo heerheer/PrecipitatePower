@@ -7,6 +7,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import top.realme.mc.precipitate_power.PrecipitatePower;
 import top.realme.mc.precipitate_power.block.entity.AdvancedPrecipitateGeneratorBlockEntity;
 import top.realme.mc.precipitate_power.block.entity.PrecipitateGeneratorBlockEntity;
+import top.realme.mc.precipitate_power.block.entity.SockBlenderBlockEntity;
 
 public final class ModBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> REGISTER =
@@ -15,6 +16,11 @@ public final class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PrecipitateGeneratorBlockEntity>> PRECIPITATE_GENERATOR = REGISTER.register(
             "precipitate_generator",
             () -> BlockEntityType.Builder.of(PrecipitateGeneratorBlockEntity::new, ModBlocks.PRECIPITATE_GENERATOR.get()).build(null)
+    );
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SockBlenderBlockEntity>> SOCK_BLENDER = REGISTER.register(
+            "sock_blender",
+            () -> BlockEntityType.Builder.of(SockBlenderBlockEntity::new, ModBlocks.SOCK_BLENDER.get()).build(null)
     );
 
     // Temporarily disabled with the advanced generator block registration.

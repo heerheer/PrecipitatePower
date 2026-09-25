@@ -2,6 +2,16 @@
   "replace": false,
   "values": [
     "precipitate_power:travel_disposable_sock",
-    "precipitate_power:boat_sock"
+    "precipitate_power:boat_sock",
+    "precipitate_power:white_sock",
+    "precipitate_power:rainbow_white_sock",
+    "precipitate_power:over_knee_sock",
+    "precipitate_power:sport_crew_sock",
+    "precipitate_power:pantyhose",
+    "precipitate_power:split_toe_sock",
+    "precipitate_power:stockings",
+    "precipitate_power:zhaozhao_original_scent",
+    "precipitate_power:fusheng_original_scent",
+    "precipitate_power:datou_original_scent"
   ]
 }

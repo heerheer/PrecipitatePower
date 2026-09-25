@@ -22,6 +22,11 @@ public class RainbowWhiteSockItem extends WhiteSockItem {
     }
 
     @Override
+    protected int calculateBaseGeneration(GeneratorTickContext context, int precipitation) {
+        return super.calculateBaseGeneration(context, precipitation);
+    }
+
+    @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag){
         super.appendHoverText(stack,context,tooltipComponents,tooltipFlag);
         tooltipComponents.add(

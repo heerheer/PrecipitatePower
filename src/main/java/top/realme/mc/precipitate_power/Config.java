@@ -13,6 +13,34 @@ public final class Config {
             .comment("Maximum FE extracted per tick from each horizontal side.")
             .defineInRange("generatorMaxExtract", 20000, 1, Integer.MAX_VALUE);
 
+    public static final ModConfigSpec.IntValue GENERATOR_TRANSFER_RATE = BUILDER
+            .comment("Maximum FE transferred per tick into the generator charging slot.")
+            .defineInRange("generatorTransferRate", 100, 1, Integer.MAX_VALUE);
+
+    public static final ModConfigSpec.IntValue SMALL_ELECTRIC_SOCK_CAPACITY = BUILDER
+            .comment("FE capacity of the small electric sock.")
+            .defineInRange("small_capacity", 10000, 1, Integer.MAX_VALUE);
+
+    public static final ModConfigSpec.IntValue SMALL_ELECTRIC_SOCK_TRANSFER_RATE = BUILDER
+            .comment("Maximum FE received or output per tick by the small electric sock.")
+            .defineInRange("small_transfer_rate", 100, 1, Integer.MAX_VALUE);
+
+    public static final ModConfigSpec.IntValue MEDIUM_ELECTRIC_SOCK_CAPACITY = BUILDER
+            .comment("FE capacity of the medium electric sock.")
+            .defineInRange("medium_capacity", 50000, 1, Integer.MAX_VALUE);
+
+    public static final ModConfigSpec.IntValue MEDIUM_ELECTRIC_SOCK_TRANSFER_RATE = BUILDER
+            .comment("Maximum FE received or output per tick by the medium electric sock.")
+            .defineInRange("medium_transfer_rate", 250, 1, Integer.MAX_VALUE);
+
+    public static final ModConfigSpec.IntValue LARGE_ELECTRIC_SOCK_CAPACITY = BUILDER
+            .comment("FE capacity of the large electric sock.")
+            .defineInRange("large_capacity", 200000, 1, Integer.MAX_VALUE);
+
+    public static final ModConfigSpec.IntValue LARGE_ELECTRIC_SOCK_TRANSFER_RATE = BUILDER
+            .comment("Maximum FE received or output per tick by the large electric sock.")
+            .defineInRange("large_transfer_rate", 500, 1, Integer.MAX_VALUE);
+
     public static final ModConfigSpec.IntValue TRAVEL_SOCK_MAX_EXTRACT_BOOST = BUILDER
             .comment("Permanent FE/t max output boost added to a generator when a travel disposable sock breaks inside it.")
             .defineInRange("travelSockMaxExtractBoost", 100, 0, Integer.MAX_VALUE);

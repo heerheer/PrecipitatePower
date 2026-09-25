@@ -31,22 +31,22 @@ public class AdvancedPrecipitateGeneratorBlockEntity extends AbstractPrecipitate
     }
 
     @Override
-    protected double getGenerationMultiplier() {
+    public double getGenerationMultiplierForItems() {
         return 2.0D;
     }
 
     @Override
-    protected double getDirtyChanceMultiplier() {
+    public double getDirtyChanceMultiplierForItems() {
         return 0.5D;
     }
 
     @Override
-    protected boolean canConsumeGenerationResource(int precipitation) {
+    public boolean canConsumeGenerationResourceForItems(int precipitation) {
         return waterAmount >= getWaterConsumption(precipitation);
     }
 
     @Override
-    protected void consumeGenerationResource(int precipitation) {
+    public void consumeGenerationResourceForItems(int precipitation) {
         int cost = getWaterConsumption(precipitation);
         if (cost > 0) {
             waterAmount = Math.max(0, waterAmount - cost);

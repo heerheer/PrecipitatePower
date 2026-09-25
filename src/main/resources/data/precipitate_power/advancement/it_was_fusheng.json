@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "id": "precipitate_power:fusheng_original_scent"
+    },
+    "title": {
+      "translate": "advancement.precipitate_power.it_was_fusheng.title"
+    },
+    "description": {
+      "translate": "advancement.precipitate_power.it_was_fusheng.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "unlock": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

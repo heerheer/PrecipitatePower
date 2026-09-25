@@ -1,0 +1,9 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "item/generated",
+	"textures": {
+		"layer0": "precipitate_power:item/black_sock",
+		"particle": "precipitate_power:item/black_sock"
+	},
+	"display": {}
+}

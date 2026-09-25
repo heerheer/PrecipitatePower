@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "id": "precipitate_power:zhaozhao_original_scent"
+    },
+    "title": {
+      "translate": "advancement.precipitate_power.the_real_taste.title"
+    },
+    "description": {
+      "translate": "advancement.precipitate_power.the_real_taste.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "unlock": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

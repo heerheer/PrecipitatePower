@@ -1,0 +1,23 @@
+{
+  "type": "kaleidoscope_tavern:barrel",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "kaleidoscope_tavern"
+    }
+  ],
+  "carrier": {
+    "item": "kaleidoscope_tavern:empty_bottle"
+  },
+  "fluid": "minecraft:water",
+  "ingredients": [
+    {
+      "tag": "c:sock"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "precipitate_power:original_brew"
+  },
+  "unit_time": 2400
+}
